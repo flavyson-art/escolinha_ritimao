@@ -94,6 +94,11 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+				
+				<div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+
+				<div class="campo"><label>Rede Social (Instagram/Facebook)</label><input type="text" id="redeSocial" placeholder="@seuusuario">
+				</div>
 
                 <div class="campo">
                     <label>Instrumento</label>
@@ -198,6 +203,7 @@
                     numSocio: document.getElementById('campoNumSocio').value || "N/A",
                     nomeResp: document.getElementById('nomeResp').value || "N/A",
                     telResp: document.getElementById('telResp').value || "N/A",
+					redeSocial: document.getElementById('redeSocial').value || "Não informado",
                     fotoBase64: fotoBase64
                 };
 
