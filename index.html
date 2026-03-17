@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Escolinha Ritimão</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <style>
+        :root { --preto: #000; --branco: #fff; --cinza: #333; }
+        body, html { margin: 0; padding: 0; font-family: 'Arial', sans-serif; background-color: var(--preto); color: var(--branco); overflow-x: hidden; }
+
+        /* TELA INICIAL */
+        #tela-inicial {
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            cursor: pointer; transition: transform 0.3s;
+        }
+        #tela-inicial img { max-width: 90%; max-height: 80vh; border: 2px solid var(--cinza); border-radius: 10px; }
+        #tela-inicial:hover { transform: scale(1.02); }
+
+        /* TELA DE CADASTRO */
+        #tela-cadastro {
+            display: none; min-height: 100vh; padding: 20px;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1514525253361-b8748b43a593?q=80');
+            background-size: cover; background-position: center; background-attachment: fixed;
+        }
+        .container { max-width: 600px; margin: auto; background: rgba(0,0,0,0.9); padding: 30px; border-radius: 15px; border: 1px solid var(--branco); }
+        .campo { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--cinza); background: #111; color: #fff; border-radius: 5px; box-sizing: border-box; }
+        .hidden { display: none; }
+        button { width: 100%; padding: 15px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
+        button:hover { background: #ccc; }
+        button:disabled { background: #666; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <div id="tela-inicial" onclick="abrirCadastro()">
+        <img src="Logo.jpg" alt="Clique para se cadastrar">
+    </div>
+
+    <div id="tela-cadastro">
+        <div class="container">
+            <h2 style="text-align:center">MATRÍCULA RITIMÃO</h2>
+            <form id="formMatricula">
+                <div class="campo"><label>Nome Completo:</label><input type="text" id="nome" required></div>
+                
+                <div class="campo"><label>CPF:</label>
+                    <input type="text" id="cpf" class="mask-cpf" required placeholder="000.000.000-00">
+                </div>
+
+                <div class="campo"><label>Idade:</label>
+                    <input type="number" id="idade" required onchange="validarMenor(this.value)">
+                </div>
+
+                <div id="dadosResponsavel" class="hidden">
+                    <div class="campo"><label>Nome do Responsável:</label><input type="text" id="nomeResp"></div>
+                    <div class="campo"><label>Telefone do Responsável:</label><input type="text" id="telResp" class="mask-tel"></div>
+                </div>
+
+                <div class="campo"><label>Sexo:</label>
+                    <select id="sexo" required>
+                        <option value="">Selecione</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="campo"><label>Telefone do Aluno:</label><input type="text" id="tel" class="mask-tel" required></div>
+                <div class="campo"><label>E-mail:</label><input type="email" id="email" required placeholder="exemplo@email.com"></div>
+
+                <div class="campo"><label>Instrumento de Interesse (Escolha 1):</label>
+                    <select id="instrumento" required>
+                        <option value="">Selecione...</option>
+                        <option value="Cuica">Cuíca</option>
+                        <option value="Chocalho">Chocalho</option>
+                        <option value="Xequere">Xequeré</option>
+                        <option value="Tamborim">Tamborim</option>
+                        <option value="Timbal">Timbal</option>
+                        <option value="Caixa">Caixa</option>
+                        <option value="Repique">Repique</option>
+                        <option value="Surdo 3">Surdo de Terceira</option>
+                        <option value="Surdo 1">Surdo de Primeira</option>
+                        <option value="Surdo 2">Surdo de Segunda</option>
+                    </select>
+                </div>
+
+                <div class="campo"><label>Nível:</label>
+                    <select id="nivel">
+                        <option value="Iniciante">Iniciante</option>
+                        <option value="Intermediário">Intermediário</option>
+                        <option value="Avançado">Avançado</option>
+                    </select>
+                </div>
+
+                <div class="campo"><label>É Sócio Gaviões?</label>
+                    <select id="isSocio" onchange="document.getElementById('campoNumSocio').classList.toggle('hidden', this.value !== 'Sim')">
+                        <option value="Não">Não</option><option value="Sim">Sim</option>
+                    </select>
+                    <input type="text" id="campoNumSocio" class="hidden" placeholder="Número do Sócio" style="margin-top:10px">
+                </div>
+
+                <div class="campo"><label>Anexar Foto:</label><input type="file" id="foto" accept="image/*" required></div>
+
+                <button type="submit" id="btnEnviar">Finalizar Inscrição</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Máscaras JQuery
+        $(document).ready(function(){
+            $('.mask-cpf').mask('000.000.000-00');
+            $('.mask-tel').mask('(00) 00000-0000');
+        });
+
+        function abrirCadastro() {
+            document.getElementById('tela-inicial').style.display = 'none';
+            document.getElementById('tela-cadastro').style.display = 'block';
+        }
+
+        function validarMenor(idade) {
+            const div = document.getElementById('dadosResponsavel');
+            div.classList.toggle('hidden', idade >= 18);
+            document.getElementById('nomeResp').required = idade < 18;
+            document.getElementById('telResp').required = idade < 18;
+        }
+
+        // Função para converter arquivo de foto em Base64 (Texto para envio)
+        const converterBase64 = (file) => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+
+        // --- PASSO 4 ATUALIZADO: ENVIO REAL ---
+        document.getElementById('formMatricula').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnEnviar');
+            btn.disabled = true;
+            btn.innerText = "Processando Matrícula...";
+
+            // URL do seu Google Apps Script (Sempre verifique se a URL está correta)
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIq5q-sPjQFZoYNZAxOkCxltFfPwS6zGSN6JP8k9jftRMZbfcFub4-Hpwo8F9dzZHp/exec";
+
+            try {
+                const arquivoFoto = document.getElementById('foto').files[0];
+                let fotoBase64 = "";
+                if (arquivoFoto) {
+                    fotoBase64 = await converterBase64(arquivoFoto);
+                }
+
+                const payload = {
+                    nome: document.getElementById('nome').value,
+                    cpf: document.getElementById('cpf').value,
+                    idade: document.getElementById('idade').value,
+                    sexo: document.getElementById('sexo').value,
+                    telefone: document.getElementById('tel').value,
+                    email: document.getElementById('email').value,
+                    instrumento: document.getElementById('instrumento').value,
+                    nivel: document.getElementById('nivel').value,
+                    isSocio: document.getElementById('isSocio').value,
+                    numSocio: document.getElementById('campoNumSocio').value || "N/A",
+                    nomeResp: document.getElementById('nomeResp').value || "N/A",
+                    telResp: document.getElementById('telResp').value || "N/A",
+                    fotoBase64: fotoBase64
+                };
+
+                // Envio para o Google
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                const resultado = await response.json();
+
+                if (resultado.status === "sucesso") {
+                    alert("✅ MATRÍCULA REALIZADA COM SUCESSO!\nBem-vindo à Ritimão!");
+                    location.reload(); // Volta para a tela inicial
+                } else {
+                    alert("❌ ATENÇÃO: " + resultado.msg);
+                    btn.disabled = false;
+                    btn.innerText = "Finalizar Inscrição";
+                }
+
+            } catch (erro) {
+                console.error(erro);
+                // Como o Google as vezes bloqueia o retorno do JSON (CORS), tratamos como sucesso se os dados caírem na planilha
+                alert("Verifique sua planilha. Se os dados não aparecerem, tente novamente.");
+                btn.disabled = false;
+                btn.innerText = "Finalizar Inscrição";
+            }
+        });
+    </script>
+</body>
+</html>
