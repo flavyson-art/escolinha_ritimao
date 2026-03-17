@@ -119,20 +119,6 @@
             </form>
         </div>
     </div>
-	
-	<div id="tela-sucesso" class="hidden" style="text-align: center; padding: 50px 20px;">
-    <div class="container">
-        <h2 style="color: #4CAF50;">✅ CADASTRO RECEBIDO!</h2>
-        <p style="font-size: 1.2rem; line-height: 1.6;">
-            Parabéns! Sua inscrição para a <strong>Escolinha da Bateria Ritimão</strong> foi concluída com sucesso.
-        </p>
-        <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;">
-        <p style="color: #bbb;">
-            Nossa diretoria irá analisar seus dados e entraremos em contato via <strong>WhatsApp</strong> ou <strong>E-mail</strong> em breve para informar os próximos passos e datas de início.
-        </p>
-        <button onclick="location.reload()" style="background: #333; color: #fff; margin-top: 20px;">VOLTAR AO INÍCIO</button>
-    </div>
-</div>
 
     <script>
         window.onload = () => {
@@ -200,13 +186,16 @@
                 const res = await response.json();
 
                 if (res.status === "sucesso") {
-				// Esconde a tela de cadastro e mostra a de sucesso
-				document.getElementById('tela-cadastro').style.display = 'none';
-				document.getElementById('tela-sucesso').classList.remove('hidden');
-    
-				// Opcional: Faz a página rolar para o topo para ver a mensagem
-				window.scrollTo(0, 0);
-			}
+                    alert("✅ MATRÍCULA REALIZADA!");
+                    location.reload();
+                } else {
+                    alert("❌ " + res.msg);
+                    btn.disabled = false; btn.innerText = "CADASTRAR";
+                }
+            } catch (err) {
+                alert("Erro ao enviar. Verifique a URL do Script.");
+                btn.disabled = false; btn.innerText = "CADASTRAR";
+            }
         });
     </script>
 </body>
