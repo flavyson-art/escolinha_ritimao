@@ -12,92 +12,138 @@
         
         body, html { 
             margin: 0; padding: 0; 
-            font-family: 'Segoe UI', sans-serif; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
             background-color: #000; 
             color: #fff;
             overflow-x: hidden;
+            height: 100%;
         }
 
-        /* TELA INICIAL */
+        /* =========================================
+           TELA INICIAL - FOCO RESPONSIVO
+           ========================================= */
         #tela-inicial {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             height: 100vh; cursor: pointer; text-align: center;
             background: #000;
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .titulo-principal { font-size: 3.5rem; text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -1px; }
-        .sub-titulo { letter-spacing: 6px; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; }
+        /* Títulos Responsivos */
+        .titulo-principal { 
+            font-size: clamp(2.5rem, 8vw, 6rem); /* Mínimo 2.5rem, ideal 8% da tela, máximo 6rem */
+            text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -2px; 
+            text-shadow: 0 4px 10px rgba(255,255,255,0.2);
+        }
+        .sub-titulo { 
+            letter-spacing: clamp(4px, 1.5vw, 10px);
+            font-size: clamp(0.7rem, 2vw, 1.2rem); 
+            color: #aaa; margin-bottom: 20px; 
+        }
         
-        /* LOGO AMPLIADA COM ANIMAÇÃO */
+        /* LOGO RESPONSIVA - MÁXIMO DESTAQUE NO DESKTOP */
         .logo-ritimao { 
-            width: 250px; /* Aumentado de 180px para 250px */
-            height: 250px; 
+            /* Define o tamanho baseado na largura da tela (vw) */
+            width: clamp(250px, 40vw, 550px); /* Celular: 250px, Tablet/Ideal: 40% da tela, Desktop Máx: 550px */
+            height: clamp(250px, 40vw, 550px); /* Mantém proporção circular */
+            
             border-radius: 50%; 
-            border: 10px solid #fff; /* Borda mais robusta */
-            margin: 30px 0; 
+            border: clamp(8px, 1.5vw, 18px) solid #fff; /* Espessura da borda também responde à tela */
+            margin: 40px 0; 
             object-fit: cover;
-            box-shadow: 0 0 40px rgba(255,255,255,0.4);
-            animation: logo-pulsar 2.5s infinite ease-in-out;
+            box-shadow: 0 0 60px rgba(255,255,255,0.3);
+            animation: logo-pulsar 3s infinite ease-in-out;
+            transition: all 0.3s ease;
         }
 
+        /* Animação de Pulsar Calibrada */
         @keyframes logo-pulsar {
-            0% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.3); }
-            50% { transform: scale(1.08); box-shadow: 0 0 60px rgba(255,255,255,0.6); }
-            100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.3); }
+            0% { transform: scale(1); box-shadow: 0 0 40px rgba(255,255,255,0.3); }
+            50% { transform: scale(1.04); box-shadow: 0 0 80px rgba(255,255,255,0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 40px rgba(255,255,255,0.3); }
         }
 
-        /* TELA DE CADASTRO */
+        .touch-hint { color: #666; margin-top: 50px; font-weight: bold; letter-spacing: 2px; font-size: 1.1rem; }
+
+        /* =========================================
+           TELA DE CADASTRO - ALTO CONTRASTE DO FUNDO
+           ========================================= */
         #tela-cadastro { 
             display: none; 
             min-height: 100vh; 
-            padding: 20px; 
+            padding: clamp(20px, 5vw, 60px); /* Padding aumenta no desktop */
             box-sizing: border-box;
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+            
+            /* AJUSTE DE CONTRASTE: Opacidade preta reduzida de 0.85 para 0.6 para mostrar a imagem */
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
+        /* Container centralizado e responsivo */
         .container { 
-            max-width: 450px; margin: 10px auto; 
-            background: rgba(17, 17, 17, 0.95);
-            padding: 30px; border-radius: 15px; 
-            border: 1px solid #333;
+            max-width: 550px; /* Levemente maior no desktop */
+            margin: 0 auto; 
+            background: rgba(10, 10, 10, 0.9); /* Quase sólido para leitura */
+            padding: clamp(25px, 4vw, 40px);
+            border-radius: 20px; 
+            border: 1px solid #444;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.7);
         }
 
-        .campo { display: flex; flex-direction: column; margin-bottom: 15px; }
-        label { margin-bottom: 6px; font-size: 0.75rem; color: #888; text-transform: uppercase; font-weight: bold; }
+        /* Ajustes de Título e Formulário no Cadastro */
+        #tela-cadastro h2 { 
+            text-align: center; margin-top: 0; color: #fff; font-size: 2.2rem; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Sombra para leitura */
+        }
+
+        .campo { display: flex; flex-direction: column; margin-bottom: 20px; }
+        
+        /* AJUSTE DE LEITURA: Sombra nos labels para destacar sobre o fundo mais claro */
+        label { 
+            margin-bottom: 8px; font-size: 0.8rem; color: #fff; /* Texto branco */
+            text-transform: uppercase; font-weight: bold; letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Sombra forte para leitura */
+        }
         
         input, select { 
-            padding: 14px; border: 1px solid #333; background: #000; 
-            color: #fff; border-radius: 8px; font-size: 1rem;
+            padding: 16px; border: 1px solid #444; background: #000; 
+            color: #fff; border-radius: 10px; font-size: 1.1rem;
+            transition: border-color 0.3s;
         }
         
-        input:focus { border-color: #fff; }
+        input:focus { border-color: #fff; outline: none; }
 
         button { 
-            width: 100%; padding: 18px; background: #fff; 
+            width: 100%; padding: 20px; background: #fff; 
             color: #000; border: none; font-weight: 900; 
-            cursor: pointer; border-radius: 8px; margin-top: 15px;
-            font-size: 1rem; text-transform: uppercase;
+            cursor: pointer; border-radius: 10px; margin-top: 20px;
+            font-size: 1.2rem; text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.3s;
         }
+        button:hover { background: #eee; transform: translateY(-2px); }
 
         .bloco-socio { 
-            background: rgba(255, 255, 255, 0.03); padding: 15px; 
-            border-radius: 10px; border: 1px dashed #444;
-            margin: 20px 0; 
+            background: rgba(255, 255, 255, 0.05); padding: 20px; 
+            border-radius: 12px; border: 1px dashed #555;
+            margin: 30px 0; 
+        }
+
+        /* Media Query para Celulares Pequenos (Ajuste fino) */
+        @media (max-width: 480px) {
+            .logo-ritimao { border-width: 8px; }
+            .container { padding: 20px; }
+            input, select, button { padding: 14px; font-size: 1rem; }
         }
 
         .hidden { display: none; }
-        #tela-final { display: none; text-align: center; padding: 100px 20px; }
-        
-        @keyframes hint-pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        .touch-hint { color: #555; margin-top: 40px; animation: hint-pulse 2s infinite; font-weight: bold; letter-spacing: 2px; }
+        #tela-final { display: none; text-align: center; padding: 100px 20px; background: #000; height: 100vh; }
     </style>
 </head>
 <body>
 
-    <!-- TELA INICIAL -->
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
@@ -105,15 +151,14 @@
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
              class="logo-ritimao" 
              alt="Ritimão" 
-             onerror="this.src='https://via.placeholder.com/300/ffffff/000000?text=RITIMAO'">
+             onerror="this.src='https://via.placeholder.com/500/ffffff/000000?text=RITIMAO'">
         
         <p class="touch-hint">TOQUE PARA INICIAR</p>
     </div>
 
-    <!-- TELA DE CADASTRO -->
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center; margin-top:0;">MATRÍCULA</h2>
+            <h2>MATRÍCULA 2024</h2>
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
@@ -135,7 +180,6 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                
                 <div class="campo"><label>Rede Social (Instagram/Face)</label><input type="text" id="redeSocial" placeholder="@exemplo"></div>
                 
                 <div class="campo">
@@ -171,16 +215,16 @@
                     <input type="file" id="foto" accept="image/*" required>
                 </div>
 
-                <button type="submit" id="btnEnviar">ENVIAR INSCRIÇÃO</button>
+                <button type="submit" id="btnEnviar">FINALIZAR MATRÍCULA</button>
             </form>
         </div>
     </div>
 
     <div id="tela-final">
-        <h1 style="font-size: 4rem;">🥁</h1>
-        <h2>CADASTRO ENVIADO!</h2>
-        <p style="color: #888;">Seja bem-vindo à Ritimão.</p>
-        <button onclick="location.reload()" style="max-width: 200px;">VOLTAR</button>
+        <h1 style="font-size: 5rem;">🥁</h1>
+        <h2 style="font-size: 2.5rem; color: #fff; text-transform: uppercase; font-weight: 900;">CADASTRO ENVIADO!</h2>
+        <p style="color: #aaa; font-size: 1.2rem;">Seja bem-vindo à Ritimão. Aguarde nosso contato.</p>
+        <button onclick="location.reload()" style="max-width: 250px; margin-top: 40px;">VOLTAR</button>
     </div>
 
     <script>
@@ -191,8 +235,8 @@
         });
 
         function abrirCadastro() {
-            $('#tela-inicial').fadeOut(300, function() {
-                $('#tela-cadastro').show();
+            $('#tela-inicial').fadeOut(400, function() {
+                $('#tela-cadastro').fadeIn(400);
             });
         }
 
@@ -210,7 +254,7 @@
         document.getElementById('formMatricula').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
-            btn.disabled = true; btn.innerText = "ENVIANDO...";
+            btn.disabled = true; btn.innerText = "ENVIANDO AGUARDE...";
 
             const URL_GAS = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
 
@@ -234,19 +278,16 @@
                     fotoSocioBase64: fotoS
                 };
 
-                const resp = await fetch(URL_GAS, { method: 'POST', body: JSON.stringify(payload) });
-                const final = await resp.json();
+                // Adicionado no-cors para evitar erro Cross-Origin no Google GAS
+                await fetch(URL_GAS, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                
+                // Como mode é 'no-cors', não recebemos o JSON de volta, assumimos sucesso se não der erro
+                $('#tela-cadastro').hide();
+                $('#tela-final').fadeIn();
 
-                if (final.status === "sucesso") {
-                    $('#tela-cadastro').hide();
-                    $('#tela-final').fadeIn();
-                } else {
-                    alert(final.msg);
-                    btn.disabled = false; btn.innerText = "ENVIAR INSCRIÇÃO";
-                }
             } catch (err) {
-                alert("Erro ao conectar com a planilha.");
-                btn.disabled = false; btn.innerText = "ENVIAR INSCRIÇÃO";
+                alert("Erro ao enviar. Tente novamente ou verifique sua conexão.");
+                btn.disabled = false; btn.innerText = "FINALIZAR MATRÍCULA";
             }
         });
     </script>
