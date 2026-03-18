@@ -251,31 +251,29 @@
                 fotoSocioBase64: fotoSocio
             };
 
-            google.script.run
-                .withSuccessHandler(function(resposta) {
-                    if (resposta.status === "sucesso") {
-                        $('#tela-cadastro').fadeOut(300, function() {
-                            $('#tela-final').css('display', 'flex').hide().fadeIn(400);
-                        });
-                    } else {
-                        alert("⚠️ " + resposta.msg);
-                        btn.disabled = false;
-                        btn.innerText = "FINALIZAR MATRÍCULA";
-                    }
-                })
-                .withFailureHandler(function(erro) {
-                    alert("Erro técnico: " + erro);
-                    btn.disabled = false;
-                    btn.innerText = "FINALIZAR MATRÍCULA";
-                })
-                .processarFormulario(payload);
+          const URL_DO_SEU_SCRIPT = "COLE_AQUI_A_URL_DO_WEB_APP_DO_GOOGLE";
 
-        } catch (err) {
-            alert("Erro ao processar fotos. Verifique se os arquivos são imagens.");
-            btn.disabled = false;
-            btn.innerText = "FINALIZAR MATRÍCULA";
-        }
-    });
+				fetch(URL_DO_SEU_SCRIPT, {
+				method: "POST",
+				body: JSON.stringify(payload)
+			})
+					.then(res => res.json())
+					.then(resposta => {
+				if (resposta.status === "sucesso") {
+					$('#tela-cadastro').fadeOut(300, function() {
+					$('#tela-final').css('display', 'flex').hide().fadeIn(400);
+			});
+			} 	else {
+					alert("⚠️ " + resposta.msg);
+					btn.disabled = false;
+					btn.innerText = "FINALIZAR MATRÍCULA";
+    }
+})
+.catch(erro => {
+    alert("Erro na conexão com o servidor: " + erro);
+    btn.disabled = false;
+    btn.innerText = "FINALIZAR MATRÍCULA";
+});
 </script>
 </body>
 </html>
