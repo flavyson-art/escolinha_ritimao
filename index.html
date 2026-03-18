@@ -8,26 +8,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     
     <style>
-        :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; }
+        :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', Arial, sans-serif; overflow-x: hidden; }
         
-        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; width: 100%; text-align: center; background: var(--preto); cursor: pointer; padding: 20px; box-sizing: border-box; }
+        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; width: 100%; text-align: center; background: var(--preto); cursor: pointer; padding: 20px; box-sizing: border-box; transition: 0.5s; }
         .titulo-principal { font-size: clamp(2.5rem, 8vw, 6rem); text-transform: uppercase; font-weight: 900; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .sub-titulo { letter-spacing: 5px; font-size: 1rem; color: var(--cinza); margin-bottom: 20px; }
+        
+        /* Estilo da Logo */
         .logo-ritimao { width: clamp(250px, 45vw, 500px); height: auto; border-radius: 50%; border: 10px solid var(--branco); margin: 30px 0; box-shadow: 0 0 50px rgba(255,255,255,0.2); animation: pulsar 3s infinite ease-in-out; }
         @keyframes pulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        .touch-hint { color: #555; font-weight: bold; margin-top: 30px; letter-spacing: 2px; text-transform: uppercase; }
+        
+        /* Estilo quando ENCERRADO */
+        .encerrado .logo-ritimao { border-color: var(--erro); box-shadow: 0 0 60px rgba(255, 68, 68, 0.4); animation: none; filter: grayscale(0.5); }
+        .encerrado .touch-hint { color: var(--erro) !important; font-size: 1.5rem !important; }
+        
+        .touch-hint { color: #555; font-weight: bold; margin-top: 30px; letter-spacing: 2px; text-transform: uppercase; transition: 0.3s; }
         
         #tela-cadastro { display: none; padding: 40px 20px; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed; background-size: cover; min-height: 100vh; }
         .container { max-width: 500px; margin: 0 auto; background: rgba(10, 10, 10, 0.95); padding: 30px; border-radius: 20px; border: 1px solid #333; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         
-        /* Quadro de Vagas */
         .quadro-vagas { background: #111; padding: 15px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #333; }
         .quadro-vagas h3 { font-size: 0.75rem; margin: 0 0 12px 0; text-align: center; color: var(--cinza); text-transform: uppercase; letter-spacing: 1px; }
         .grade-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .vaga-item { font-size: 0.8rem; display: flex; justify-content: space-between; padding: 5px 8px; border-bottom: 1px solid #222; }
         .vaga-numero { font-weight: bold; color: var(--branco); }
-        .esgotado { color: #ff4444 !important; font-weight: bold; }
+        .esgotado { color: var(--erro) !important; font-weight: bold; }
 
         .campo { display: flex; flex-direction: column; margin-bottom: 18px; }
         label { margin-bottom: 8px; font-size: 0.75rem; color: var(--branco); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
@@ -44,13 +50,12 @@
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-ritimao" alt="Logo">
-        <p class="touch-hint">Toque para iniciar sua matrícula</p>
+        <p class="touch-hint" id="status-inscricao">Toque para iniciar sua matrícula</p>
     </div>
 
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Matrícula 2026</h2>
-            
             <div class="quadro-vagas">
                 <h3>Vagas Disponíveis</h3>
                 <div id="listaVagas" class="grade-vagas">
@@ -116,16 +121,31 @@
     </div>
 
 <script>
-    // URL do seu Web App do Google (Certifique-se de que é a versão com o doGet)
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
+    let inscricoesAbertas = true;
 
     $(document).ready(function(){
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
+        verificarStatusGeral(); // Checa se já fechou tudo ao carregar
     });
 
+    function verificarStatusGeral() {
+        $.getJSON(URL_SCRIPT, function(data) {
+            let totalVagas = 0;
+            for (let inst in data) { totalVagas += data[inst]; }
+
+            if (totalVagas <= 0) {
+                inscricoesAbertas = false;
+                $('#tela-inicial').addClass('encerrado').removeAttr('onclick');
+                $('#status-inscricao').text('INSCRIÇÕES ENCERRADAS');
+            }
+        });
+    }
+
     function abrirCadastro() {
+        if (!inscricoesAbertas) return;
         $('#tela-inicial').fadeOut(300, function() {
             $('#tela-cadastro').fadeIn(400);
             atualizarVagas();
@@ -136,8 +156,10 @@
     function atualizarVagas() {
         $.getJSON(URL_SCRIPT, function(data) {
             let html = "";
+            let totalRestante = 0;
             for (let inst in data) {
                 let valor = data[inst];
+                totalRestante += valor;
                 let classe = valor <= 0 ? "esgotado" : "vaga-numero";
                 let texto = valor <= 0 ? "LOTADO" : valor;
                 html += `<div class="vaga-item"><span>${inst}:</span><span class="${classe}">${texto}</span></div>`;
@@ -146,6 +168,9 @@
                 }
             }
             $('#listaVagas').html(html);
+            
+            // Se as vagas acabarem enquanto o usuário está na tela de cadastro
+            if (totalRestante <= 0) { location.reload(); }
         });
     }
 
