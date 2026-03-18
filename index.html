@@ -26,23 +26,25 @@
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
         }
 
-        .titulo-principal { font-size: 3rem; text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -1px; }
-        .sub-titulo { letter-spacing: 5px; font-size: 0.7rem; color: #aaa; margin-bottom: 20px; }
+        .titulo-principal { font-size: 3.5rem; text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -1px; }
+        .sub-titulo { letter-spacing: 6px; font-size: 0.8rem; color: #aaa; margin-bottom: 20px; }
         
-        /* LOGO COM ANIMAÇÃO PULSANTE E BORDA MAIOR */
+        /* LOGO AMPLIADA COM ANIMAÇÃO */
         .logo-ritimao { 
-            width: 180px; height: 180px; border-radius: 50%; 
-            border: 8px solid #fff; /* Borda aumentada */
-            margin: 20px 0; 
+            width: 250px; /* Aumentado de 180px para 250px */
+            height: 250px; 
+            border-radius: 50%; 
+            border: 10px solid #fff; /* Borda mais robusta */
+            margin: 30px 0; 
             object-fit: cover;
-            box-shadow: 0 0 30px rgba(255,255,255,0.3);
-            animation: logo-pulsar 2s infinite ease-in-out;
+            box-shadow: 0 0 40px rgba(255,255,255,0.4);
+            animation: logo-pulsar 2.5s infinite ease-in-out;
         }
 
         @keyframes logo-pulsar {
-            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,255,255,0.5); }
-            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+            0% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.3); }
+            50% { transform: scale(1.08); box-shadow: 0 0 60px rgba(255,255,255,0.6); }
+            100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,255,255,0.3); }
         }
 
         /* TELA DE CADASTRO */
@@ -90,7 +92,7 @@
         #tela-final { display: none; text-align: center; padding: 100px 20px; }
         
         @keyframes hint-pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        .touch-hint { color: #444; margin-top: 40px; animation: hint-pulse 2s infinite; font-weight: bold; }
+        .touch-hint { color: #555; margin-top: 40px; animation: hint-pulse 2s infinite; font-weight: bold; letter-spacing: 2px; }
     </style>
 </head>
 <body>
@@ -103,9 +105,9 @@
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
              class="logo-ritimao" 
              alt="Ritimão" 
-             onerror="this.src='https://via.placeholder.com/200/ffffff/000000?text=RITIMAO'">
+             onerror="this.src='https://via.placeholder.com/300/ffffff/000000?text=RITIMAO'">
         
-        <p class="touch-hint">CLIQUE PARA COMEÇAR</p>
+        <p class="touch-hint">TOQUE PARA INICIAR</p>
     </div>
 
     <!-- TELA DE CADASTRO -->
@@ -134,7 +136,6 @@
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
                 
-                <!-- CAMPO REDE SOCIAL RETORNADO -->
                 <div class="campo"><label>Rede Social (Instagram/Face)</label><input type="text" id="redeSocial" placeholder="@exemplo"></div>
                 
                 <div class="campo">
@@ -224,7 +225,7 @@
                     sexo: $('#sexo').val(),
                     telefone: $('#tel').val(),
                     email: $('#email').val(),
-                    redeSocial: $('#redeSocial').val(), // Envio do dado recuperado
+                    redeSocial: $('#redeSocial').val(),
                     instrumento: $('#instrumento').val(),
                     numSocio: $('#campoNumSocio').val(),
                     nomeResp: $('#nomeResp').val() || "N/A",
