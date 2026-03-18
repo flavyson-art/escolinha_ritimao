@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     
     <style>
-        :root { --preto: #000; --branco: #fff; }
+        :root { --preto: #000; --branco: #fff; --cinza: #aaa; --cinza-escuro: #444; }
         
         body, html { 
             margin: 0; padding: 0; 
@@ -31,26 +31,22 @@
             box-sizing: border-box;
         }
 
-        /* Títulos Responsivos */
         .titulo-principal { 
-            font-size: clamp(2.5rem, 8vw, 6rem); /* Mínimo 2.5rem, ideal 8% da tela, máximo 6rem */
+            font-size: clamp(2.5rem, 8vw, 6rem);
             text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -2px; 
             text-shadow: 0 4px 10px rgba(255,255,255,0.2);
         }
         .sub-titulo { 
             letter-spacing: clamp(4px, 1.5vw, 10px);
             font-size: clamp(0.7rem, 2vw, 1.2rem); 
-            color: #aaa; margin-bottom: 20px; 
+            color: var(--cinza); margin-bottom: 20px; 
         }
         
-        /* LOGO RESPONSIVA - MÁXIMO DESTAQUE NO DESKTOP */
         .logo-ritimao { 
-            /* Define o tamanho baseado na largura da tela (vw) */
-            width: clamp(250px, 40vw, 550px); /* Celular: 250px, Tablet/Ideal: 40% da tela, Desktop Máx: 550px */
-            height: clamp(250px, 40vw, 550px); /* Mantém proporção circular */
-            
+            width: clamp(250px, 40vw, 550px);
+            height: clamp(250px, 40vw, 550px);
             border-radius: 50%; 
-            border: clamp(8px, 1.5vw, 18px) solid #fff; /* Espessura da borda também responde à tela */
+            border: clamp(8px, 1.5vw, 18px) solid #fff;
             margin: 40px 0; 
             object-fit: cover;
             box-shadow: 0 0 60px rgba(255,255,255,0.3);
@@ -58,7 +54,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Animação de Pulsar Calibrada */
         @keyframes logo-pulsar {
             0% { transform: scale(1); box-shadow: 0 0 40px rgba(255,255,255,0.3); }
             50% { transform: scale(1.04); box-shadow: 0 0 80px rgba(255,255,255,0.6); }
@@ -68,48 +63,43 @@
         .touch-hint { color: #666; margin-top: 50px; font-weight: bold; letter-spacing: 2px; font-size: 1.1rem; }
 
         /* =========================================
-           TELA DE CADASTRO - ALTO CONTRASTE DO FUNDO
+           TELA DE CADASTRO - ALTO CONTRASTE
            ========================================= */
         #tela-cadastro { 
             display: none; 
             min-height: 100vh; 
-            padding: clamp(20px, 5vw, 60px); /* Padding aumenta no desktop */
+            padding: clamp(20px, 5vw, 60px);
             box-sizing: border-box;
-            
-            /* AJUSTE DE CONTRASTE: Opacidade preta reduzida de 0.85 para 0.6 para mostrar a imagem */
             background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
                         url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
-        /* Container centralizado e responsivo */
         .container { 
-            max-width: 550px; /* Levemente maior no desktop */
+            max-width: 550px;
             margin: 0 auto; 
-            background: rgba(10, 10, 10, 0.9); /* Quase sólido para leitura */
+            background: rgba(10, 10, 10, 0.9);
             padding: clamp(25px, 4vw, 40px);
             border-radius: 20px; 
-            border: 1px solid #444;
+            border: 1px solid var(--cinza-escuro);
             box-shadow: 0 15px 50px rgba(0,0,0,0.7);
         }
 
-        /* Ajustes de Título e Formulário no Cadastro */
         #tela-cadastro h2 { 
             text-align: center; margin-top: 0; color: #fff; font-size: 2.2rem; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5); /* Sombra para leitura */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .campo { display: flex; flex-direction: column; margin-bottom: 20px; }
         
-        /* AJUSTE DE LEITURA: Sombra nos labels para destacar sobre o fundo mais claro */
         label { 
-            margin-bottom: 8px; font-size: 0.8rem; color: #fff; /* Texto branco */
+            margin-bottom: 8px; font-size: 0.8rem; color: #fff;
             text-transform: uppercase; font-weight: bold; letter-spacing: 1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8); /* Sombra forte para leitura */
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
         
         input, select { 
-            padding: 16px; border: 1px solid #444; background: #000; 
+            padding: 16px; border: 1px solid var(--cinza-escuro); background: #000; 
             color: #fff; border-radius: 10px; font-size: 1.1rem;
             transition: border-color 0.3s;
         }
@@ -131,7 +121,37 @@
             margin: 30px 0; 
         }
 
-        /* Media Query para Celulares Pequenos (Ajuste fino) */
+        /* =========================================
+           TELA FINAL - SEM VERDE / MENSAGEM NOVA
+           ========================================= */
+        #tela-final { 
+            display: none; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center; 
+            padding: 40px 20px; 
+            background: #000; 
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .icone-sucesso { font-size: 5rem; margin-bottom: 20px; color: #fff; }
+        
+        .titulo-final { 
+            font-size: clamp(1.8rem, 5vw, 2.8rem); 
+            color: #fff; text-transform: uppercase; font-weight: 900; 
+            margin-bottom: 20px;
+        }
+
+        .texto-informativo { 
+            color: var(--cinza); 
+            font-size: clamp(1rem, 2vw, 1.2rem); 
+            max-width: 500px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
         @media (max-width: 480px) {
             .logo-ritimao { border-width: 8px; }
             .container { padding: 20px; }
@@ -139,157 +159,8 @@
         }
 
         .hidden { display: none; }
-        #tela-final { display: none; text-align: center; padding: 100px 20px; background: #000; height: 100vh; }
     </style>
 </head>
 <body>
 
-    <div id="tela-inicial" onclick="abrirCadastro()">
-        <h1 class="titulo-principal">RITIMÃO</h1>
-        <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
-        
-        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
-             class="logo-ritimao" 
-             alt="Ritimão" 
-             onerror="this.src='https://via.placeholder.com/500/ffffff/000000?text=RITIMAO'">
-        
-        <p class="touch-hint">TOQUE PARA INICIAR</p>
-    </div>
-
-    <div id="tela-cadastro">
-        <div class="container">
-            <h2>MATRÍCULA 2024</h2>
-            <form id="formMatricula">
-                <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
-                <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
-                <div class="campo"><label>Idade</label><input type="number" id="idade" required onchange="validarMenor(this.value)"></div>
-
-                <div id="dadosResponsavel" class="hidden">
-                    <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label>Telefone do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
-                </div>
-
-                <div class="campo">
-                    <label>Sexo</label>
-                    <select id="sexo" required>
-                        <option value="">Selecione...</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
-                    </select>
-                </div>
-
-                <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
-                <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Rede Social (Instagram/Face)</label><input type="text" id="redeSocial" placeholder="@exemplo"></div>
-                
-                <div class="campo">
-                    <label>Instrumento</label>
-                    <select id="instrumento" required>
-                        <option value="">Escolha seu instrumento...</option>
-                        <option value="Caixa">Caixa</option>
-                        <option value="Chocalho">Chocalho</option>
-                        <option value="Cuica">Cuíca</option>
-                        <option value="Repique">Repique</option>
-                        <option value="Surdo 1">Surdo 1</option>
-                        <option value="Surdo 2">Surdo 2</option>
-                        <option value="Surdo 3">Surdo 3</option>
-                        <option value="Tamborim">Tamborim</option>
-                        <option value="Timbal">Timbal</option>
-                        <option value="Xequere">Xequeré</option>
-                    </select>
-                </div>
-
-                <div class="bloco-socio">
-                    <div class="campo">
-                        <label>Nº Sócio Gaviões</label>
-                        <input type="text" id="campoNumSocio" class="mask-numero" required>
-                    </div>
-                    <div class="campo">
-                        <label>Foto da Carteirinha</label>
-                        <input type="file" id="fotoSocio" accept="image/*" required>
-                    </div>
-                </div>
-
-                <div class="campo">
-                    <label>Sua Foto (Perfil)</label>
-                    <input type="file" id="foto" accept="image/*" required>
-                </div>
-
-                <button type="submit" id="btnEnviar">FINALIZAR MATRÍCULA</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="tela-final">
-        <h1 style="font-size: 5rem;">🥁</h1>
-        <h2 style="font-size: 2.5rem; color: #fff; text-transform: uppercase; font-weight: 900;">CADASTRO ENVIADO!</h2>
-        <p style="color: #aaa; font-size: 1.2rem;">Seja bem-vindo à Ritimão. Aguarde nosso contato.</p>
-        <button onclick="location.reload()" style="max-width: 250px; margin-top: 40px;">VOLTAR</button>
-    </div>
-
-    <script>
-        $(document).ready(function(){
-            $('.mask-cpf').mask('000.000.000-00');
-            $('.mask-tel').mask('(00) 00000-0000');
-            $('.mask-numero').mask('00000000');
-        });
-
-        function abrirCadastro() {
-            $('#tela-inicial').fadeOut(400, function() {
-                $('#tela-cadastro').fadeIn(400);
-            });
-        }
-
-        function validarMenor(idade) {
-            if (idade > 0 && idade < 18) $('#dadosResponsavel').fadeIn();
-            else $('#dadosResponsavel').hide();
-        }
-
-        const converter = (file) => new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-        });
-
-        document.getElementById('formMatricula').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnEnviar');
-            btn.disabled = true; btn.innerText = "ENVIANDO AGUARDE...";
-
-            const URL_GAS = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
-
-            try {
-                const fotoA = await converter(document.getElementById('foto').files[0]);
-                const fotoS = await converter(document.getElementById('fotoSocio').files[0]);
-
-                const payload = {
-                    nome: $('#nome').val(),
-                    cpf: $('#cpf').val(),
-                    idade: $('#idade').val(),
-                    sexo: $('#sexo').val(),
-                    telefone: $('#tel').val(),
-                    email: $('#email').val(),
-                    redeSocial: $('#redeSocial').val(),
-                    instrumento: $('#instrumento').val(),
-                    numSocio: $('#campoNumSocio').val(),
-                    nomeResp: $('#nomeResp').val() || "N/A",
-                    telResp: $('#telResp').val() || "N/A",
-                    fotoBase64: fotoA,
-                    fotoSocioBase64: fotoS
-                };
-
-                // Adicionado no-cors para evitar erro Cross-Origin no Google GAS
-                await fetch(URL_GAS, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-                
-                // Como mode é 'no-cors', não recebemos o JSON de volta, assumimos sucesso se não der erro
-                $('#tela-cadastro').hide();
-                $('#tela-final').fadeIn();
-
-            } catch (err) {
-                alert("Erro ao enviar. Tente novamente ou verifique sua conexão.");
-                btn.disabled = false; btn.innerText = "FINALIZAR MATRÍCULA";
-            }
-        });
-    </script>
-</body>
-</html>
+    <!--
