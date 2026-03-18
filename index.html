@@ -1,4 +1,167 @@
-<!-- Mantenha seu <head> e os estilos CSS exatamente como estão -->
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Ritimão</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    
+    <style>
+        /* RESET E CORES GAVIÕES (PRETO/BRANCO) */
+        :root { --preto: #000; --branco: #fff; --cinza: #aaa; }
+        
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: var(--preto); color: var(--branco);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* TELA INICIAL - ALTO IMPACTO */
+        #tela-inicial {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; width: 100%; text-align: center;
+            background: var(--preto); cursor: pointer; padding: 20px; box-sizing: border-box;
+        }
+
+        .titulo-principal { 
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            text-transform: uppercase; font-weight: 900; margin: 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+        }
+        
+        .sub-titulo { letter-spacing: 5px; font-size: 1rem; color: var(--cinza); margin-bottom: 20px; }
+        
+        .logo-ritimao { 
+            width: clamp(250px, 45vw, 500px);
+            height: auto; border-radius: 50%; border: 10px solid var(--branco);
+            margin: 30px 0; box-shadow: 0 0 50px rgba(255,255,255,0.2);
+            animation: pulsar 3s infinite ease-in-out;
+        }
+
+        @keyframes pulsar {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        .touch-hint { color: #555; font-weight: bold; margin-top: 30px; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* FORMULÁRIO DE CADASTRO */
+        #tela-cadastro { 
+            display: none; padding: 40px 20px;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
+            background-size: cover; min-height: 100vh;
+        }
+
+        .container { 
+            max-width: 500px; margin: 0 auto; 
+            background: rgba(10, 10, 10, 0.95);
+            padding: 30px; border-radius: 20px; border: 1px solid #333;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .campo { display: flex; flex-direction: column; margin-bottom: 18px; }
+        label { margin-bottom: 8px; font-size: 0.75rem; color: var(--branco); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        input, select { 
+            padding: 15px; border: 1px solid #444; background: #000; 
+            color: #fff; border-radius: 10px; font-size: 1rem; transition: 0.3s;
+        }
+        input:focus { border-color: var(--branco); outline: none; }
+        
+        button { 
+            width: 100%; padding: 20px; background: var(--branco); color: var(--preto); border: none; 
+            font-weight: 900; cursor: pointer; border-radius: 10px; font-size: 1.1rem; 
+            text-transform: uppercase; transition: 0.3s;
+        }
+        button:hover { background: #ccc; transform: translateY(-2px); }
+        button:disabled { background: #444; color: #888; cursor: not-allowed; }
+
+        /* TELA FINAL - SEM VERDE */
+        #tela-final { 
+            display: none; flex-direction: column; justify-content: center; 
+            align-items: center; text-align: center; height: 100vh; background: #000;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA INICIAL -->
+    <div id="tela-inicial" onclick="abrirCadastro()">
+        <h1 class="titulo-principal">RITIMÃO</h1>
+        <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
+        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
+             class="logo-ritimao" alt="Ritimão Logo">
+        <p class="touch-hint">Toque para iniciar sua matrícula</p>
+    </div>
+
+    <!-- TELA DE CADASTRO -->
+    <div id="tela-cadastro">
+        <div class="container">
+            <h2 style="text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;">Matrícula Escolinha 2026</h2>
+            <form id="formMatricula">
+                <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
+                <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
+                <div class="campo"><label>Idade</label><input type="number" id="idade" required onchange="validarMenor(this.value)"></div>
+
+                <div id="dadosResponsavel" class="hidden">
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #fff;">
+                        <p style="font-size: 0.7rem; margin: 0 0 10px 0; font-weight: bold; color: #aaa;">DADOS DO RESPONSÁVEL (MENOR DE IDADE)</p>
+                        <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
+                        <div class="campo"><label>Telefone do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Sexo</label>
+                    <select id="sexo" required>
+                        <option value="">Selecione...</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                </div>
+
+                <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
+                <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+				<div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
+                
+                <div class="campo"><label>Instrumento Desejado</label>
+                    <select id="instrumento" required>
+                        <option value="">Escolha seu instrumento...</option>
+                        <option value="Caixa">Caixa</option>
+                        <option value="Chocalho">Chocalho</option>
+                        <option value="Cuica">Cuíca</option>
+                        <option value="Repique">Repique</option>
+                        <option value="Surdo">Surdo</option>
+                        <option value="Tamborim">Tamborim</option>
+                    </select>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; border: 1px dashed #444; margin: 20px 0;">
+                    <div class="campo"><label>Nº Sócio Gaviões</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
+                    <div class="campo"><label>Foto da Carteirinha (Sócio)</label><input type="file" id="fotoSocio" accept="image/*" required></div>
+                </div>
+
+                <div class="campo"><label>Sua Foto de Perfil</label><input type="file" id="foto" accept="image/*" required></div>
+                
+                <button type="submit" id="btnEnviar">FINALIZAR MATRÍCULA</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- TELA FINAL -->
+    <div id="tela-final">
+        <div style="font-size: 5rem; margin-bottom: 20px;">🥁</div>
+        <h2 style="text-transform: uppercase; font-weight: 900; letter-spacing: 2px;">Cadastro Recebido!</h2>
+        <p style="color: #aaa; padding: 0 40px; line-height: 1.6; max-width: 500px;">
+            Sua matrícula foi enviada com sucesso e agora será analisada pela nossa equipe.<br><br>
+            Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> ou <strong>E-mail</strong> para confirmar sua vaga.
+        </p>
+        <button onclick="location.reload()" style="max-width: 250px; margin-top: 30px;">VOLTAR AO INÍCIO</button>
+    </div>
 
 <script>
     $(document).ready(function(){
