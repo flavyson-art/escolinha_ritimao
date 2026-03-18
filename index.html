@@ -31,7 +31,8 @@
             width: 200px; height: 200px; border-radius: 50%; 
             border: 3px solid #fff; margin: 20px 0; 
             object-fit: cover;
-            background-color: #111; /* Fundo caso a imagem falhe */
+            background-color: #111;
+            display: block;
         }
 
         /* TELA DE CADASTRO */
@@ -40,8 +41,8 @@
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            /* Usando um degradê de segurança caso o link da imagem falhe no iframe do Google */
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+            /* Degradê de segurança + Imagem com parâmetro de bypass de cache */
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
                         url('https://i.imgur.com/vHqY7A2.jpeg');
             background-size: cover;
             background-position: center;
@@ -85,8 +86,8 @@
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p style="letter-spacing: 3px; font-size: 0.8rem;">ESCOLINHA DE BATERIA</p>
-        <!-- Usei o link direto do Imgur (i.imgur.com) que é o mais estável -->
-        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" alt="Logo">
+        <!-- Forçamos o carregamento com crossOrigin -->
+        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" crossorigin="anonymous" alt="Logo">
         <p style="color: #888; margin-top: 20px;">TOQUE PARA INICIAR</p>
     </div>
 
