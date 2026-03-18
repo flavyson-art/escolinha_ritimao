@@ -29,11 +29,20 @@
         .titulo-principal { font-size: 3rem; text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -1px; }
         .sub-titulo { letter-spacing: 5px; font-size: 0.7rem; color: #aaa; margin-bottom: 20px; }
         
+        /* LOGO COM ANIMAÇÃO PULSANTE E BORDA MAIOR */
         .logo-ritimao { 
             width: 180px; height: 180px; border-radius: 50%; 
-            border: 4px solid #fff; margin: 20px 0; 
+            border: 8px solid #fff; /* Borda aumentada */
+            margin: 20px 0; 
             object-fit: cover;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+            animation: logo-pulsar 2s infinite ease-in-out;
+        }
+
+        @keyframes logo-pulsar {
+            0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(255,255,255,0.5); }
+            100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,255,255,0.2); }
         }
 
         /* TELA DE CADASTRO */
@@ -42,15 +51,14 @@
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            /* AJUSTE: Fundo vindo do GitHub */
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
                         url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
             background-size: cover;
         }
 
         .container { 
             max-width: 450px; margin: 10px auto; 
-            background: rgba(17, 17, 17, 0.95); /* Leve transparência para ver o fundo */
+            background: rgba(17, 17, 17, 0.95);
             padding: 30px; border-radius: 15px; 
             border: 1px solid #333;
         }
@@ -69,7 +77,7 @@
             width: 100%; padding: 18px; background: #fff; 
             color: #000; border: none; font-weight: 900; 
             cursor: pointer; border-radius: 8px; margin-top: 15px;
-            font-size: 1rem;
+            font-size: 1rem; text-transform: uppercase;
         }
 
         .bloco-socio { 
@@ -81,8 +89,8 @@
         .hidden { display: none; }
         #tela-final { display: none; text-align: center; padding: 100px 20px; }
         
-        @keyframes pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-        .touch-hint { color: #444; margin-top: 40px; animation: pulse 2s infinite; font-weight: bold; }
+        @keyframes hint-pulse { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        .touch-hint { color: #444; margin-top: 40px; animation: hint-pulse 2s infinite; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -92,7 +100,6 @@
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
         
-        <!-- AJUSTE: Logo vindo do GitHub -->
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
              class="logo-ritimao" 
              alt="Ritimão" 
@@ -101,7 +108,7 @@
         <p class="touch-hint">CLIQUE PARA COMEÇAR</p>
     </div>
 
-    <!-- TELA DE CADASTRO (restante do formulário permanece igual) -->
+    <!-- TELA DE CADASTRO -->
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center; margin-top:0;">MATRÍCULA</h2>
@@ -126,6 +133,9 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+                
+                <!-- CAMPO REDE SOCIAL RETORNADO -->
+                <div class="campo"><label>Rede Social (Instagram/Face)</label><input type="text" id="redeSocial" placeholder="@exemplo"></div>
                 
                 <div class="campo">
                     <label>Instrumento</label>
@@ -214,6 +224,7 @@
                     sexo: $('#sexo').val(),
                     telefone: $('#tel').val(),
                     email: $('#email').val(),
+                    redeSocial: $('#redeSocial').val(), // Envio do dado recuperado
                     instrumento: $('#instrumento').val(),
                     numSocio: $('#campoNumSocio').val(),
                     nomeResp: $('#nomeResp').val() || "N/A",
