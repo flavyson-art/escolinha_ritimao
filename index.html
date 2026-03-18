@@ -27,35 +27,32 @@
         .titulo-principal { font-size: clamp(1.5rem, 8vw, 3.5rem); text-transform: uppercase; font-weight: 900; }
         #tela-inicial img { width: 250px; height: 250px; border-radius: 50%; border: 3px solid var(--branco); margin: 20px 0; }
 
-		/* TELA DE CADASTRO - Ajustada para máxima compatibilidade */
+        /* TELA DE CADASTRO - Ajustada com Link Direto do Imgur */
         #tela-cadastro { 
             display: none; 
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            
-            /* Tente usar o caminho relativo ./ para garantir que busque na pasta raiz */
-            background-color: #000; /* Cor de fundo caso a imagem falhe */
-            background-image: url('./Fundo_tela_Cadastro.jpg'); 
-            
+            background-color: #000; 
+            /* LINK DIRETO DA IMAGEM ABAIXO */
+            background-image: url('https://i.imgur.com/vHqY7A2.jpeg'); 
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
 
-        /* Reforço no container para destacar sobre a foto */
+        /* Container com opacidade para leitura sobre a foto */
         .container { 
             max-width: 450px; 
             margin: 40px auto; 
-            background: rgba(10, 10, 10, 0.95); /* Preto quase sólido */
+            background: rgba(0, 0, 0, 0.92); 
             padding: 30px; 
             border-radius: 12px; 
             border: 1px solid #333; 
-            box-shadow: 0 0 20px rgba(0,0,0,1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
 
-        /* Restante do CSS mantido conforme seu original */
         .campo { display: flex; flex-direction: column; margin-bottom: 15px; width: 100%; }
         label { margin-bottom: 5px; font-size: 0.9rem; color: #bbb; text-align: left; }
         input, select { 
@@ -165,7 +162,6 @@
     </div>
 
     <script>
-        // Scripts originais mantidos sem alteração
         window.onload = () => {
             $('.mask-cpf').mask('000.000.000-00');
             $('.mask-tel').mask('(00) 00000-0000');
@@ -212,63 +208,4 @@
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scale;
                     canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));
-                };
-            };
-        });
-
-        document.getElementById('formMatricula').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const cpfVal = document.getElementById('cpf').value;
-            const numSocioVal = document.getElementById('campoNumSocio').value.trim();
-            const arquivoSocio = document.getElementById('fotoSocio').files[0];
-
-            if(!validaCPF(cpfVal)){ alert("O CPF digitado é inválido."); return; }
-            const apenasNumeros = /^\d+$/;
-            if(!apenasNumeros.test(numSocioVal)){ alert("O campo 'Número de Sócio' deve conter apenas números."); return; }
-            if(!arquivoSocio){ alert("Por favor, anexe a foto da carteirinha."); return; }
-
-            const btn = document.getElementById('btnEnviar');
-            btn.disabled = true; btn.innerText = "PROCESSANDO...";
-
-            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
-
-            try {
-                const fotoBase64 = await redimensionarEConverter(document.getElementById('foto').files[0]);
-                const fotoSocioBase64 = await redimensionarEConverter(arquivoSocio);
-
-                const payload = {
-                    nome: document.getElementById('nome').value,
-                    cpf: cpfVal,
-                    idade: document.getElementById('idade').value,
-                    sexo: document.getElementById('sexo').value,
-                    telefone: document.getElementById('tel').value,
-                    email: document.getElementById('email').value,
-                    redeSocial: document.getElementById('redeSocial').value || "Não informado",
-                    instrumento: document.getElementById('instrumento').value,
-                    numSocio: numSocioVal,
-                    nomeResp: document.getElementById('nomeResp').value || "N/A",
-                    telResp: document.getElementById('telResp').value || "N/A",
-                    fotoBase64: fotoBase64,
-                    fotoSocioBase64: fotoSocioBase64
-                };
-
-                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const res = await response.json();
-
-                if (res.status === "sucesso") {
-                    document.getElementById('tela-cadastro').style.display = 'none';
-                    document.getElementById('tela-finalizacao').style.display = 'block';
-                    window.scrollTo(0,0);
-                } else {
-                    alert("Erro: " + res.msg);
-                    btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
-                }
-            } catch (err) {
-                alert("Erro de conexão. Tente novamente.");
-                btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
-            }
-        });
-    </script>
-</body>
-</html>
+                    resolve(
