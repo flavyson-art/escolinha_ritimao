@@ -25,7 +25,7 @@
         button { width: 100%; padding: 20px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; cursor: pointer; border-radius: 10px; font-size: 1.1rem; text-transform: uppercase; transition: 0.3s; }
         button:hover { background: #ccc; transform: translateY(-2px); }
         button:disabled { background: #444; color: #888; cursor: not-allowed; }
-        #tela-final { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh; background: #000; }
+        #tela-final { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh; background: #000; padding: 20px; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -64,6 +64,10 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+                
+                <!-- CAMPO REDE SOCIAL RECUPERADO -->
+                <div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
+
                 <div class="campo"><label>Instrumento</label>
                     <select id="instrumento" required>
                         <option value="">Selecione...</option>
@@ -77,18 +81,23 @@
                 </div>
 
                 <div class="campo"><label>Nº Sócio</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
-                <div class="campo"><label>Foto Carteirinha</label><input type="file" id="fotoSocio" accept="image/*" required></div>
-                <div class="campo"><label>Sua Foto</label><input type="file" id="foto" accept="image/*" required></div>
+                <div class="campo"><label>Foto Carteirinha (Sócio)</label><input type="file" id="fotoSocio" accept="image/*" required></div>
+                <div class="campo"><label>Sua Foto de Perfil</label><input type="file" id="foto" accept="image/*" required></div>
                 
                 <button type="submit" id="btnEnviar">FINALIZAR MATRÍCULA</button>
             </form>
         </div>
     </div>
 
+    <!-- TELA FINAL RESTAURADA -->
     <div id="tela-final">
-        <div style="font-size: 5rem;">🥁</div>
-        <h2>Cadastro Recebido!</h2>
-        <button onclick="location.reload()" style="max-width: 200px;">VOLTAR</button>
+        <div style="font-size: 5rem; margin-bottom: 20px;">🥁</div>
+        <h2 style="text-transform: uppercase; font-weight: 900; letter-spacing: 2px;">Cadastro Recebido!</h2>
+        <p style="color: #aaa; line-height: 1.6; max-width: 500px; margin-bottom: 30px;">
+            Sua matrícula foi enviada com sucesso e agora será analisada pela nossa equipe.<br><br>
+            Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> ou <strong>E-mail</strong> para confirmar sua vaga.
+        </p>
+        <button onclick="location.reload()" style="max-width: 250px;">VOLTAR AO INÍCIO</button>
     </div>
 
 <script>
@@ -101,15 +110,21 @@
     function abrirCadastro() {
         $('#tela-inicial').fadeOut(300, function() {
             $('#tela-cadastro').fadeIn(400);
+            window.scrollTo(0,0);
         });
     }
 
     function validarMenor(idade) {
-        if (idade > 0 && idade < 18) { $('#dadosResponsavel').removeClass('hidden'); }
-        else { $('#dadosResponsavel').addClass('hidden'); }
+        if (idade > 0 && idade < 18) { 
+            $('#dadosResponsavel').removeClass('hidden'); 
+            $('#nomeResp, #telResp').prop('required', true);
+        } else { 
+            $('#dadosResponsavel').addClass('hidden'); 
+            $('#nomeResp, #telResp').prop('required', false);
+        }
     }
 
-    const converterEComprimir = (file) => new Promise((resolve, reject) => {
+    const converterEComprimir = (file) => new Promise((resolve) => {
         if (!file) { resolve(null); return; }
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -133,12 +148,15 @@
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btnEnviar');
+        const originalText = btn.innerText;
         btn.disabled = true;
-        btn.innerText = "PROCESSANDO...";
+        btn.innerText = "PROCESSANDO FOTOS...";
 
         try {
             const f1 = await converterEComprimir(document.getElementById('foto').files[0]);
             const f2 = await converterEComprimir(document.getElementById('fotoSocio').files[0]);
+
+            btn.innerText = "ENVIANDO DADOS...";
 
             const payload = {
                 nome: $('#nome').val(),
@@ -147,6 +165,7 @@
                 sexo: $('#sexo').val(),
                 telefone: $('#tel').val(),
                 email: $('#email').val(),
+                redeSocial: $('#redeSocial').val(),
                 instrumento: $('#instrumento').val(),
                 numSocio: $('#campoNumSocio').val(),
                 nomeResp: $('#nomeResp').val() || "N/A",
@@ -157,19 +176,31 @@
 
             const url = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
             
-            await fetch(url, {
+            // Alteração crucial: usando 'cors' e tratando a resposta para ver erros de CPF
+            const response = await fetch(url, {
                 method: "POST",
-                mode: "no-cors",
                 body: JSON.stringify(payload)
             });
 
-            $('#tela-cadastro').fadeOut(300, function() {
-                $('#tela-final').css('display', 'flex').hide().fadeIn(400);
-            });
+            const result = await response.json();
+
+            if (result.status === "sucesso") {
+                $('#tela-cadastro').fadeOut(300, function() {
+                    $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+                });
+            } else {
+                alert("ATENÇÃO: " + result.msg);
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
 
         } catch (err) {
-            alert("Erro: " + err);
+            // Em caso de erro de rede ou CORS, o dado costuma ser salvo mas o navegador chia.
+            // Se o CPF for inválido, o Google Script retornará um erro que cairá aqui ou no 'else' acima.
+            console.error(err);
+            alert("Ocorreu um erro ao enviar. Verifique se o CPF já está cadastrado.");
             btn.disabled = false;
+            btn.innerText = originalText;
         }
     });
 </script>
