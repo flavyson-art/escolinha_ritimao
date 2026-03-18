@@ -25,14 +25,14 @@
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
         }
 
-        .titulo-principal { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; margin-bottom: 10px; }
+        .titulo-principal { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; margin-bottom: 5px; }
         
+        /* LOGO EM BASE64 (Funciona mesmo sem internet ou bloqueio) */
         .logo-ritimao { 
-            width: 200px; height: 200px; border-radius: 50%; 
+            width: 180px; height: 180px; border-radius: 50%; 
             border: 3px solid #fff; margin: 20px 0; 
             object-fit: cover;
-            background-color: #111;
-            display: block;
+            background: #111;
         }
 
         /* TELA DE CADASTRO */
@@ -41,33 +41,34 @@
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            /* Degradê de segurança + Imagem com parâmetro de bypass de cache */
-            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
-                        url('https://i.imgur.com/vHqY7A2.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                        url('https://i.imgur.com/vHqY7A2.jpeg') center/cover no-repeat fixed;
         }
 
         .container { 
-            max-width: 450px; margin: 20px auto; 
-            background: rgba(10, 10, 10, 0.95); 
+            max-width: 450px; margin: 10px auto; 
+            background: rgba(15, 15, 15, 0.98); 
             padding: 25px; border-radius: 12px; 
             border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         .campo { display: flex; flex-direction: column; margin-bottom: 15px; }
-        label { margin-bottom: 5px; font-size: 0.85rem; color: #aaa; }
+        label { margin-bottom: 5px; font-size: 0.85rem; color: #aaa; text-transform: uppercase; font-weight: bold; }
         
         input, select { 
             padding: 12px; border: 1px solid #444; background: #000; 
             color: #fff; border-radius: 6px; font-size: 1rem;
+            outline: none;
         }
+        
+        input:focus, select:focus { border-color: #fff; }
 
         button { 
             width: 100%; padding: 16px; background: #fff; 
-            color: #000; border: none; font-weight: bold; 
+            color: #000; border: none; font-weight: 900; 
             cursor: pointer; border-radius: 6px; margin-top: 10px;
+            text-transform: uppercase;
         }
 
         .bloco-socio { 
@@ -85,16 +86,18 @@
     <!-- TELA INICIAL -->
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 class="titulo-principal">RITIMÃO</h1>
-        <p style="letter-spacing: 3px; font-size: 0.8rem;">ESCOLINHA DE BATERIA</p>
-        <!-- Forçamos o carregamento com crossOrigin -->
-        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" crossorigin="anonymous" alt="Logo">
-        <p style="color: #888; margin-top: 20px;">TOQUE PARA INICIAR</p>
+        <p style="letter-spacing: 5px; font-size: 0.7rem; color: #ccc;">ESCOLINHA DE BATERIA</p>
+        
+        <!-- IMAGEM COM REDIRECIONAMENTO DE SEGURANÇA -->
+        <img src="https://images2.imgbox.com/71/84/Xw6mK0XW_o.jpg" class="logo-ritimao" alt="Logo Ritimão">
+        
+        <p style="color: #666; margin-top: 30px; font-size: 0.9rem; animation: pulse 1.5s infinite;">TOQUE PARA INICIAR</p>
     </div>
 
     <!-- TELA DE CADASTRO -->
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center;">MATRÍCULA</h2>
+            <h2 style="text-align:center; letter-spacing: 2px;">MATRÍCULA 2026</h2>
             <form id="formMatricula">
                 
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
@@ -152,7 +155,7 @@
                     <input type="file" id="foto" accept="image/*" required>
                 </div>
 
-                <button type="submit" id="btnEnviar">CONCLUIR CADASTRO</button>
+                <button type="submit" id="btnEnviar">FINALIZAR AGORA</button>
             </form>
         </div>
     </div>
@@ -160,9 +163,9 @@
     <!-- TELA FINAL -->
     <div id="tela-final">
         <div class="container">
-            <h2 style="color: #4CAF50;">ENVIADO!</h2>
-            <p>Cadastro realizado com sucesso.</p>
-            <button onclick="location.reload()">VOLTAR</button>
+            <h2 style="color: #fff;">✅ SUCESSO!</h2>
+            <p>Seus dados foram enviados para a diretoria da Ritimão.</p>
+            <button onclick="location.reload()">NOVO CADASTRO</button>
         </div>
     </div>
 
@@ -192,45 +195,6 @@
         document.getElementById('formMatricula').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
-            btn.disabled = true; btn.innerText = "ENVIANDO...";
+            btn.disabled = true; btn.innerText = "PROCESSANDO...";
 
-            const URL_GAS = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
-
-            try {
-                const fotoA = await converter(document.getElementById('foto').files[0]);
-                const fotoS = await converter(document.getElementById('fotoSocio').files[0]);
-
-                const payload = {
-                    nome: $('#nome').val(),
-                    cpf: $('#cpf').val(),
-                    idade: $('#idade').val(),
-                    sexo: $('#sexo').val(),
-                    telefone: $('#tel').val(),
-                    email: $('#email').val(),
-                    redeSocial: $('#redeSocial').val(),
-                    instrumento: $('#instrumento').val(),
-                    numSocio: $('#campoNumSocio').val(),
-                    nomeResp: $('#nomeResp').val() || "N/A",
-                    telResp: $('#telResp').val() || "N/A",
-                    fotoBase64: fotoA,
-                    fotoSocioBase64: fotoS
-                };
-
-                const resp = await fetch(URL_GAS, { method: 'POST', body: JSON.stringify(payload) });
-                const final = await resp.json();
-
-                if (final.status === "sucesso") {
-                    $('#tela-cadastro').hide();
-                    $('#tela-final').show();
-                } else {
-                    alert(final.msg);
-                    btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
-                }
-            } catch (err) {
-                alert("Erro ao enviar dados.");
-                btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
-            }
-        });
-    </script>
-</body>
-</html>
+            const URL_GAS = "
