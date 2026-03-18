@@ -124,6 +124,23 @@
         }
     }
 
+    // --- FUNÇÃO DE VALIDAÇÃO DE CPF (Lógica idêntica ao Servidor) ---
+    function testaCPF(cpf) {
+        cpf = cpf.replace(/\D/g, '');
+        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+        let soma = 0, resto;
+        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) resto = 0;
+        if (resto !== parseInt(cpf.substring(9, 10))) return false;
+        soma = 0;
+        for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
+        resto = (soma * 10) % 11;
+        if ((resto === 10) || (resto === 11)) resto = 0;
+        if (resto !== parseInt(cpf.substring(10, 11))) return false;
+        return true;
+    }
+
     const converterEComprimir = (file) => new Promise((resolve) => {
         if (!file) { resolve(null); return; }
         const reader = new FileReader();
@@ -148,24 +165,30 @@
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btnEnviar');
-        const originalText = btn.innerText;
+        const cpfValor = $('#cpf').val();
+
+        // 1. Validação Local de CPF antes de enviar
+        if (!testaCPF(cpfValor)) {
+            alert("O CPF digitado é INVÁLIDO. Por favor, confira os números.");
+            $('#cpf').focus();
+            return;
+        }
+
         btn.disabled = true;
-        btn.innerText = "PROCESSANDO FOTOS...";
+        btn.innerText = "PROCESSANDO...";
 
         try {
             const f1 = await converterEComprimir(document.getElementById('foto').files[0]);
             const f2 = await converterEComprimir(document.getElementById('fotoSocio').files[0]);
 
-            btn.innerText = "ENVIANDO DADOS...";
-
             const payload = {
                 nome: $('#nome').val(),
-                cpf: $('#cpf').val(),
+                cpf: cpfValor,
                 idade: $('#idade').val(),
                 sexo: $('#sexo').val(),
                 telefone: $('#tel').val(),
                 email: $('#email').val(),
-                redeSocial: $('#redeSocial').val(),
+                redeSocial: $('#redeSocial').val() || "N/A",
                 instrumento: $('#instrumento').val(),
                 numSocio: $('#campoNumSocio').val(),
                 nomeResp: $('#nomeResp').val() || "N/A",
@@ -176,31 +199,23 @@
 
             const url = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
             
-            // Alteração crucial: usando 'cors' e tratando a resposta para ver erros de CPF
-            const response = await fetch(url, {
+            // Usamos no-cors para garantir que o envio ocorra sem bloqueio de segurança
+            // A duplicidade agora será tratada pelo Google, mas o erro de CPF nós matamos aqui.
+            await fetch(url, {
                 method: "POST",
+                mode: "no-cors", 
                 body: JSON.stringify(payload)
             });
 
-            const result = await response.json();
-
-            if (result.status === "sucesso") {
-                $('#tela-cadastro').fadeOut(300, function() {
-                    $('#tela-final').css('display', 'flex').hide().fadeIn(400);
-                });
-            } else {
-                alert("ATENÇÃO: " + result.msg);
-                btn.disabled = false;
-                btn.innerText = originalText;
-            }
+            // Como o CPF foi validado aqui, e se não houver erro de rede, assumimos o sucesso.
+            $('#tela-cadastro').fadeOut(300, function() {
+                $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+            });
 
         } catch (err) {
-            // Em caso de erro de rede ou CORS, o dado costuma ser salvo mas o navegador chia.
-            // Se o CPF for inválido, o Google Script retornará um erro que cairá aqui ou no 'else' acima.
-            console.error(err);
-            alert("Ocorreu um erro ao enviar. Verifique se o CPF já está cadastrado.");
+            alert("Erro na conexão. Verifique sua internet.");
             btn.disabled = false;
-            btn.innerText = originalText;
+            btn.innerText = "FINALIZAR MATRÍCULA";
         }
     });
 </script>
