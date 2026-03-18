@@ -18,7 +18,7 @@
             overflow-x: hidden;
         }
 
-        /* TELA INICIAL - ALTO IMPACTO */
+        /* TELA INICIAL */
         #tela-inicial {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             min-height: 100vh; width: 100%; text-align: center;
@@ -50,7 +50,7 @@
         /* FORMULÁRIO DE CADASTRO */
         #tela-cadastro { 
             display: none; padding: 40px 20px;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
                         url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
             background-size: cover; min-height: 100vh;
         }
@@ -78,7 +78,7 @@
         button:hover { background: #ccc; transform: translateY(-2px); }
         button:disabled { background: #444; color: #888; cursor: not-allowed; }
 
-        /* TELA FINAL - SEM VERDE */
+        /* TELA FINAL */
         #tela-final { 
             display: none; flex-direction: column; justify-content: center; 
             align-items: center; text-align: center; height: 100vh; background: #000;
@@ -126,7 +126,7 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-				<div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
+                <div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
                 
                 <div class="campo"><label>Instrumento Desejado</label>
                     <select id="instrumento" required>
@@ -158,20 +158,18 @@
         <h2 style="text-transform: uppercase; font-weight: 900; letter-spacing: 2px;">Cadastro Recebido!</h2>
         <p style="color: #aaa; padding: 0 40px; line-height: 1.6; max-width: 500px;">
             Sua matrícula foi enviada com sucesso e agora será analisada pela nossa equipe.<br><br>
-            Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> ou <strong>E-mail</strong> para confirmar sua vaga.
+            Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> para confirmar sua vaga.
         </p>
         <button onclick="location.reload()" style="max-width: 250px; margin-top: 30px;">VOLTAR AO INÍCIO</button>
     </div>
 
 <script>
     $(document).ready(function(){
-        // Aplica as máscaras nos campos de entrada
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
     });
 
-    // Função para transição da tela inicial para o formulário
     function abrirCadastro() {
         $('#tela-inicial').fadeOut(300, function() {
             $('#tela-cadastro').fadeIn(400);
@@ -179,7 +177,6 @@
         });
     }
 
-    // Gerencia campos obrigatórios para menores de idade
     function validarMenor(idade) {
         if (idade > 0 && idade < 18) {
             $('#dadosResponsavel').removeClass('hidden');
@@ -190,27 +187,53 @@
         }
     }
 
-    // Converte arquivos (fotos) para Base64 para envio ao Drive
-    const converter = (file) => new Promise((resolve, reject) => {
+    // MELHORIA: Compressor de Imagens para evitar erros de limite de dados
+    const converterEComprimir = (file) => new Promise((resolve, reject) => {
         if (!file) { resolve(null); return; }
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800; 
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_WIDTH) {
+                        width *= MAX_WIDTH / height;
+                        height = MAX_WIDTH;
+                    }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.7)); // Qualidade 70%
+            };
+        };
         reader.onerror = error => reject(error);
     });
 
-    // Processamento do formulário no envio
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const btn = document.getElementById('btnEnviar');
         btn.disabled = true;
-        btn.innerText = "ENVIANDO...";
+        btn.innerText = "PROCESSANDO FOTOS...";
 
         try {
-            // Converte as duas fotos em paralelo
-            const fotoPerfil = await converter(document.getElementById('foto').files[0]);
-            const fotoSocio = await converter(document.getElementById('fotoSocio').files[0]);
+            const fotoPerfil = await converterEComprimir(document.getElementById('foto').files[0]);
+            const fotoSocio = await converterEComprimir(document.getElementById('fotoSocio').files[0]);
+
+            btn.innerText = "ENVIANDO DADOS...";
 
             const payload = {
                 nome: $('#nome').val(),
@@ -228,7 +251,6 @@
                 fotoSocioBase64: fotoSocio
             };
 
-            // Chama a função no Apps Script (Código.gs)
             google.script.run
                 .withSuccessHandler(function(resposta) {
                     if (resposta.status === "sucesso") {
@@ -236,21 +258,20 @@
                             $('#tela-final').css('display', 'flex').hide().fadeIn(400);
                         });
                     } else {
-                        // Exibe erros de CPF inválido, duplicado ou falta de vagas
                         alert("⚠️ " + resposta.msg);
                         btn.disabled = false;
                         btn.innerText = "FINALIZAR MATRÍCULA";
                     }
                 })
                 .withFailureHandler(function(erro) {
-                    alert("Erro técnico no servidor: " + erro);
+                    alert("Erro técnico: " + erro);
                     btn.disabled = false;
                     btn.innerText = "FINALIZAR MATRÍCULA";
                 })
                 .processarFormulario(payload);
 
         } catch (err) {
-            alert("Erro ao processar os dados ou fotos. Tente novamente.");
+            alert("Erro ao processar fotos. Verifique se os arquivos são imagens.");
             btn.disabled = false;
             btn.innerText = "FINALIZAR MATRÍCULA";
         }
