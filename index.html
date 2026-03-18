@@ -15,11 +15,9 @@
         .titulo-principal { font-size: clamp(2.5rem, 8vw, 6rem); text-transform: uppercase; font-weight: 900; margin: 0; text-shadow: 0 0 20px rgba(255,255,255,0.1); }
         .sub-titulo { letter-spacing: 5px; font-size: 1rem; color: var(--cinza); margin-bottom: 20px; }
         
-        /* Estilo da Logo */
         .logo-ritimao { width: clamp(250px, 45vw, 500px); height: auto; border-radius: 50%; border: 10px solid var(--branco); margin: 30px 0; box-shadow: 0 0 50px rgba(255,255,255,0.2); animation: pulsar 3s infinite ease-in-out; }
         @keyframes pulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         
-        /* Estilo quando ENCERRADO */
         .encerrado .logo-ritimao { border-color: var(--erro); box-shadow: 0 0 60px rgba(255, 68, 68, 0.4); animation: none; filter: grayscale(0.5); }
         .encerrado .touch-hint { color: var(--erro) !important; font-size: 1.5rem !important; }
         
@@ -50,12 +48,13 @@
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-ritimao" alt="Logo">
-        <p class="touch-hint" id="status-inscricao">Toque para iniciar sua matrícula</p>
+        <p class="touch-hint" id="status-inscricao">Toque para iniciar sua Inscrição</p>
     </div>
 
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Matrícula 2026</h2>
+            <h2 style="text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Inscrição 2026</h2>
+            
             <div class="quadro-vagas">
                 <h3>Vagas Disponíveis</h3>
                 <div id="listaVagas" class="grade-vagas">
@@ -94,9 +93,9 @@
                         <option value="Chocalho">Chocalho</option>
                         <option value="Cuica">Cuíca</option>
                         <option value="Repique">Repique</option>
-						<option value="Surdo 1">Surdo 1</option>
-						<option value="Surdo 2">Surdo 2</option>
-						<option value="Surdo 3">Surdo 3</option>
+                        <option value="Surdo 1">Surdo 1</option>
+                        <option value="Surdo 2">Surdo 2</option>
+                        <option value="Surdo 3">Surdo 3</option>
                         <option value="Tamborim">Tamborim</option>
                         <option value="Timbal">Timbal</option>
                         <option value="Xequere">Xequere</option>
@@ -107,7 +106,7 @@
                 <div class="campo"><label>Foto Carteirinha ou Recibo(Sócio)</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Sua Foto de Perfil</label><input type="file" id="foto" accept="image/*" required></div>
                 
-                <button type="submit" id="btnEnviar">FINALIZAR MATRÍCULA</button>
+                <button type="submit" id="btnEnviar">FINALIZAR INSCRIÇÃO</button>
             </form>
         </div>
     </div>
@@ -116,7 +115,7 @@
         <div style="font-size: 5rem; margin-bottom: 20px;">🥁</div>
         <h2 style="text-transform: uppercase; font-weight: 900; letter-spacing: 2px;">Cadastro Recebido!</h2>
         <p style="color: #aaa; line-height: 1.6; max-width: 500px; margin-bottom: 30px;">
-            Sua matrícula foi enviada com sucesso e agora será analisada pela nossa <strong>diretoria</strong>.<br><br>
+            Sua Inscrição foi enviada com sucesso e agora será analisada pela nossa <strong>diretoria</strong>.<br><br>
             Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> ou <strong>E-mail</strong> para confirmar sua vaga.
         </p>
         <button onclick="location.reload()" style="max-width: 250px;">VOLTAR AO INÍCIO</button>
@@ -130,14 +129,13 @@
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
-        verificarStatusGeral(); // Checa se já fechou tudo ao carregar
+        verificarStatusGeral();
     });
 
     function verificarStatusGeral() {
         $.getJSON(URL_SCRIPT, function(data) {
             let totalVagas = 0;
             for (let inst in data) { totalVagas += data[inst]; }
-
             if (totalVagas <= 0) {
                 inscricoesAbertas = false;
                 $('#tela-inicial').addClass('encerrado').removeAttr('onclick');
@@ -164,14 +162,17 @@
                 totalRestante += valor;
                 let classe = valor <= 0 ? "esgotado" : "vaga-numero";
                 let texto = valor <= 0 ? "LOTADO" : valor;
-                html += `<div class="vaga-item"><span>${inst}:</span><span class="${classe}">${texto}</span></div>`;
+                
+                // Texto extra para instrumentos femininos
+                let extra = (inst === "Chocalho" || inst === "Xequere") ? " <small>(Feminino)</small>" : "";
+                
+                html += `<div class="vaga-item"><span>${inst}${extra}:</span><span class="${classe}">${texto}</span></div>`;
+                
                 if (valor <= 0) {
                     $(`#instrumento option[value="${inst}"]`).prop('disabled', true).text(inst + " (LOTADO)");
                 }
             }
             $('#listaVagas').html(html);
-            
-            // Se as vagas acabarem enquanto o usuário está na tela de cadastro
             if (totalRestante <= 0) { location.reload(); }
         });
     }
@@ -217,10 +218,20 @@
 
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btnEnviar');
+
+        // 1. VALIDAÇÃO DE GÊNERO (NOVO)
+        const instSelecionado = $('#instrumento').val();
+        const sexoSelecionado = $('#sexo').val();
+        if ((instSelecionado === "Chocalho" || instSelecionado === "Xequere") && sexoSelecionado !== "Feminino") {
+            alert("Atenção: As vagas para Chocalho e Xequerê são exclusivas para o sexo feminino.");
+            return;
+        }
+
+        // 2. VALIDAÇÃO DE CPF
         const cpfValor = $('#cpf').val();
         if (!testaCPF(cpfValor)) { alert("CPF INVÁLIDO!"); return; }
 
+        const btn = document.getElementById('btnEnviar');
         btn.disabled = true;
         btn.innerText = "PROCESSANDO...";
 
@@ -230,8 +241,8 @@
 
             const payload = {
                 nome: $('#nome').val(), cpf: cpfValor, idade: $('#idade').val(),
-                sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
-                redeSocial: $('#redeSocial').val() || "N/A", instrumento: $('#instrumento').val(),
+                sexo: sexoSelecionado, telefone: $('#tel').val(), email: $('#email').val(),
+                redeSocial: $('#redeSocial').val() || "N/A", instrumento: instSelecionado,
                 numSocio: $('#campoNumSocio').val(), nomeResp: $('#nomeResp').val() || "N/A",
                 telResp: $('#telResp').val() || "N/A", fotoBase64: f1, fotoSocioBase64: f2
             };
@@ -246,12 +257,19 @@
                         $('#tela-cadastro').fadeOut(300, function() { $('#tela-final').css('display', 'flex').hide().fadeIn(400); });
                     } else {
                         alert("ATENÇÃO: " + response.msg);
-                        btn.disabled = false; btn.innerText = "FINALIZAR MATRÍCULA";
+                        btn.disabled = false; btn.innerText = "FINALIZAR INSCRIÇÃO";
                     }
                 },
-                error: function() { alert("Erro ao enviar. Tente novamente."); btn.disabled = false; btn.innerText = "FINALIZAR MATRÍCULA"; }
+                error: function() { 
+                    alert("Erro ao enviar. Verifique sua conexão e tente novamente."); 
+                    btn.disabled = false; btn.innerText = "FINALIZAR INSCRIÇÃO"; 
+                }
             });
-        } catch (err) { alert("Erro no processamento."); btn.disabled = false; }
+        } catch (err) { 
+            alert("Erro no processamento das imagens."); 
+            btn.disabled = false; 
+            btn.innerText = "FINALIZAR INSCRIÇÃO";
+        }
     });
 </script>
 </body>
