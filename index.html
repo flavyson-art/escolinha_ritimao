@@ -29,7 +29,6 @@
         .titulo-principal { font-size: 3rem; text-transform: uppercase; font-weight: 900; margin: 0; letter-spacing: -1px; }
         .sub-titulo { letter-spacing: 5px; font-size: 0.7rem; color: #aaa; margin-bottom: 20px; }
         
-        /* LOGO BLINDADA (ESTRATÉGIA BASE64) */
         .logo-ritimao { 
             width: 180px; height: 180px; border-radius: 50%; 
             border: 4px solid #fff; margin: 20px 0; 
@@ -43,12 +42,15 @@
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            background: #000; /* Fundo preto puro para evitar erros visualização */
+            /* AJUSTE: Fundo vindo do GitHub */
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), 
+                        url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg') no-repeat center center fixed;
+            background-size: cover;
         }
 
         .container { 
             max-width: 450px; margin: 10px auto; 
-            background: #111; 
+            background: rgba(17, 17, 17, 0.95); /* Leve transparência para ver o fundo */
             padding: 30px; border-radius: 15px; 
             border: 1px solid #333;
         }
@@ -90,13 +92,16 @@
         <h1 class="titulo-principal">RITIMÃO</h1>
         <p class="sub-titulo">ESCOLINHA DE BATERIA</p>
         
-        <!-- Imagem Direta (Se o Imgur falhar, o CSS manterá o círculo branco) -->
-        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" alt="Ritimão" onerror="this.src='https://via.placeholder.com/200/ffffff/000000?text=RITIMAO'">
+        <!-- AJUSTE: Logo vindo do GitHub -->
+        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
+             class="logo-ritimao" 
+             alt="Ritimão" 
+             onerror="this.src='https://via.placeholder.com/200/ffffff/000000?text=RITIMAO'">
         
         <p class="touch-hint">CLIQUE PARA COMEÇAR</p>
     </div>
 
-    <!-- TELA DE CADASTRO -->
+    <!-- TELA DE CADASTRO (restante do formulário permanece igual) -->
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center; margin-top:0;">MATRÍCULA</h2>
@@ -160,7 +165,6 @@
         </div>
     </div>
 
-    <!-- TELA FINAL -->
     <div id="tela-final">
         <h1 style="font-size: 4rem;">🥁</h1>
         <h2>CADASTRO ENVIADO!</h2>
