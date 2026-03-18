@@ -130,6 +130,28 @@
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
         verificarStatusGeral();
+
+        // --- TRAVA DE INSTRUMENTO EM TEMPO REAL ---
+        $('#sexo').on('change', function() {
+            const sexo = $(this).val();
+            const instSelect = $('#instrumento');
+            
+            if (sexo === "Masculino") {
+                // Desabilita Chocalho e Xequere
+                instSelect.find('option[value="Chocalho"], option[value="Xequere"]').prop('disabled', true);
+                
+                // Se um deles estiver selecionado, reseta o campo de instrumento
+                const atual = instSelect.val();
+                if (atual === "Chocalho" || atual === "Xequere") {
+                    instSelect.val("");
+                    alert("Atenção: Os instrumentos Chocalho e Xequerê são exclusivos para o sexo feminino.");
+                }
+            } else {
+                // Se for feminino ou vazio, reabilita (a função atualizarVagas cuidará de manter desabilitado o que estiver LOTADO)
+                instSelect.find('option[value="Chocalho"], option[value="Xequere"]').prop('disabled', false);
+                atualizarVagas(); // Chama para garantir que o que está LOTADO continue bloqueado
+            }
+        });
     });
 
     function verificarStatusGeral() {
@@ -157,19 +179,31 @@
         $.getJSON(URL_SCRIPT, function(data) {
             let html = "";
             let totalRestante = 0;
+            const sexoAtual = $('#sexo').val();
+
             for (let inst in data) {
                 let valor = data[inst];
                 totalRestante += valor;
                 let classe = valor <= 0 ? "esgotado" : "vaga-numero";
                 let texto = valor <= 0 ? "LOTADO" : valor;
                 
-                // Texto extra para instrumentos femininos
-                let extra = (inst === "Chocalho" || inst === "Xequere") ? " <small>(Feminino)</small>" : "";
-                
+                let extra = (inst === "Chocalho" || inst === "Xequere") ? " <small>(Fem)</small>" : "";
                 html += `<div class="vaga-item"><span>${inst}${extra}:</span><span class="${classe}">${texto}</span></div>`;
                 
+                // Lógica de desabilitar no Select
+                const option = $(`#instrumento option[value="${inst}"]`);
+                
+                // Regra 1: Se estiver lotado, sempre desabilita
                 if (valor <= 0) {
-                    $(`#instrumento option[value="${inst}"]`).prop('disabled', true).text(inst + " (LOTADO)");
+                    option.prop('disabled', true).text(inst + " (LOTADO)");
+                } 
+                // Regra 2: Se for Masculino e o instrumento for restrito, desabilita
+                else if (sexoAtual === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) {
+                    option.prop('disabled', true).text(inst + " (Apenas Feminino)");
+                }
+                // Caso contrário, habilita
+                else {
+                    option.prop('disabled', false).text(inst);
                 }
             }
             $('#listaVagas').html(html);
@@ -219,7 +253,6 @@
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        // 1. VALIDAÇÃO DE GÊNERO (NOVO)
         const instSelecionado = $('#instrumento').val();
         const sexoSelecionado = $('#sexo').val();
         if ((instSelecionado === "Chocalho" || instSelecionado === "Xequere") && sexoSelecionado !== "Feminino") {
@@ -227,7 +260,6 @@
             return;
         }
 
-        // 2. VALIDAÇÃO DE CPF
         const cpfValor = $('#cpf').val();
         if (!testaCPF(cpfValor)) { alert("CPF INVÁLIDO!"); return; }
 
