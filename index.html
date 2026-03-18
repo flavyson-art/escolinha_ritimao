@@ -187,7 +187,6 @@
         }
     }
 
-    // MELHORIA: Compressor de Imagens para evitar erros de limite de dados
     const converterEComprimir = (file) => new Promise((resolve, reject) => {
         if (!file) { resolve(null); return; }
         const reader = new FileReader();
@@ -200,23 +199,16 @@
                 const MAX_WIDTH = 800; 
                 let width = img.width;
                 let height = img.height;
-
                 if (width > height) {
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                 } else {
-                    if (height > MAX_WIDTH) {
-                        width *= MAX_WIDTH / height;
-                        height = MAX_WIDTH;
-                    }
+                    if (height > MAX_WIDTH) { width *= MAX_WIDTH / height; height = MAX_WIDTH; }
                 }
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7)); // Qualidade 70%
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
             };
         };
         reader.onerror = error => reject(error);
@@ -251,29 +243,28 @@
                 fotoSocioBase64: fotoSocio
             };
 
-          const URL_DO_SEU_SCRIPT = "COLE_AQUI_A_URL_DO_WEB_APP_DO_GOOGLE";
+            // SUBSTITUA PELA SUA URL REAL DO GOOGLE APPS SCRIPT
+            const URL_DO_SEU_SCRIPT = "COLE_AQUI_A_URL_DO_WEB_APP_DO_GOOGLE";
 
-				fetch(URL_DO_SEU_SCRIPT, {
-				method: "POST",
-				body: JSON.stringify(payload)
-			})
-					.then(res => res.json())
-					.then(resposta => {
-				if (resposta.status === "sucesso") {
-					$('#tela-cadastro').fadeOut(300, function() {
-					$('#tela-final').css('display', 'flex').hide().fadeIn(400);
-			});
-			} 	else {
-					alert("⚠️ " + resposta.msg);
-					btn.disabled = false;
-					btn.innerText = "FINALIZAR MATRÍCULA";
-    }
-})
-.catch(erro => {
-    alert("Erro na conexão com o servidor: " + erro);
-    btn.disabled = false;
-    btn.innerText = "FINALIZAR MATRÍCULA";
-});
+            const response = await fetch(URL_DO_SEU_SCRIPT, {
+                method: "POST",
+                mode: "no-cors", // Necessário para evitar erros de CORS entre domínios diferentes
+                body: JSON.stringify(payload)
+            });
+
+            // Como usamos no-cors, não conseguimos ler a resposta JSON diretamente.
+            // Para sistemas simples, assumimos sucesso se não houver erro de rede.
+            $('#tela-cadastro').fadeOut(300, function() {
+                $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+            });
+
+        } catch (erro) {
+            console.error(erro);
+            alert("Erro na conexão ou processamento: " + erro);
+            btn.disabled = false;
+            btn.innerText = "FINALIZAR MATRÍCULA";
+        }
+    });
 </script>
 </body>
 </html>
