@@ -8,7 +8,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js" defer></script>
     
     <style>
-        :root { --preto: #000; --branco: #fff; --cinza: #222; }
+        :root { --preto: #000; --branco: #fff; --dourado: #f1c40f; }
         body, html { margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--preto); color: var(--branco); }
 
         #tela-inicial {
@@ -20,20 +20,19 @@
         .titulo-principal { font-size: clamp(1.5rem, 8vw, 3.5rem); text-transform: uppercase; font-weight: 900; }
         #tela-inicial img { width: 250px; height: 250px; border-radius: 50%; border: 3px solid var(--branco); margin: 20px 0; }
 
-        #tela-cadastro { display: none; min-height: 100vh; padding: 20px; box-sizing: border-box; }
+        #tela-cadastro, #tela-finalizacao { display: none; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         
         .container { 
             max-width: 450px; margin: auto; background: #111; 
-            padding: 25px; border-radius: 12px; border: 1px solid #333; 
+            padding: 25px; border-radius: 12px; border: 1px solid #333; position: relative;
         }
 
-        /* AJUSTE DE ALINHAMENTO */
         .campo { display: flex; flex-direction: column; margin-bottom: 15px; width: 100%; }
         label { margin-bottom: 5px; font-size: 0.9rem; color: #bbb; text-align: left; }
         input, select { 
             padding: 12px; border: 1px solid #333; background: #000; 
             color: #fff; border-radius: 6px; font-size: 1rem; width: 100%;
-            box-sizing: border-box; /* Garante que o padding não estoure a largura */
+            box-sizing: border-box;
         }
 
         button { 
@@ -42,17 +41,26 @@
             cursor: pointer; border-radius: 6px; margin-top: 10px;
         }
 
+        .rodape-marca {
+            text-align: center; margin-top: 30px; font-size: 0.8rem;
+            letter-spacing: 2px; color: #555; font-weight: bold; text-transform: uppercase;
+        }
+
+        .msg-sucesso { text-align: center; }
+        .msg-sucesso h2 { color: #4CAF50; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
+    <!-- TELA 1: INICIAL -->
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 class="titulo-principal">RITIMÃO<br><span style="font-size: 0.4em;">ESCOLINHA DE BATERIA</span></h1>
         <img src="Logo.jpg" alt="Logo">
         <p style="color: #666; letter-spacing: 2px;">TOQUE PARA INICIAR</p>
     </div>
 
+    <!-- TELA 2: FORMULÁRIO -->
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center; margin-bottom:20px;">MATRÍCULA</h2>
@@ -83,25 +91,11 @@
                     <label>Instrumento</label>
                     <select id="instrumento" required>
                         <option value="">Selecione...</option>
-                        <option value="Cuica">Cuíca</option>
-                        <option value="Chocalho">Chocalho</option>
-                        <option value="Xequere">Xequeré</option>
-                        <option value="Tamborim">Tamborim</option>
-                        <option value="Timbal">Timbal</option>
-                        <option value="Caixa">Caixa</option>
-                        <option value="Repique">Repique</option>
-                        <option value="Surdo 3">Surdo 3</option>
-                        <option value="Surdo 1">Surdo 1</option>
-                        <option value="Surdo 2">Surdo 2</option>
-                    </select>
-                </div>
-
-                <div class="campo">
-                    <label>Nível</label>
-                    <select id="nivel">
-                        <option value="Iniciante">Iniciante</option>
-                        <option value="Intermediário">Intermediário</option>
-                        <option value="Avançado">Avançado</option>
+                        <option value="Cuica">Cuíca</option><option value="Chocalho">Chocalho</option>
+                        <option value="Xequere">Xequeré</option><option value="Tamborim">Tamborim</option>
+                        <option value="Timbal">Timbal</option><option value="Caixa">Caixa</option>
+                        <option value="Repique">Repique</option><option value="Surdo 3">Surdo 3</option>
+                        <option value="Surdo 1">Surdo 1</option><option value="Surdo 2">Surdo 2</option>
                     </select>
                 </div>
 
@@ -115,8 +109,28 @@
 
                 <div class="campo"><label>Foto (Identificação)</label><input type="file" id="foto" accept="image/*" required></div>
 
-                <button type="submit" id="btnEnviar">CADASTRAR</button>
+                <button type="submit" id="btnEnviar">CONCLUIR CADASTRO</button>
             </form>
+            
+            <div class="rodape-marca">
+                Bateria Ritimão – Unida – Forte – Vencedora
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA 3: FINALIZAÇÃO -->
+    <div id="tela-finalizacao">
+        <div class="container msg-sucesso">
+            <img src="Logo.jpg" style="width: 100px; border-radius: 50%; margin-bottom: 20px;">
+            <h2>CADASTRO FINALIZADO!</h2>
+            <p style="line-height: 1.6; color: #ddd;">
+                Sua solicitação foi recebida com sucesso por nossa diretoria.
+            </p>
+            <p style="line-height: 1.6; color: #ddd;">
+                Fique atento! <strong>Entraremos em contato via WhatsApp ou E-mail</strong> após a avaliação do seu cadastro para informar os próximos passos.
+            </p>
+            <button onclick="location.reload()" style="background: #222; color: #fff; border: 1px solid #444;">VOLTAR</button>
+            <div class="rodape-marca" style="margin-top:40px;">Ritimão</div>
         </div>
     </div>
 
@@ -133,6 +147,23 @@
 
         function validarMenor(idade) {
             document.getElementById('dadosResponsavel').classList.toggle('hidden', idade >= 18);
+        }
+
+        // Validação de CPF no Front-end
+        function validaCPF(cpf) {
+            cpf = cpf.replace(/\D/g, '');
+            if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false;
+            let soma = 0, resto;
+            for (let i = 1; i <= 9; i++) soma = soma + parseInt(cpf.substring(i-1, i)) * (11 - i);
+            resto = (soma * 10) % 11;
+            if ((resto == 10) || (resto == 11)) resto = 0;
+            if (resto != parseInt(cpf.substring(9, 10))) return false;
+            soma = 0;
+            for (let i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i-1, i)) * (12 - i);
+            resto = (soma * 10) % 11;
+            if ((resto == 10) || (resto == 11)) resto = 0;
+            if (resto != parseInt(cpf.substring(10, 11))) return false;
+            return true;
         }
 
         const redimensionarEConverter = (file) => new Promise((resolve) => {
@@ -155,30 +186,33 @@
 
         document.getElementById('formMatricula').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const cpfVal = document.getElementById('cpf').value;
+            if(!validaCPF(cpfVal)){
+                alert("O CPF digitado é inválido. Por favor, verifique.");
+                return;
+            }
+
             const btn = document.getElementById('btnEnviar');
-            btn.disabled = true;
-            btn.innerText = "ENVIANDO...";
+            btn.disabled = true; btn.innerText = "PROCESSANDO...";
 
             const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
 
             try {
                 const fotoBase64 = await redimensionarEConverter(document.getElementById('foto').files[0]);
-
                 const payload = {
                     nome: document.getElementById('nome').value,
-                    cpf: document.getElementById('cpf').value,
+                    cpf: cpfVal,
                     idade: document.getElementById('idade').value,
                     sexo: document.getElementById('sexo').value,
                     telefone: document.getElementById('tel').value,
                     email: document.getElementById('email').value,
                     redeSocial: document.getElementById('redeSocial').value || "Não informado",
                     instrumento: document.getElementById('instrumento').value,
-                    nivel: document.getElementById('nivel').value,
                     isSocio: document.getElementById('isSocio').value,
                     numSocio: document.getElementById('campoNumSocio').value || "N/A",
                     nomeResp: document.getElementById('nomeResp').value || "N/A",
                     telResp: document.getElementById('telResp').value || "N/A",
-                    obs: "Inscrição Web",
                     fotoBase64: fotoBase64
                 };
 
@@ -186,15 +220,16 @@
                 const res = await response.json();
 
                 if (res.status === "sucesso") {
-                    alert("✅ MATRÍCULA REALIZADA!");
-                    location.reload();
+                    document.getElementById('tela-cadastro').style.display = 'none';
+                    document.getElementById('tela-finalizacao').style.display = 'block';
+                    window.scrollTo(0,0);
                 } else {
-                    alert("❌ " + res.msg);
-                    btn.disabled = false; btn.innerText = "CADASTRAR";
+                    alert("Erro: " + res.msg);
+                    btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
                 }
             } catch (err) {
-                alert("Erro ao enviar. Verifique a URL do Script.");
-                btn.disabled = false; btn.innerText = "CADASTRAR";
+                alert("Erro de conexão. Tente novamente.");
+                btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
             }
         });
     </script>
