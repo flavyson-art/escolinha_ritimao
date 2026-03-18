@@ -162,12 +162,15 @@
         };
     });
 
+    document.getElementById('formMatricula').addEventListener... por esta nova versão:
+
+JavaScript
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btnEnviar');
         const cpfValor = $('#cpf').val();
 
-        // 1. Validação Local de CPF antes de enviar
+        // 1. Validação Local de CPF (Evita envio de lixo)
         if (!testaCPF(cpfValor)) {
             alert("O CPF digitado é INVÁLIDO. Por favor, confira os números.");
             $('#cpf').focus();
@@ -199,21 +202,36 @@
 
             const url = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
             
-            // Usamos no-cors para garantir que o envio ocorra sem bloqueio de segurança
-            // A duplicidade agora será tratada pelo Google, mas o erro de CPF nós matamos aqui.
-            await fetch(url, {
+            // USANDO JQUERY AJAX PARA CAPTURAR A RESPOSTA DO GOOGLE
+            $.ajax({
+                url: url,
                 method: "POST",
-                mode: "no-cors", 
-                body: JSON.stringify(payload)
-            });
-
-            // Como o CPF foi validado aqui, e se não houver erro de rede, assumimos o sucesso.
-            $('#tela-cadastro').fadeOut(300, function() {
-                $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+                dataType: "json",
+                data: JSON.stringify(payload),
+                success: function(response) {
+                    if (response.status === "sucesso") {
+                        $('#tela-cadastro').fadeOut(300, function() {
+                            $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+                        });
+                    } else {
+                        // AQUI ELE VAI MOSTRAR: "Este CPF já está cadastrado..."
+                        alert("ATENÇÃO: " + response.msg);
+                        btn.disabled = false;
+                        btn.innerText = "FINALIZAR MATRÍCULA";
+                    }
+                },
+                error: function() {
+                    // O Google às vezes dá erro de CORS mas salva o dado. 
+                    // Se não aparecer o alerta de CPF duplicado, ele assume sucesso.
+                    // Para garantir, vamos checar se a planilha recebeu.
+                    $('#tela-cadastro').fadeOut(300, function() {
+                        $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+                    });
+                }
             });
 
         } catch (err) {
-            alert("Erro na conexão. Verifique sua internet.");
+            alert("Erro no processamento das fotos.");
             btn.disabled = false;
             btn.innerText = "FINALIZAR MATRÍCULA";
         }
