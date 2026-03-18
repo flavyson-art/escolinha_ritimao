@@ -164,83 +164,58 @@
     </div>
 
     <script>
-        $(document).ready(function(){
-            $('.mask-cpf').mask('000.000.000-00');
-            $('.mask-tel').mask('(00) 00000-0000');
-            $('.mask-numero').mask('00000000');
-        });
-
-        function abrirCadastro() {
-            $('#tela-inicial').fadeOut(300, function() {
-                $('#tela-cadastro').fadeIn(400);
-                window.scrollTo(0,0);
-            });
-        }
-
-        function validarMenor(idade) {
-            if (idade > 0 && idade < 18) {
-                $('#dadosResponsavel').removeClass('hidden');
-                $('#nomeResp, #telResp').prop('required', true);
-            } else {
-                $('#dadosResponsavel').addClass('hidden');
-                $('#nomeResp, #telResp').prop('required', false);
-            }
-        }
-
-        const converter = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-
         document.getElementById('formMatricula').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('btnEnviar');
-            btn.disabled = true;
-            btn.innerText = "ENVIANDO DADOS...";
+    e.preventDefault();
+    const btn = document.getElementById('btnEnviar');
+    btn.disabled = true;
+    btn.innerText = "VERIFICANDO DADOS...";
 
-            const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
+    try {
+        const fotoPerfil = await converter(document.getElementById('foto').files[0]);
+        const fotoSocio = await converter(document.getElementById('fotoSocio').files[0]);
 
-            try {
-                const fotoPerfil = await converter(document.getElementById('foto').files[0]);
-                const fotoSocio = await converter(document.getElementById('fotoSocio').files[0]);
+        const payload = {
+            nome: $('#nome').val(),
+            cpf: $('#cpf').val(),
+            idade: $('#idade').val(),
+            sexo: $('#sexo').val(),
+            telefone: $('#tel').val(),
+            email: $('#email').val(),
+            redeSocial: $('#redeSocial').val(),
+            instrumento: $('#instrumento').val(),
+            numSocio: $('#campoNumSocio').val(),
+            nomeResp: $('#nomeResp').val() || "N/A",
+            telResp: $('#telResp').val() || "N/A",
+            fotoBase64: fotoPerfil,
+            fotoSocioBase64: fotoSocio
+        };
 
-                const payload = {
-                    nome: $('#nome').val(),
-                    cpf: $('#cpf').val(),
-                    idade: $('#idade').val(),
-                    sexo: $('#sexo').val(),
-                    telefone: $('#tel').val(),
-                    email: $('#email').val(),
-					redeSocial: $('#redeSocial').val(),
-                    instrumento: $('#instrumento').val(),
-                    numSocio: $('#campoNumSocio').val(),
-                    nomeResp: $('#nomeResp').val() || "N/A",
-                    telResp: $('#telResp').val() || "N/A",
-                    fotoBase64: fotoPerfil,
-                    fotoSocioBase64: fotoSocio
-                };
-
-                // Envio via fetch (POST)
-                await fetch(URL_APPS_SCRIPT, {
-                    method: 'POST',
-                    mode: 'no-cors', // Necessário para Google Apps Script
-                    body: JSON.stringify(payload)
-                });
-
-                // Sucesso
-                $('#tela-cadastro').fadeOut(300, function() {
-                    $('#tela-final').css('display', 'flex').hide().fadeIn(400);
-                });
-
-            } catch (err) {
-                console.error(err);
-                alert("Ocorreu um erro ao enviar sua matrícula. Verifique as fotos e tente novamente.");
+        // NOVA FORMA DE ENVIO: Chama a função do Código.gs e espera a resposta
+        google.script.run
+            .withSuccessHandler(function(resposta) {
+                if (resposta.status === "sucesso") {
+                    $('#tela-cadastro').fadeOut(300, function() {
+                        $('#tela-final').css('display', 'flex').hide().fadeIn(400);
+                    });
+                } else {
+                    alert("Atenção: " + resposta.msg); // EXIBE O ERRO DE CPF AQUI
+                    btn.disabled = false;
+                    btn.innerText = "FINALIZAR MATRÍCULA";
+                }
+            })
+            .withFailureHandler(function(erro) {
+                alert("Erro ao conectar com o servidor. Tente novamente.");
                 btn.disabled = false;
                 btn.innerText = "FINALIZAR MATRÍCULA";
-            }
-        });
+            })
+            .processarFormulario(payload); // Nome da função lá no Código.gs
+
+    } catch (err) {
+        alert("Erro ao processar fotos. Certifique-se que os arquivos não são muito grandes.");
+        btn.disabled = false;
+        btn.innerText = "FINALIZAR MATRÍCULA";
+    }
+});
     </script>
 </body>
 </html>
