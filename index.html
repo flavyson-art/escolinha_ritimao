@@ -3,108 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Escolinha Ritimão</title>
+    <title>Cadastro Ritimão</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     
     <style>
-        :root { --preto: #000; --branco: #fff; --dourado: #f1c40f; }
+        :root { --preto: #000; --branco: #fff; }
         
         body, html { 
             margin: 0; padding: 0; 
             font-family: 'Segoe UI', sans-serif; 
-            background-color: var(--preto); 
-            color: var(--branco); 
-            overflow-x: hidden;
+            background-color: #000; 
+            color: #fff;
         }
 
         /* TELA INICIAL */
         #tela-inicial {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             height: 100vh; cursor: pointer; text-align: center;
-            background: radial-gradient(circle, #111 0%, #000 100%);
+            background: #000;
             position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;
         }
 
-        .titulo-principal { font-size: clamp(1.5rem, 8vw, 3.5rem); text-transform: uppercase; font-weight: 900; }
+        .titulo-principal { font-size: 2.5rem; text-transform: uppercase; font-weight: 900; margin-bottom: 10px; }
         
-        /* Ajuste da Logo para carregar do Imgur */
         .logo-ritimao { 
-            width: 250px; height: 250px; border-radius: 50%; 
-            border: 3px solid var(--branco); margin: 20px 0; 
+            width: 200px; height: 200px; border-radius: 50%; 
+            border: 3px solid #fff; margin: 20px 0; 
             object-fit: cover;
+            background-color: #111; /* Fundo caso a imagem falhe */
         }
 
-        /* TELA DE CADASTRO COM FUNDO FIXO */
+        /* TELA DE CADASTRO */
         #tela-cadastro { 
             display: none; 
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            background-image: url('https://i.imgur.com/vHqY7A2.jpeg'); /* Sua foto de fundo */
+            /* Usando um degradê de segurança caso o link da imagem falhe no iframe do Google */
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://i.imgur.com/vHqY7A2.jpeg');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
         }
 
         .container { 
-            max-width: 450px; margin: 40px auto; 
-            background: rgba(17, 17, 17, 0.95); /* Fundo escuro semi-transparente para leitura */
-            padding: 30px; border-radius: 12px; 
-            border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            max-width: 450px; margin: 20px auto; 
+            background: rgba(10, 10, 10, 0.95); 
+            padding: 25px; border-radius: 12px; 
+            border: 1px solid #333;
         }
 
-        .campo { display: flex; flex-direction: column; margin-bottom: 15px; width: 100%; }
-        label { margin-bottom: 5px; font-size: 0.9rem; color: #bbb; text-align: left; }
+        .campo { display: flex; flex-direction: column; margin-bottom: 15px; }
+        label { margin-bottom: 5px; font-size: 0.85rem; color: #aaa; }
+        
         input, select { 
-            padding: 12px; border: 1px solid #333; background: #000; 
-            color: #fff; border-radius: 6px; font-size: 1rem; width: 100%;
-            box-sizing: border-box;
+            padding: 12px; border: 1px solid #444; background: #000; 
+            color: #fff; border-radius: 6px; font-size: 1rem;
         }
 
         button { 
-            width: 100%; padding: 18px; background: var(--branco); 
-            color: var(--preto); border: none; font-weight: 800; 
+            width: 100%; padding: 16px; background: #fff; 
+            color: #000; border: none; font-weight: bold; 
             cursor: pointer; border-radius: 6px; margin-top: 10px;
-            text-transform: uppercase;
         }
 
         .bloco-socio { 
-            background: rgba(40, 40, 40, 0.6); padding: 15px; 
-            border-radius: 8px; border-left: 4px solid var(--branco); 
-            margin-bottom: 15px; 
+            background: rgba(255, 255, 255, 0.05); padding: 15px; 
+            border-radius: 8px; border-left: 4px solid #fff; 
+            margin: 20px 0; 
         }
 
-        .rodape-marca {
-            text-align: center; margin-top: 30px; font-size: 0.8rem;
-            letter-spacing: 2px; color: #777; font-weight: bold; text-transform: uppercase;
-        }
-
-        #tela-finalizacao { display: none; min-height: 100vh; background: #000; padding-top: 50px; }
         .hidden { display: none; }
+        #tela-final { display: none; text-align: center; padding: 50px 20px; }
     </style>
 </head>
 <body>
 
     <!-- TELA INICIAL -->
     <div id="tela-inicial" onclick="abrirCadastro()">
-        <h1 class="titulo-principal">RITIMÃO<br><span style="font-size: 0.4em;">ESCOLINHA DE BATERIA</span></h1>
-        <!-- Link direto da imagem para evitar erro de carregamento -->
-        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" alt="Logo Ritimão">
-        <p style="color: #666; letter-spacing: 2px;">TOQUE PARA INICIAR</p>
+        <h1 class="titulo-principal">RITIMÃO</h1>
+        <p style="letter-spacing: 3px; font-size: 0.8rem;">ESCOLINHA DE BATERIA</p>
+        <!-- Usei o link direto do Imgur (i.imgur.com) que é o mais estável -->
+        <img src="https://i.imgur.com/vHqY7A2.jpeg" class="logo-ritimao" alt="Logo">
+        <p style="color: #888; margin-top: 20px;">TOQUE PARA INICIAR</p>
     </div>
 
     <!-- TELA DE CADASTRO -->
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center; margin-bottom:20px; border-bottom: 1px solid #333; padding-bottom: 10px;">MATRÍCULA</h2>
+            <h2 style="text-align:center;">MATRÍCULA</h2>
             <form id="formMatricula">
                 
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
                 <div class="campo"><label>Idade</label><input type="number" id="idade" required onchange="validarMenor(this.value)"></div>
 
-                <!-- Campos de Responsável (Aparecem se menor de 18) -->
                 <div id="dadosResponsavel" class="hidden">
                     <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
                     <div class="campo"><label>Telefone do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
@@ -113,19 +108,18 @@
                 <div class="campo">
                     <label>Sexo</label>
                     <select id="sexo" required>
-                        <option value="">Selecione</option>
+                        <option value="">Selecione...</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Feminino">Feminino</option>
-                        <option value="Outro">Prefiro não dizer</option>
                     </select>
                 </div>
 
-                <div class="campo"><label>WhatsApp (DDD + Número)</label><input type="text" id="tel" class="mask-tel" required></div>
+                <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
+                <div class="campo"><label>Instagram</label><input type="text" id="redeSocial" placeholder="@"></div>
 
                 <div class="campo">
-                    <label>Instrumento Desejado</label>
+                    <label>Instrumento</label>
                     <select id="instrumento" required>
                         <option value="">Selecione...</option>
                         <option value="Caixa">Caixa</option>
@@ -143,33 +137,31 @@
 
                 <div class="bloco-socio">
                     <div class="campo">
-                        <label>Número de Sócio Gaviões da Fiel</label>
-                        <input type="text" id="campoNumSocio" class="mask-numero" placeholder="Apenas os números" required>
+                        <label>Nº Sócio Gaviões da Fiel</label>
+                        <input type="text" id="campoNumSocio" class="mask-numero" required>
                     </div>
                     <div class="campo">
-                        <label>Foto da Carteirinha ou Recibo</label>
+                        <label>Foto da Carteirinha/Recibo</label>
                         <input type="file" id="fotoSocio" accept="image/*" required>
                     </div>
                 </div>
 
                 <div class="campo">
-                    <label>Sua Foto (Para Identificação)</label>
+                    <label>Sua Foto (Identificação)</label>
                     <input type="file" id="foto" accept="image/*" required>
                 </div>
 
-                <button type="submit" id="btnEnviar">ENVIAR INSCRIÇÃO</button>
+                <button type="submit" id="btnEnviar">CONCLUIR CADASTRO</button>
             </form>
-            <div class="rodape-marca">Bateria Ritimão – Unida – Forte – Vencedora</div>
         </div>
     </div>
 
-    <!-- TELA FINALIZACAO -->
-    <div id="tela-finalizacao">
-        <div class="container" style="text-align: center;">
-            <h2 style="color: #4CAF50;">CADASTRO FINALIZADO!</h2>
-            <p>Sua solicitação foi enviada com sucesso.</p>
-            <p>A diretoria irá analisar os dados e entrará em contato via WhatsApp.</p>
-            <button onclick="location.reload()" style="background: #333; color: #fff;">VOLTAR</button>
+    <!-- TELA FINAL -->
+    <div id="tela-final">
+        <div class="container">
+            <h2 style="color: #4CAF50;">ENVIADO!</h2>
+            <p>Cadastro realizado com sucesso.</p>
+            <button onclick="location.reload()">VOLTAR</button>
         </div>
     </div>
 
@@ -183,34 +175,17 @@
         function abrirCadastro() {
             $('#tela-inicial').fadeOut();
             $('#tela-cadastro').fadeIn();
-            window.scrollTo(0,0);
         }
 
         function validarMenor(idade) {
-            if (idade > 0 && idade < 18) {
-                $('#dadosResponsavel').removeClass('hidden');
-            } else {
-                $('#dadosResponsavel').addClass('hidden');
-            }
+            if (idade > 0 && idade < 18) $('#dadosResponsavel').show();
+            else $('#dadosResponsavel').hide();
         }
 
-        const redimensionarEConverter = (file) => new Promise((resolve) => {
-            if (!file) { resolve(null); return; }
+        const converter = (file) => new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = (e) => {
-                const img = new Image();
-                img.src = e.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600;
-                    const scale = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scale;
-                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7));
-                };
-            };
+            reader.onload = () => resolve(reader.result);
         });
 
         document.getElementById('formMatricula').addEventListener('submit', async (e) => {
@@ -218,11 +193,11 @@
             const btn = document.getElementById('btnEnviar');
             btn.disabled = true; btn.innerText = "ENVIANDO...";
 
-            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
+            const URL_GAS = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
 
             try {
-                const fotoBase64 = await redimensionarEConverter(document.getElementById('foto').files[0]);
-                const fotoSocioBase64 = await redimensionarEConverter(document.getElementById('fotoSocio').files[0]);
+                const fotoA = await converter(document.getElementById('foto').files[0]);
+                const fotoS = await converter(document.getElementById('fotoSocio').files[0]);
 
                 const payload = {
                     nome: $('#nome').val(),
@@ -231,28 +206,28 @@
                     sexo: $('#sexo').val(),
                     telefone: $('#tel').val(),
                     email: $('#email').val(),
-                    redeSocial: $('#redeSocial').val() || "Não informado",
+                    redeSocial: $('#redeSocial').val(),
                     instrumento: $('#instrumento').val(),
                     numSocio: $('#campoNumSocio').val(),
                     nomeResp: $('#nomeResp').val() || "N/A",
                     telResp: $('#telResp').val() || "N/A",
-                    fotoBase64: fotoBase64,
-                    fotoSocioBase64: fotoSocioBase64
+                    fotoBase64: fotoA,
+                    fotoSocioBase64: fotoS
                 };
 
-                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const res = await response.json();
+                const resp = await fetch(URL_GAS, { method: 'POST', body: JSON.stringify(payload) });
+                const final = await resp.json();
 
-                if (res.status === "sucesso") {
+                if (final.status === "sucesso") {
                     $('#tela-cadastro').hide();
-                    $('#tela-finalizacao').show();
+                    $('#tela-final').show();
                 } else {
-                    alert("Erro: " + res.msg);
-                    btn.disabled = false; btn.innerText = "ENVIAR INSCRIÇÃO";
+                    alert(final.msg);
+                    btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
                 }
             } catch (err) {
-                alert("Erro ao enviar. Tente novamente.");
-                btn.disabled = false; btn.innerText = "ENVIAR INSCRIÇÃO";
+                alert("Erro ao enviar dados.");
+                btn.disabled = false; btn.innerText = "CONCLUIR CADASTRO";
             }
         });
     </script>
