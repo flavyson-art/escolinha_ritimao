@@ -27,29 +27,32 @@
         .titulo-principal { font-size: clamp(1.5rem, 8vw, 3.5rem); text-transform: uppercase; font-weight: 900; }
         #tela-inicial img { width: 250px; height: 250px; border-radius: 50%; border: 3px solid var(--branco); margin: 20px 0; }
 
-        /* TELA DE CADASTRO - Ajustada com sua imagem de fundo */
+		/* TELA DE CADASTRO - Ajustada para máxima compatibilidade */
         #tela-cadastro { 
             display: none; 
             min-height: 100vh; 
             padding: 20px; 
             box-sizing: border-box;
-            /* AQUI ESTÁ O AJUSTE DA IMAGEM */
-            background-image: url('Fundo_tela_Cadastro.jpg'); 
+            
+            /* Tente usar o caminho relativo ./ para garantir que busque na pasta raiz */
+            background-color: #000; /* Cor de fundo caso a imagem falhe */
+            background-image: url('./Fundo_tela_Cadastro.jpg'); 
+            
             background-size: cover;
-            background-position: center;
-            background-attachment: fixed; /* A imagem fica parada enquanto o form rola */
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
         }
-        
-        /* Ajuste do container para garantir leitura sobre a foto */
+
+        /* Reforço no container para destacar sobre a foto */
         .container { 
             max-width: 450px; 
-            margin: auto; 
-            background: rgba(0, 0, 0, 0.9); /* Fundo preto com 90% de opacidade */
-            padding: 25px; 
+            margin: 40px auto; 
+            background: rgba(10, 10, 10, 0.95); /* Preto quase sólido */
+            padding: 30px; 
             border-radius: 12px; 
             border: 1px solid #333; 
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            box-shadow: 0 0 20px rgba(0,0,0,1);
         }
 
         /* Restante do CSS mantido conforme seu original */
