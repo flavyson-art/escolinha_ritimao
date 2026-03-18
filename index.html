@@ -34,7 +34,7 @@
         .esgotado { color: var(--erro) !important; font-weight: bold; }
 
         /* Estilo da Observação do Tamborim */
-        .obs-tamborim { margin-top: 15px; padding: 10px; border: 1px solid var(--destaque); border-radius: 8px; background: rgba(255, 215, 0, 0.05); color: var(--destaque); font-size: 0.75rem; text-align: center; line-height: 1.4; }
+        .obs-tamborim { margin-top: 15px; padding: 10px; border: 1px solid var(--destaque); border-radius: 8px; background: rgba(255, 215, 0, 0.05); color: var(--destaque); font-size: 0.8rem; text-align: center; line-height: 1.4; }
 
         .campo { display: flex; flex-direction: column; margin-bottom: 18px; }
         label { margin-bottom: 8px; font-size: 0.75rem; color: var(--branco); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
@@ -65,7 +65,7 @@
                 </div>
                 <!-- OBSERVAÇÃO SOLICITADA -->
                 <div class="obs-tamborim">
-                    <strong>Atenção! Para as aulas de tamborim: é necessário que o aluno traga seu PRÓPRIO instrumento, pois não fornecemos.</strong>
+                    ⚠️ <strong>ATENÇÃO:</strong> Para as aulas de <strong>Tamborim</strong>, é obrigatório que o aluno possua e traga seu próprio instrumento. A escola não fornece tamborins.
                 </div>
             </div>
 
@@ -129,7 +129,7 @@
     </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec";
+    const URL_SCRIPT = "SUA_URL_DO_APPS_SCRIPT_AQUI"; // Lembre de colar sua URL aqui!
     let inscricoesAbertas = true;
 
     $(document).ready(function(){
@@ -197,7 +197,7 @@
                     option.prop('disabled', true).text(inst + " (LOTADO)");
                 } 
                 else if (sexoAtual === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) {
-                    option.prop('disabled', true).text(inst + " (Apenas Feminino)");
+                    option.prop('disabled', true).text(inst + " (Feminino)");
                 }
                 else {
                     option.prop('disabled', false).text(inst);
