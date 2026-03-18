@@ -49,18 +49,17 @@
         .msg-sucesso { text-align: center; }
         .msg-sucesso h2 { color: #4CAF50; }
         .hidden { display: none; }
+        .bloco-socio { background: #1a1a1a; padding: 15px; border-radius: 8px; border-left: 4px solid var(--branco); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <!-- TELA 1: INICIAL -->
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 class="titulo-principal">RITIMÃO<br><span style="font-size: 0.4em;">ESCOLINHA DE BATERIA</span></h1>
         <img src="Logo.jpg" alt="Logo">
         <p style="color: #666; letter-spacing: 2px;">TOQUE PARA INICIAR</p>
     </div>
 
-    <!-- TELA 2: FORMULÁRIO -->
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center; margin-bottom:20px;">MATRÍCULA</h2>
@@ -91,23 +90,32 @@
                     <label>Instrumento</label>
                     <select id="instrumento" required>
                         <option value="">Selecione...</option>
-                        <option value="Cuica">Cuíca</option><option value="Chocalho">Chocalho</option>
-                        <option value="Xequere">Xequeré</option><option value="Tamborim">Tamborim</option>
-                        <option value="Timbal">Timbal</option><option value="Caixa">Caixa</option>
-                        <option value="Repique">Repique</option><option value="Surdo 3">Surdo 3</option>
-                        <option value="Surdo 1">Surdo 1</option><option value="Surdo 2">Surdo 2</option>
+                        <option value="Caixa">Caixa</option>
+                        <option value="Chocalho">Chocalho</option>
+                        <option value="Cuica">Cuíca</option>
+                        <option value="Repique">Repique</option>
+                        <option value="Surdo 1">Surdo 1</option>
+                        <option value="Surdo 2">Surdo 2</option>
+                        <option value="Surdo 3">Surdo 3</option>
+                        <option value="Tamborim">Tamborim</option>
+                        <option value="Timbal">Timbal</option>
+                        <option value="Xequere">Xequeré</option>
                     </select>
                 </div>
 
-                <div class="campo">
-                    <label>Sócio Gaviões?</label>
-                    <select id="isSocio" onchange="document.getElementById('campoNumSocio').classList.toggle('hidden', this.value !== 'Sim')">
-                        <option value="Não">Não</option><option value="Sim">Sim</option>
-                    </select>
-                    <input type="text" id="campoNumSocio" class="hidden" placeholder="Nº Sócio" style="margin-top:8px">
+                <!-- CAMPO SÓCIO ATUALIZADO -->
+                <div class="bloco-socio">
+                    <div class="campo">
+                        <label>Número de Sócio Gaviões da Fiel</label>
+                        <input type="text" id="campoNumSocio" placeholder="Digite o nº ou 'N/A' se não for sócio" required>
+                    </div>
+                    <div id="areaAnexo" class="campo">
+                        <label>Foto da Carteirinha ou Recibo (Obrigatório)</label>
+                        <input type="file" id="fotoSocio" accept="image/*">
+                    </div>
                 </div>
 
-                <div class="campo"><label>Foto (Identificação)</label><input type="file" id="foto" accept="image/*" required></div>
+                <div class="campo"><label>Foto (Identificação do Aluno)</label><input type="file" id="foto" accept="image/*" required></div>
 
                 <button type="submit" id="btnEnviar">CONCLUIR CADASTRO</button>
             </form>
@@ -118,7 +126,6 @@
         </div>
     </div>
 
-    <!-- TELA 3: FINALIZAÇÃO -->
     <div id="tela-finalizacao">
         <div class="container msg-sucesso">
             <img src="Logo.jpg" style="width: 100px; border-radius: 50%; margin-bottom: 20px;">
@@ -149,7 +156,6 @@
             document.getElementById('dadosResponsavel').classList.toggle('hidden', idade >= 18);
         }
 
-        // Validação de CPF no Front-end
         function validaCPF(cpf) {
             cpf = cpf.replace(/\D/g, '');
             if (cpf.length !== 11 || !!cpf.match(/(\d)\1{10}/)) return false;
@@ -167,6 +173,7 @@
         }
 
         const redimensionarEConverter = (file) => new Promise((resolve) => {
+            if (!file) { resolve(null); return; }
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (e) => {
@@ -188,18 +195,29 @@
             e.preventDefault();
             
             const cpfVal = document.getElementById('cpf').value;
+            const numSocioVal = document.getElementById('campoNumSocio').value;
+            const arquivoSocio = document.getElementById('fotoSocio').files[0];
+
             if(!validaCPF(cpfVal)){
-                alert("O CPF digitado é inválido. Por favor, verifique.");
+                alert("O CPF digitado é inválido.");
+                return;
+            }
+
+            // Validação de obrigatoriedade da carteirinha se for sócio
+            if(numSocioVal.toLowerCase() !== 'n/a' && !arquivoSocio){
+                alert("Por favor, anexe a foto da carteirinha ou recibo dos Gaviões.");
                 return;
             }
 
             const btn = document.getElementById('btnEnviar');
             btn.disabled = true; btn.innerText = "PROCESSANDO...";
 
-            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwEzDmY30Pzv7p_az6HV08NUWyCLB-uR42JekbZ2WP4kU86gxqEa_1yUkLTzW6yDttSw/exec";
+            const SCRIPT_URL = "SUA_URL_DO_SCRIPT_AQUI";
 
             try {
                 const fotoBase64 = await redimensionarEConverter(document.getElementById('foto').files[0]);
+                const fotoSocioBase64 = await redimensionarEConverter(arquivoSocio);
+
                 const payload = {
                     nome: document.getElementById('nome').value,
                     cpf: cpfVal,
@@ -209,11 +227,11 @@
                     email: document.getElementById('email').value,
                     redeSocial: document.getElementById('redeSocial').value || "Não informado",
                     instrumento: document.getElementById('instrumento').value,
-                    isSocio: document.getElementById('isSocio').value,
-                    numSocio: document.getElementById('campoNumSocio').value || "N/A",
+                    numSocio: numSocioVal,
                     nomeResp: document.getElementById('nomeResp').value || "N/A",
                     telResp: document.getElementById('telResp').value || "N/A",
-                    fotoBase64: fotoBase64
+                    fotoBase64: fotoBase64,
+                    fotoSocioBase64: fotoSocioBase64
                 };
 
                 const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
