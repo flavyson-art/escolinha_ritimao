@@ -103,15 +103,15 @@
                     </select>
                 </div>
 
-                <!-- CAMPO SÓCIO ATUALIZADO -->
+                <!-- BLOCO SÓCIO OBRIGATÓRIO -->
                 <div class="bloco-socio">
                     <div class="campo">
-                        <label>Número de Sócio Gaviões da Fiel</label>
-                        <input type="text" id="campoNumSocio" placeholder="Digite o nº ou 'N/A' se não for sócio" required>
+                        <label>Número de Sócio Gaviões da Fiel (Somente números)</label>
+                        <input type="text" id="campoNumSocio" class="mask-numero" placeholder="Ex: 12345" required>
                     </div>
                     <div id="areaAnexo" class="campo">
                         <label>Foto da Carteirinha ou Recibo (Obrigatório)</label>
-                        <input type="file" id="fotoSocio" accept="image/*">
+                        <input type="file" id="fotoSocio" accept="image/*" required>
                     </div>
                 </div>
 
@@ -145,6 +145,8 @@
         window.onload = () => {
             $('.mask-cpf').mask('000.000.000-00');
             $('.mask-tel').mask('(00) 00000-0000');
+            // Máscara para aceitar apenas números (até 10 dígitos)
+            $('.mask-numero').mask('0000000000');
         };
 
         function abrirCadastro() {
@@ -195,16 +197,23 @@
             e.preventDefault();
             
             const cpfVal = document.getElementById('cpf').value;
-            const numSocioVal = document.getElementById('campoNumSocio').value;
+            const numSocioVal = document.getElementById('campoNumSocio').value.trim();
             const arquivoSocio = document.getElementById('fotoSocio').files[0];
 
+            // Validação de CPF
             if(!validaCPF(cpfVal)){
                 alert("O CPF digitado é inválido.");
                 return;
             }
 
-            // Validação de obrigatoriedade da carteirinha se for sócio
-            if(numSocioVal.toLowerCase() !== 'n/a' && !arquivoSocio){
+            // Validação rigorosa do número de sócio (Apenas números e não vazio)
+            const apenasNumeros = /^\d+$/;
+            if(!apenasNumeros.test(numSocioVal)){
+                alert("O campo 'Número de Sócio' deve conter apenas números. Texto ou 'N/A' não são permitidos.");
+                return;
+            }
+
+            if(!arquivoSocio){
                 alert("Por favor, anexe a foto da carteirinha ou recibo dos Gaviões.");
                 return;
             }
