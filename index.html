@@ -129,7 +129,7 @@
     </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec"; // Lembre de colar sua URL aqui!
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbwO2TjelyNlhhtNPs_EhqNfHo-KViavc3oKcGXx672GumDpSZmWzpjCm8x8ccatu_p3EA/exec"; 
     let inscricoesAbertas = true;
 
     $(document).ready(function(){
@@ -157,7 +157,11 @@
     });
 
     function verificarStatusGeral() {
-        $.getJSON(URL_SCRIPT, function(data) {
+    $.ajax({
+        url: URL_SCRIPT,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
             let totalVagas = 0;
             for (let inst in data) { totalVagas += data[inst]; }
             if (totalVagas <= 0) {
@@ -165,8 +169,12 @@
                 $('#tela-inicial').addClass('encerrado').removeAttr('onclick');
                 $('#status-inscricao').text('INSCRIÇÕES ENCERRADAS');
             }
-        });
-    }
+        },
+        error: function(err) {
+            console.error("Erro ao verificar status:", err);
+        }
+    });
+}
 
     function abrirCadastro() {
         if (!inscricoesAbertas) return;
@@ -178,7 +186,11 @@
     }
 
     function atualizarVagas() {
-        $.getJSON(URL_SCRIPT, function(data) {
+    $.ajax({
+        url: URL_SCRIPT,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
             let html = "";
             let totalRestante = 0;
             const sexoAtual = $('#sexo').val();
@@ -195,18 +207,19 @@
                 const option = $(`#instrumento option[value="${inst}"]`);
                 if (valor <= 0) {
                     option.prop('disabled', true).text(inst + " (LOTADO)");
-                } 
-                else if (sexoAtual === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) {
+                } else if (sexoAtual === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) {
                     option.prop('disabled', true).text(inst + " (Feminino)");
-                }
-                else {
+                } else {
                     option.prop('disabled', false).text(inst);
                 }
             }
             $('#listaVagas').html(html);
-            if (totalRestante <= 0) { location.reload(); }
-        });
-    }
+        },
+        error: function(err) {
+            $('#listaVagas').html('<div style="grid-column: span 2; text-align: center; color: red;">Erro ao carregar vagas.</div>');
+        }
+    });
+}
 
     function validarMenor(idade) {
         if (idade > 0 && idade < 18) { $('#dadosResponsavel').removeClass('hidden'); $('#nomeResp, #telResp').prop('required', true); }
