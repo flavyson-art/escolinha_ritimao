@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Ritimão</title>
+    <title>Cadastro Ritimão 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; --sucesso: #28a745; }
         body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
         #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; cursor: pointer; }
-        .logo-ritimao { width: 280px; border-radius: 50%; border: 8px solid var(--branco); margin: 20px; }
+        .logo-ritimao { width: 250px; border-radius: 50%; border: 6px solid var(--branco); margin: 20px; }
         #tela-cadastro, #tela-pix, #tela-final { display: none; padding: 20px; min-height: 100vh; }
         .container { max-width: 450px; margin: 0 auto; background: #111; padding: 25px; border-radius: 15px; border: 1px solid #333; }
+        
+        .quadro-vagas { background: #000; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem; }
+        .vaga-item { display: flex; justify-content: space-between; padding: 2px 5px; border-bottom: 1px solid #111; }
+        .vaga-zero { color: var(--erro); font-weight: bold; }
+
         .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
         label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); }
         input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
         .input-erro { border-color: var(--erro) !important; }
         button { width: 100%; padding: 15px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
         .hidden { display: none; }
-        .qr-code { background: #fff; padding: 10px; width: 200px; height: 200px; margin: 20px auto; }
-        .msg-valida { color: var(--erro); font-size: 11px; margin-top: 4px; }
+        .qr-code { background: #fff; padding: 10px; width: 180px; height: 180px; margin: 15px auto; border-radius: 10px; }
+        .chave-pix { font-family: monospace; font-size: 0.8rem; word-break: break-all; background: #222; padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px dashed #555; }
     </style>
 </head>
 <body>
@@ -28,12 +33,17 @@
     <div id="tela-inicial" onclick="abrirCadastro()">
         <h1 style="font-size: 3rem; margin: 0;">RITIMÃO</h1>
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-ritimao">
-        <p>Toque para iniciar</p>
+        <p>Toque para iniciar inscrição</p>
     </div>
 
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center">INSCRIÇÃO 2026</h2>
+            
+            <div id="vagasDisplay" class="quadro-vagas">
+                <div style="grid-column: span 2; text-align: center;">Carregando vagas...</div>
+            </div>
+
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
@@ -54,7 +64,9 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Instrumento</label><select id="instrumento" required><option value="">Carregando...</option></select></div>
+                <div class="campo"><label>Rede Social (Instagram)</label><input type="text" id="redeSocial" placeholder="@seuusuario" required></div>
+                
+                <div class="campo"><label>Instrumento</label><select id="instrumento" required><option value="">Selecione o sexo...</option></select></div>
                 <div class="campo"><label>Nº Sócio (Gaviões)</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
                 <div class="campo"><label>Foto Carteirinha/Recibo</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Sua Foto de Perfil</label><input type="file" id="foto" accept="image/*" required></div>
@@ -67,133 +79,120 @@
     <div id="tela-pix">
         <div class="container" style="text-align: center;">
             <h2 style="color:var(--destaque)">PAGAMENTO</h2>
-            <p>Para confirmar sua vaga, realize o pagamento da taxa de inscrição:</p>
+            <p style="font-size: 0.8rem;">Escaneie o código ou copie a chave abaixo:</p>
             <div class="qr-code">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=CHAVE_PIX_AQUI" width="200">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=aa16b3ae-567b-4a15-87f5-98abe8650a93" width="180">
             </div>
-            <p style="font-size: 0.8rem; word-break: break-all; background: #222; padding: 10px;">Chave PIX: <strong>suachave@pix.com</strong></p>
-            <button onclick="confirmarPagamento()" style="background:var(--sucesso); color:#fff">JÁ REALIZEI O PAGAMENTO</button>
+            <div class="chave-pix">aa16b3ae-567b-4a15-87f5-98abe8650a93</div>
+
+            <div class="campo" style="margin-top: 20px; text-align: left;">
+                <label>Anexar Comprovante do PIX</label>
+                <input type="file" id="fotoComprovante" accept="image/*" required>
+            </div>
+
+            <button id="btnConfirmarPix" onclick="enviarTudo()" style="background:var(--sucesso); color:#fff">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
     <div id="tela-final">
         <div class="container" style="text-align:center">
             <h1 style="font-size: 4rem;">🥁</h1>
-            <h2>TUDO PRONTO!</h2>
-            <p>Sua inscrição foi enviada. A diretoria analisará o comprovante e entrará em contato.</p>
+            <h2>SUCESSO!</h2>
+            <p>Inscrição e comprovante recebidos. Aguarde nosso contato.</p>
             <button onclick="location.reload()">SAIR</button>
         </div>
     </div>
 
 <script>
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
+    let dadosTemp = {};
 
     $(document).ready(function(){
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
 
-        // VALIDAÇÃO CPF E DUPLICIDADE
         $('#cpf').on('blur', function() {
             const cpf = $(this).val();
-            if(!validarCPF(cpf)) { alert("CPF Inválido!"); $(this).addClass('input-erro'); return; }
+            if(!validarCPF(cpf)) { alert("CPF Inválido!"); $(this).addClass('input-erro').val(""); return; }
             $.get(URL_SCRIPT + "?verificarCPF=" + cpf, (res) => {
-                if(res.existe) { alert("Este CPF já possui cadastro!"); $('#cpf').addClass('input-erro'); }
-                else { $('#cpf').removeClass('input-erro'); }
+                if(res.existe) { alert("CPF já cadastrado!"); $(this).addClass('input-erro').val(""); }
+                else { $(this).removeClass('input-erro'); }
             });
         });
 
-        // VALIDAÇÃO IDADE (>12) E RESPONSÁVEL (<18)
         $('#dataNasc').on('change', function() {
-            const nascimento = new Date($(this).val());
-            const hoje = new Date();
-            let idade = hoje.getFullYear() - nascimento.getFullYear();
-            if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < new Date(hoje.getFullYear(), nascimento.getMonth(), nascimento.getDate())) idade--;
-
-            if(idade < 12) { alert("Idade mínima de 12 anos."); $(this).val(""); return; }
+            const idade = calcularIdade($(this).val());
+            if(idade < 12) { alert("Mínimo 12 anos."); $(this).val(""); return; }
             if(idade < 18) { $('#dadosResponsavel').removeClass('hidden'); $('#nomeResp, #telResp').prop('required', true); }
             else { $('#dadosResponsavel').addClass('hidden'); $('#nomeResp, #telResp').prop('required', false); }
-            $('#nome').data('idade', idade);
         });
 
-        // BLOQUEIO POR SEXO
-        $('#sexo').on('change', function() {
-            atualizarListaVagas($(this).val());
-        });
-
-        // VALIDAÇÃO EMAIL
-        $('#email').on('blur', function() {
-            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if(!regex.test($(this).val())) { alert("E-mail inválido!"); $(this).addClass('input-erro'); }
-            else { $(this).removeClass('input-erro'); }
-        });
+        $('#sexo').on('change', function() { atualizarVagas($(this).val()); });
     });
 
-    function abrirCadastro() {
-        $('#tela-inicial').fadeOut(300, () => { $('#tela-cadastro').fadeIn(); atualizarListaVagas(); });
-    }
+    function abrirCadastro() { $('#tela-inicial').fadeOut(300, () => { $('#tela-cadastro').fadeIn(); atualizarVagas(); }); }
 
-    async function atualizarListaVagas(sexo = "") {
+    async function atualizarVagas(sexo = "") {
         const res = await $.get(URL_SCRIPT);
-        let html = '<option value="">Selecione...</option>';
+        let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
         for (let inst in res) {
-            let disabled = res[inst] <= 0 ? "disabled" : "";
-            let label = res[inst] <= 0 ? inst + " (LOTADO)" : inst;
-            
-            // Lógica de Bloqueio Masculino
+            hVagas += `<div class="vaga-item"><span>${inst}:</span><span class="${res[inst]<=0?'vaga-zero':''}">${res[inst]<=0?'LOTADO':res[inst]}</span></div>`;
             if (sexo === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) continue;
-            
-            html += `<option value="${inst}" ${disabled}>${label}</option>`;
+            hSelect += `<option value="${inst}" ${res[inst]<=0?'disabled':''}>${inst} ${res[inst]<=0?'(LOTADO)':''}</option>`;
         }
-        $('#instrumento').html(html);
+        $('#vagasDisplay').html(hVagas); $('#instrumento').html(hSelect);
     }
 
     $('#formMatricula').on('submit', async function(e) {
         e.preventDefault();
-        if($('.input-erro').length > 0) return alert("Corrija os erros antes de enviar.");
-        
         const btn = $('#btnEnviar');
-        btn.prop('disabled', true).text('VERIFICANDO VAGAS...');
+        btn.prop('disabled', true).text('VALIDANDO VAGAS...');
 
-        const payload = {
-            nome: $('#nome').val(),
-            cpf: $('#cpf').val(),
-            idade: $('#nome').data('idade'),
-            sexo: $('#sexo').val(),
-            telefone: $('#tel').val(),
-            email: $('#email').val(),
-            instrumento: $('#instrumento').val(),
-            numSocio: $('#campoNumSocio').val(),
-            nomeResp: $('#nomeResp').val() || "N/A",
+        dadosTemp = {
+            nome: $('#nome').val(), cpf: $('#cpf').val(), idade: calcularIdade($('#dataNasc').val()),
+            sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
+            redeSocial: $('#redeSocial').val(), instrumento: $('#instrumento').val(),
+            numSocio: $('#campoNumSocio').val(), nomeResp: $('#nomeResp').val() || "N/A",
             telResp: $('#telResp').val() || "N/A",
             fotoBase64: await converterImagem($('#foto')[0].files[0]),
             fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0])
         };
 
-        $.post(URL_SCRIPT, JSON.stringify(payload), function(res) {
-            if(res.status === "sucesso") {
-                $('#tela-cadastro').fadeOut(300, () => $('#tela-pix').fadeIn());
-            } else {
-                alert("Erro: " + res.msg);
-                btn.prop('disabled', false).text('FINALIZAR INSCRIÇÃO');
-            }
-        });
+        const check = await $.get(URL_SCRIPT);
+        if (check[dadosTemp.instrumento] <= 0) { alert("Vaga esgotada!"); location.reload(); return; }
+        $('#tela-cadastro').fadeOut(300, () => $('#tela-pix').fadeIn());
     });
 
-    function confirmarPagamento() {
-        $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex'));
+    async function enviarTudo() {
+        const file = $('#fotoComprovante')[0].files[0];
+        if(!file) return alert("Anexe o comprovante!");
+        $('#btnConfirmarPix').prop('disabled', true).text('ENVIANDO...');
+        dadosTemp.fotoComprovante = await converterImagem(file);
+
+        $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
+            if(res.status === "sucesso") $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex'));
+            else { alert("Erro: " + res.msg); $('#btnConfirmarPix').prop('disabled', false).text('ENVIAR COMPROVANTE'); }
+        });
+    }
+
+    function calcularIdade(d) {
+        const nasc = new Date(d); const hoje = new Date();
+        let i = hoje.getFullYear() - nasc.getFullYear();
+        if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) i--;
+        return i;
     }
 
     function validarCPF(cpf) {
         cpf = cpf.replace(/\D/g, '');
         if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-        let soma = 0, resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
-        resto = (soma * 10) % 11; if (resto > 9) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0; for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
-        resto = (soma * 10) % 11; if (resto > 9) resto = 0;
-        return resto === parseInt(cpf.substring(10, 11));
+        let s = 0, r;
+        for (let i = 1; i <= 9; i++) s += parseInt(cpf.substring(i-1, i)) * (11 - i);
+        r = (s * 10) % 11; if (r > 9) r = 0;
+        if (r !== parseInt(cpf.substring(9, 10))) return false;
+        s = 0; for (let i = 1; i <= 10; i++) s += parseInt(cpf.substring(i-1, i)) * (12 - i);
+        r = (s * 10) % 11; if (r > 9) r = 0;
+        return r === parseInt(cpf.substring(10, 11));
     }
 
     function converterImagem(file) {
