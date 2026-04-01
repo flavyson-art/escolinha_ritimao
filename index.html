@@ -10,13 +10,18 @@
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
         body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
         
-        #tela-cadastro { 
+        /* TELAS COM FUNDO */
+        #tela-cadastro, #tela-pix { 
             display: none; padding: 20px; min-height: 100vh; position: relative;
-            background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg");
             background-size: cover; background-position: center; background-attachment: fixed;
         }
 
-        #tela-cadastro::before {
+        /* Fundos específicos */
+        #tela-cadastro { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg"); }
+        #tela-pix { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_Pix.jpg"); }
+
+        /* Overlay para efeito de marca d'água/legibilidade */
+        #tela-cadastro::before, #tela-pix::before {
             content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75); z-index: 1;
         }
@@ -28,7 +33,7 @@
         
         #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; cursor: pointer; }
         .logo-ritimao { width: 220px; border-radius: 50%; border: 5px solid var(--branco); margin: 20px; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
-        #tela-pix, #tela-final { display: none; padding: 20px; min-height: 100vh; }
+        #tela-final { display: none; padding: 20px; min-height: 100vh; }
         
         .quadro-vagas { background: #000; padding: 12px; border-radius: 8px; border: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem; }
         .vaga-item { display: flex; justify-content: space-between; padding: 2px 5px; border-bottom: 1px solid #111; }
@@ -116,10 +121,12 @@
             <div class="valor-pix">R$ 50,00</div>
             <div class="qr-code"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=aa16b3ae-567b-4a15-87f5-98abe8650a93" width="180"></div>
             <div class="chave-pix">aa16b3ae-567b-4a15-87f5-98abe8650a93</div>
+            
             <div class="campo" style="margin-top: 20px; text-align: left;">
                 <label>Anexar Comprovante PIX</label>
                 <input type="file" id="fotoComprovante" accept="image/*" required>
             </div>
+            
             <button id="btnConfirmarPix" onclick="confirmarPagamento()">ENVIAR COMPROVANTE</button>
         </div>
     </div>
@@ -144,11 +151,11 @@
         "Repique": ["Iniciante", "Intermediário"],
         "Caixa": ["Iniciante", "Intermediário"],
         "Surdo 3": ["Iniciante", "Intermediário"],
-        "Tamborim": ["Iniciante", "Intermediário", "Curso de aprimoramento (para quem já toca)"],
-        "Cuica": ["Iniciante", "Intermediário", "Curso de aprimoramento (para quem já toca)"],
-        "Timbal": ["Iniciante", "Intermediário", "Curso de aprimoramento (para quem já toca)"],
-        "Surdo 1": ["Curso de aprimoramento (para quem já toca)"],
-        "Surdo 2": ["Curso de aprimoramento (para quem já toca)"]
+        "Tamborim": ["Iniciante", "Intermediário", "Curso de aprimoramento"],
+        "Cuica": ["Iniciante", "Intermediário", "Curso de aprimoramento"],
+        "Timbal": ["Iniciante", "Intermediário", "Curso de aprimoramento"],
+        "Surdo 1": ["Curso de aprimoramento"],
+        "Surdo 2": ["Curso de aprimoramento"]
     };
 
     $(document).ready(function(){
@@ -157,10 +164,9 @@
         $('.mask-numero').mask('00000000');
         $('.mask-data').mask('00/00/0000');
 
-        // VALIDAÇÃO DE IDADE EM TEMPO REAL (CORRIGIDA)
+        // TRAVA DE IDADE REFORÇADA
         $('#dataNasc').on('input change blur', function() {
             const dataStr = $(this).val();
-            
             if(dataStr.length === 10) {
                 const idade = calcularIdade(dataStr);
                 const blocoResp = $('#dadosResponsavel');
@@ -196,107 +202,4 @@
             if (inst && NIVEIS[inst]) {
                 let options = '<option value="">Selecione o nível...</option>';
                 NIVEIS[inst].forEach(n => options += `<option value="${n}">${n}</option>`);
-                selectNivel.html(options).prop('required', true);
-                campoNivel.removeClass('hidden');
-            } else {
-                campoNivel.addClass('hidden');
-            }
-        });
-    });
-
-    function calcularIdade(s) {
-        const partes = s.split('/');
-        if (partes.length !== 3) return -1;
-        const dia = parseInt(partes[0]), mes = parseInt(partes[1]), ano = parseInt(partes[2]);
-        const nascimento = new Date(ano, mes - 1, dia);
-        const hoje = new Date();
-        let idade = hoje.getFullYear() - nascimento.getFullYear();
-        const m = hoje.getMonth() - nascimento.getMonth();
-        if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
-        return idade;
-    }
-
-    async function atualizarVagas(sexo = "") {
-        try {
-            const res = await $.get(URL_SCRIPT);
-            let hVagas = ""; 
-            let hSelect = '<option value="">Selecione...</option>';
-            const restritosMasc = ["Chocalho", "Xequere"];
-
-            for (let inst in res) {
-                let lotado = res[inst] <= 0;
-                let nomeExibicao = inst === "Surdo 3" ? "Terceira" : inst;
-                let ehRestrito = (sexo === "Masculino" && restritosMasc.includes(inst));
-                hVagas += `<div class="vaga-item"><span>${nomeExibicao}:</span><span class="${lotado?'vaga-zero':''}">${lotado?'LOTADO':res[inst]}</span></div>`;
-                if (!ehRestrito) {
-                    hSelect += `<option value="${inst}" ${lotado?'disabled':''}>${nomeExibicao} ${lotado?'(LOTADO)':''}</option>`;
-                }
-            }
-            $('#vagasDisplay').html(hVagas); 
-            $('#instrumento').html(hSelect);
-        } catch (e) {
-            $('#vagasDisplay').html("<span style='color:red'>Erro ao carregar vagas.</span>");
-        }
-    }
-
-    function abrirCadastro() { $('#tela-inicial').fadeOut(300, () => { $('#tela-cadastro').fadeIn(); atualizarVagas(); }); }
-
-    $('#formMatricula').on('submit', async function(e) {
-        e.preventDefault();
-        const btn = $('#btnEnviar');
-        const idade = calcularIdade($('#dataNasc').val());
-
-        if (idade < 12) { alert("Idade mínima de 12 anos."); return; }
-
-        btn.prop('disabled', true).text('PROCESSANDO...');
-        
-        dadosTemp = {
-            nome: $('#nome').val(), cpf: $('#cpf').val(), idade: idade,
-            sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
-            redeSocial: $('#redeSocial').val(), instrumento: $('#instrumento').val(),
-            nivel: $('#nivel').val(), numSocio: $('#campoNumSocio').val(),
-            nomeResp: $('#nomeResp').val() || "N/A", telResp: $('#telResp').val() || "N/A",
-            fotoBase64: await converterImagem($('#foto')[0].files[0]),
-            fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0]),
-            acao: "RESERVAR"
-        };
-
-        $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
-            if(res.status === "sucesso") { 
-                $('#tela-cadastro').fadeOut(300, () => { $('#tela-pix').fadeIn(); startTimer(300, document.querySelector('#timer')); });
-            } else { alert(res.msg); btn.prop('disabled', false).text('RESERVAR VAGA'); }
-        });
-    });
-
-    async function confirmarPagamento() {
-        const fileComp = $('#fotoComprovante')[0].files[0];
-        if(!fileComp) return alert("Por favor, anexe o comprovante!");
-        const btn = $('#btnConfirmarPix');
-        btn.prop('disabled', true).text('ENVIANDO...');
-        const b64Comp = await converterImagem(fileComp);
-        const pFinal = { cpf: dadosTemp.cpf, instrumento: dadosTemp.instrumento, fotoComprovante: b64Comp, acao: "CONFIRMAR_PAGAMENTO" };
-        $.post(URL_SCRIPT, JSON.stringify(pFinal), function(res) {
-            if(res.status === "sucesso") { clearInterval(intervaloTimer); $('#tela-pix').fadeOut(300, () => $('#tela-final').fadeIn()); }
-            else { alert(res.msg); location.reload(); }
-        });
-    }
-
-    function startTimer(duration, display) {
-        let timer = duration, min, sec;
-        intervaloTimer = setInterval(() => {
-            min = parseInt(timer / 60, 10); sec = parseInt(timer % 60, 10);
-            display.textContent = (min < 10 ? "0"+min : min) + ":" + (sec < 10 ? "0"+sec : sec);
-            if (--timer < 0) { clearInterval(intervaloTimer); alert("Tempo expirado!"); location.reload(); }
-        }, 1000);
-    }
-
-    function converterImagem(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (e) => resolve(e.target.result);
-            reader.readAsDataURL(file);
-        });
-    }
-</script>
-</body>
-</html>
+                selectNivel.html(options).prop('
