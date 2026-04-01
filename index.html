@@ -42,8 +42,6 @@
         
         #tela-final { display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100vh; background: #000; padding: 20px; }
         .hidden { display: none !important; }
-        
-        /* Estilo para input de data no dark mode */
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
     </style>
 </head>
@@ -66,7 +64,7 @@
                     <div style="grid-column: span 2; text-align: center; font-size: 0.7rem; color: #666;">Consultando disponibilidade...</div>
                 </div>
                 <div class="obs-tamborim">
-                    ⚠️ <strong>ATENÇÃO:</strong> Para as aulas de <strong>Tamborim</strong>, é obrigatório que o aluno possua e traga seu próprio instrumento.
+                    ⚠️ <strong>ATENÇÃO:</strong> Para <strong>Tamborim</strong>, traga seu próprio instrumento.
                 </div>
             </div>
 
@@ -77,7 +75,8 @@
                 <div class="campo">
                     <label>Data de Nascimento</label>
                     <input type="date" id="dataNascimento" required onchange="verificarIdade(this.value)">
-                    <input type="hidden" id="idade"> </div>
+                    <input type="hidden" id="idade">
+                </div>
 
                 <div id="dadosResponsavel" class="hidden">
                     <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid #fff;">
@@ -96,8 +95,7 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Instagram / Rede Social</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
-
+                
                 <div class="campo"><label>Instrumento</label>
                     <select id="instrumento" required>
                         <option value="">Selecione...</option>
@@ -115,23 +113,28 @@
                 </div>
 
                 <div class="campo"><label>Nº Sócio</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
-                <div class="campo"><label>Foto Carteirinha ou Recibo(Sócio)</label><input type="file" id="fotoSocio" accept="image/*" required></div>
+                <div class="campo"><label>Foto Carteirinha (Sócio)</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Sua Foto de Perfil</label><input type="file" id="foto" accept="image/*" required></div>
+
+                <div class="campo" style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 10px; border: 1px dashed var(--destaque);">
+                    <label style="color: var(--destaque);">Taxa de Inscrição via PIX</label>
+                    <p style="font-size: 0.8rem; margin: 5px 0; color: #fff;">Chave: <strong>aa16b3ae-567b-4a15-87f5-98abe8650a93</strong></p>
+                    <label>Anexar Comprovante</label>
+                    <input type="file" id="fotoComprovante" accept="image/*" required>
+                </div>
                 
                 <button type="submit" id="btnEnviar">FINALIZAR INSCRIÇÃO</button>
             </form>
         </div>
     </div>
 
-	<div id="tela-final">
+    <div id="tela-final">
         <div style="font-size: 5rem; margin-bottom: 20px;">🥁</div>
         <h2 style="text-transform: uppercase; font-weight: 900; letter-spacing: 2px;">Cadastro Recebido!</h2>
-        
         <p style="color: #aaa; line-height: 1.6; max-width: 500px; margin-bottom: 30px; padding: 0 20px;">
             Sua Inscrição foi enviada com sucesso e agora será analisada pela nossa <strong>diretoria</strong>.<br><br>
             Fique atento! Entraremos em contato em breve via <strong>WhatsApp</strong> ou <strong>E-mail</strong> para confirmar sua vaga.
         </p>
-        
         <button onclick="location.reload()" style="max-width: 250px;">VOLTAR AO INÍCIO</button>
     </div>
 
@@ -144,48 +147,25 @@
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
         verificarStatusGeral();
-
-        $('#sexo').on('change', function() {
-            const sexo = $(this).val();
-            const instSelect = $('#instrumento');
-            if (sexo === "Masculino") {
-                instSelect.find('option[value="Chocalho"], option[value="Xequere"]').prop('disabled', true);
-                if (instSelect.val() === "Chocalho" || instSelect.val() === "Xequere") {
-                    instSelect.val("");
-                    alert("Chocalho e Xequerê são exclusivos para o sexo feminino.");
-                }
-            } else {
-                instSelect.find('option[value="Chocalho"], option[value="Xequere"]').prop('disabled', false);
-            }
-        });
     });
 
-    // --- NOVA FUNÇÃO DE VALIDAÇÃO DE IDADE ---
     function verificarIdade(dataNasc) {
         if (!dataNasc) return;
-
         const hoje = new Date();
         const nascimento = new Date(dataNasc);
         let idade = hoje.getFullYear() - nascimento.getFullYear();
         const m = hoje.getMonth() - nascimento.getMonth();
-        
         if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) { idade--; }
 
-        // Salva a idade calculada no campo hidden para o payload
         $('#idade').val(idade);
-
-        const btnEnviar = document.getElementById('btnEnviar');
+        const btn = document.getElementById('btnEnviar');
 
         if (idade < 12) {
-            alert("Atenção: As inscrições são permitidas apenas para maiores de 12 anos.");
-            btnEnviar.disabled = true;
-            btnEnviar.style.opacity = "0.5";
+            alert("Atenção: Inscrições permitidas apenas para maiores de 12 anos.");
+            btn.disabled = true; btn.style.opacity = "0.5";
             $('#dadosResponsavel').addClass('hidden');
         } else {
-            btnEnviar.disabled = false;
-            btnEnviar.style.opacity = "1";
-            
-            // Regra para responsáveis (12 a 17 anos)
+            btn.disabled = false; btn.style.opacity = "1";
             if (idade < 18) {
                 $('#dadosResponsavel').removeClass('hidden');
                 $('#nomeResp, #telResp').prop('required', true);
@@ -197,67 +177,34 @@
     }
 
     function verificarStatusGeral() {
-        $.ajax({
-            url: URL_SCRIPT,
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                let totalVagas = 0;
-                for (let inst in data) { totalVagas += data[inst]; }
-                if (totalVagas <= 0) {
-                    inscricoesAbertas = false;
-                    $('#tela-inicial').addClass('encerrado').removeAttr('onclick');
-                    $('#status-inscricao').text('INSCRIÇÕES ENCERRADAS');
-                }
+        $.ajax({ url: URL_SCRIPT, method: 'GET', dataType: 'json', success: function(data) {
+            let total = 0; for (let i in data) total += data[i];
+            if (total <= 0) {
+                inscricoesAbertas = false;
+                $('#tela-inicial').addClass('encerrado').removeAttr('onclick');
+                $('#status-inscricao').text('INSCRIÇÕES ENCERRADAS');
             }
-        });
+        }});
     }
 
     function abrirCadastro() {
         if (!inscricoesAbertas) return;
-        $('#tela-inicial').fadeOut(300, function() {
-            $('#tela-cadastro').fadeIn(400);
-            atualizarVagas();
-            window.scrollTo(0,0);
-        });
+        $('#tela-inicial').fadeOut(300, function() { $('#tela-cadastro').fadeIn(400); atualizarVagas(); window.scrollTo(0,0); });
     }
 
     function atualizarVagas() {
-        $.ajax({
-            url: URL_SCRIPT,
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                let html = "";
-                const sexoAtual = $('#sexo').val();
-                for (let inst in data) {
-                    let valor = data[inst];
-                    let classe = valor <= 0 ? "esgotado" : "vaga-numero";
-                    let texto = valor <= 0 ? "LOTADO" : valor;
-                    let extra = (inst === "Chocalho" || inst === "Xequere") ? " <small>(Fem)</small>" : "";
-                    html += `<div class="vaga-item"><span>${inst}${extra}:</span><span class="${classe}">${texto}</span></div>`;
-                    
-                    const option = $(`#instrumento option[value="${inst}"]`);
-                    if (valor <= 0) option.prop('disabled', true).text(inst + " (LOTADO)");
-                    else if (sexoAtual === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) option.prop('disabled', true).text(inst + " (Feminino)");
-                    else option.prop('disabled', false).text(inst);
-                }
-                $('#listaVagas').html(html);
+        $.ajax({ url: URL_SCRIPT, method: 'GET', dataType: 'json', success: function(data) {
+            let html = ""; const sexo = $('#sexo').val();
+            for (let inst in data) {
+                let valor = data[inst];
+                let classe = valor <= 0 ? "esgotado" : "vaga-numero";
+                html += `<div class="vaga-item"><span>${inst}:</span><span class="${classe}">${valor <= 0 ? 'LOTADO' : valor}</span></div>`;
+                const opt = $(`#instrumento option[value="${inst}"]`);
+                if (valor <= 0) opt.prop('disabled', true).text(inst + " (LOTADO)");
+                else opt.prop('disabled', false).text(inst);
             }
-        });
-    }
-
-    function testaCPF(cpf) {
-        cpf = cpf.replace(/\D/g, '');
-        if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
-        let soma = 0, resto;
-        for (let i = 1; i <= 9; i++) soma += parseInt(cpf.substring(i-1, i)) * (11 - i);
-        resto = (soma * 10) % 11; if ((resto === 10) || (resto === 11)) resto = 0;
-        if (resto !== parseInt(cpf.substring(9, 10))) return false;
-        soma = 0; for (let i = 1; i <= 10; i++) soma += parseInt(cpf.substring(i-1, i)) * (12 - i);
-        resto = (soma * 10) % 11; if ((resto === 10) || (resto === 11)) resto = 0;
-        if (resto !== parseInt(cpf.substring(10, 11))) return false;
-        return true;
+            $('#listaVagas').html(html);
+        }});
     }
 
     const converterEComprimir = (file) => new Promise((resolve) => {
@@ -265,15 +212,12 @@
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (e) => {
-            const img = new Image();
-            img.src = e.target.result;
+            const img = new Image(); img.src = e.target.result;
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
-                const MAX = 800;
-                let w = img.width, h = img.height;
-                if (w > h) { if (w > MAX) { h *= MAX / w; w = MAX; } }
-                else { if (h > MAX) { w *= MAX / h; h = MAX; } }
+                const MAX = 800; let w = img.width, h = img.height;
+                if (w > h) { if (w > MAX) { h *= MAX/w; w = MAX; } } else { if (h > MAX) { w *= MAX/h; h = MAX; } }
                 canvas.width = w; canvas.height = h;
                 ctx.drawImage(img, 0, 0, w, h);
                 resolve(canvas.toDataURL('image/jpeg', 0.7));
@@ -283,61 +227,32 @@
 
     document.getElementById('formMatricula').addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        const idadeAtual = parseInt($('#idade').val());
-        if (idadeAtual < 12) { alert("Idade mínima de 12 anos não atingida."); return; }
-
-        const instSelecionado = $('#instrumento').val();
-        const sexoSelecionado = $('#sexo').val();
-        if ((instSelecionado === "Chocalho" || instSelecionado === "Xequere") && sexoSelecionado !== "Feminino") {
-            alert("Chocalho e Xequerê são exclusivos para o sexo feminino.");
-            return;
-        }
-
-        if (!testaCPF($('#cpf').val())) { alert("CPF INVÁLIDO!"); return; }
-
         const btn = document.getElementById('btnEnviar');
         btn.disabled = true; btn.innerText = "PROCESSANDO...";
 
         try {
             const f1 = await converterEComprimir(document.getElementById('foto').files[0]);
             const f2 = await converterEComprimir(document.getElementById('fotoSocio').files[0]);
+            const f3 = await converterEComprimir(document.getElementById('fotoComprovante').files[0]);
 
             const payload = {
-                nome: $('#nome').val(), 
-                cpf: $('#cpf').val(), 
-                idade: $('#idade').val(), // Envia a idade calculada
-                sexo: sexoSelecionado, 
-                telefone: $('#tel').val(), 
-                email: $('#email').val(),
-                redeSocial: $('#redeSocial').val() || "N/A", 
-                instrumento: instSelecionado,
-                numSocio: $('#campoNumSocio').val(), 
-                nomeResp: $('#nomeResp').val() || "N/A",
-                telResp: $('#telResp').val() || "N/A", 
-                fotoBase64: f1, 
-                fotoSocioBase64: f2
+                nome: $('#nome').val(), cpf: $('#cpf').val(), idade: $('#idade').val(),
+                sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
+                instrumento: $('#instrumento').val(), numSocio: $('#campoNumSocio').val(),
+                nomeResp: $('#nomeResp').val() || "N/A", telResp: $('#telResp').val() || "N/A",
+                fotoBase64: f1, fotoSocioBase64: f2, fotoPixBase64: f3
             };
 
             $.ajax({
-                url: URL_SCRIPT,
-                method: "POST",
-                dataType: "json",
+                url: URL_SCRIPT, method: "POST", dataType: "json",
                 data: JSON.stringify(payload),
-                success: function(response) {
-                    if (response.status === "sucesso") {
-                        $('#tela-cadastro').fadeOut(300, function() { $('#tela-final').css('display', 'flex').hide().fadeIn(400); });
-                    } else {
-                        alert("ATENÇÃO: " + response.msg);
-                        btn.disabled = false; btn.innerText = "FINALIZAR INSCRIÇÃO";
-                    }
+                success: function(r) {
+                    if (r.status === "sucesso") $('#tela-cadastro').fadeOut(300, () => $('#tela-final').css('display', 'flex').hide().fadeIn(400));
+                    else { alert(r.msg); btn.disabled = false; btn.innerText = "FINALIZAR INSCRIÇÃO"; }
                 },
-                error: function() { 
-                    alert("Erro ao enviar. Tente novamente."); 
-                    btn.disabled = false; btn.innerText = "FINALIZAR INSCRIÇÃO"; 
-                }
+                error: () => { alert("Erro de conexão."); btn.disabled = false; }
             });
-        } catch (err) { alert("Erro nas imagens."); btn.disabled = false; }
+        } catch (err) { alert("Erro no processamento."); btn.disabled = false; }
     });
 </script>
 </body>
