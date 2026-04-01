@@ -56,7 +56,8 @@
 
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center; margin-top: 0; color: var(--destaque);">INSCRIÇÃO 2026</h2>
+            <h2 style="text-align:center; margin-top: 0; color: var(--destaque); line-height: 1.2;">INSCRIÇÕES ABIERTAS!<br>PARA SÓCIOS</h2>
+            
             <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
             
             <div class="aviso-tamborim">
@@ -153,7 +154,7 @@
         $('#sexo').on('change', function() { 
             const sexo = $(this).val();
             $('#campoNivel').addClass('hidden');
-            $('#instrumento').val(''); // Reseta instrumento ao mudar sexo
+            $('#instrumento').val('');
             atualizarVagas(sexo); 
         });
 
