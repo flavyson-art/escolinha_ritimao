@@ -18,11 +18,15 @@
         .vaga-item { display: flex; justify-content: space-between; padding: 2px 5px; border-bottom: 1px solid #111; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
 
+        .timer-box { background: var(--erro); color: white; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; display: inline-block; width: 100%; box-sizing: border-box; }
+        .valor-pix { font-size: 1.5rem; color: var(--sucesso); font-weight: 900; margin: 10px 0; }
+
         .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
         label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); font-weight: bold; }
         input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 0.9rem; }
         .input-erro { border-color: var(--erro) !important; }
         button { width: 100%; padding: 16px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
+        button:disabled { background: #444; cursor: not-allowed; }
         .hidden { display: none; }
         .qr-code { background: #fff; padding: 10px; width: 180px; height: 180px; margin: 15px auto; border-radius: 10px; }
         .chave-pix { font-family: monospace; font-size: 0.8rem; word-break: break-all; background: #222; padding: 12px; border-radius: 5px; margin: 10px 0; border: 1px dashed #555; color: var(--destaque); }
@@ -39,10 +43,7 @@
     <div id="tela-cadastro">
         <div class="container">
             <h2 style="text-align:center; margin-top: 0;">INSCRIÇÃO 2026</h2>
-            
-            <div id="vagasDisplay" class="quadro-vagas">
-                <div style="grid-column: span 2; text-align: center;">Consultando vagas...</div>
-            </div>
+            <div id="vagasDisplay" class="quadro-vagas"></div>
 
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
@@ -67,7 +68,6 @@
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
                 <div class="campo"><label>Rede Social</label><input type="text" id="redeSocial" placeholder="@seuuser" required></div>
-                
                 <div class="campo"><label>Instrumento</label><select id="instrumento" required><option value="">Selecione o sexo...</option></select></div>
                 <div class="campo"><label>Nº Sócio (Gaviões)</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
                 <div class="campo"><label>Foto Carteirinha/Recibo</label><input type="file" id="fotoSocio" accept="image/*" required></div>
@@ -80,8 +80,10 @@
 
     <div id="tela-pix">
         <div class="container" style="text-align: center;">
-            <h2 style="color:var(--destaque)">QUASE LÁ!</h2>
-            <p style="font-size: 0.8rem; color: var(--cinza);">Sua vaga está <strong>reservada por 5 minutos</strong>. Realize o pagamento para confirmar:</p>
+            <div class="timer-box">Sua vaga expira em: <span id="timer">05:00</span></div>
+            <h2 style="color:var(--destaque); margin-bottom:0">PAGAMENTO</h2>
+            <div class="valor-pix">R$ 50,00</div>
+            <p style="font-size: 0.8rem;">Escaneie ou copie a chave PIX:</p>
             
             <div class="qr-code">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=aa16b3ae-567b-4a15-87f5-98abe8650a93" width="180">
@@ -90,7 +92,7 @@
             <div class="chave-pix">aa16b3ae-567b-4a15-87f5-98abe8650a93</div>
 
             <div class="campo" style="margin-top: 25px; text-align: left;">
-                <label>Anexar Comprovante PIX (Obrigatório)</label>
+                <label>Anexar Comprovante (Obrigatório)</label>
                 <input type="file" id="fotoComprovante" accept="image/*" required>
             </div>
 
@@ -102,7 +104,7 @@
         <div class="container" style="text-align:center">
             <h1 style="font-size: 4rem;">🥁</h1>
             <h2 style="color:var(--sucesso)">INSCRIÇÃO RECEBIDA!</h2>
-            <p>Sua vaga está garantida. A diretoria entrará em contato via WhatsApp após conferir o comprovante.</p>
+            <p>Sua vaga está garantida. Aguarde o contato da diretoria.</p>
             <button onclick="location.reload()" style="background:#333; color:#fff">FECHAR</button>
         </div>
     </div>
@@ -110,26 +112,24 @@
 <script>
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
     let dadosTemp = {};
+    let intervaloTimer;
 
     $(document).ready(function(){
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
 
-        // Validação CPF e Duplicidade
         $('#cpf').on('blur', function() {
             const cpf = $(this).val();
-            if(!validarCPF(cpf)) { alert("CPF Inválido!"); $(this).addClass('input-erro').val(""); return; }
+            if(!validarCPF(cpf)) { alert("CPF Inválido!"); $(this).val(""); return; }
             $.get(URL_SCRIPT + "?verificarCPF=" + cpf, (res) => {
-                if(res.existe) { alert("Este CPF já possui cadastro!"); $(this).addClass('input-erro').val(""); }
-                else { $(this).removeClass('input-erro'); }
+                if(res.existe) { alert("CPF já cadastrado!"); $(this).val(""); }
             });
         });
 
-        // Validação Idade (>12) e Responsável (<18)
         $('#dataNasc').on('change', function() {
             const idade = calcularIdade($(this).val());
-            if(idade < 12) { alert("Idade mínima: 12 anos."); $(this).val(""); return; }
+            if(idade < 12) { alert("Mínimo: 12 anos."); $(this).val(""); return; }
             if(idade < 18) { $('#dadosResponsavel').removeClass('hidden'); $('#nomeResp, #telResp').prop('required', true); }
             else { $('#dadosResponsavel').addClass('hidden'); $('#nomeResp, #telResp').prop('required', false); }
         });
@@ -151,6 +151,23 @@
         $('#vagasDisplay').html(hVagas); $('#instrumento').html(hSelect);
     }
 
+    function startTimer(duration, display) {
+        let timer = duration, minutes, seconds;
+        intervaloTimer = setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+            display.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(intervaloTimer);
+                alert("Tempo esgotado! Sua reserva expirou.");
+                location.reload();
+            }
+        }, 1000);
+    }
+
     $('#formMatricula').on('submit', async function(e) {
         e.preventDefault();
         const btn = $('#btnEnviar');
@@ -168,28 +185,27 @@
         };
 
         $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
-            if(res.status === "sucesso") { $('#tela-cadastro').fadeOut(300, () => $('#tela-pix').fadeIn()); }
-            else { alert("Erro: " + res.msg); btn.prop('disabled', false).text('FINALIZAR INSCRIÇÃO'); }
+            if(res.status === "sucesso") { 
+                $('#tela-cadastro').fadeOut(300, () => {
+                    $('#tela-pix').fadeIn();
+                    startTimer(300, document.querySelector('#timer')); // 5 minutos
+                });
+            } else { alert("Erro: " + res.msg); btn.prop('disabled', false).text('FINALIZAR INSCRIÇÃO'); }
         });
     });
 
     async function confirmarPagamento() {
         const fileComp = $('#fotoComprovante')[0].files[0];
-        if(!fileComp) return alert("Anexe o comprovante do PIX.");
-
+        if(!fileComp) return alert("Anexe o comprovante!");
         const btn = $('#btnConfirmarPix');
-        btn.prop('disabled', true).text('CONFIRMANDO...');
-
+        btn.prop('disabled', true).text('ENVIANDO...');
         const pFinal = {
-            cpf: dadosTemp.cpf,
-            instrumento: dadosTemp.instrumento,
-            fotoComprovante: await converterImagem(fileComp),
-            acao: "CONFIRMAR_PAGAMENTO"
+            cpf: dadosTemp.cpf, instrumento: dadosTemp.instrumento,
+            fotoComprovante: await converterImagem(fileComp), acao: "CONFIRMAR_PAGAMENTO"
         };
-
         $.post(URL_SCRIPT, JSON.stringify(pFinal), function(res) {
-            if(res.status === "sucesso") { $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex')); }
-            else { alert("Erro: " + res.msg); btn.prop('disabled', false).text('ENVIAR COMPROVANTE'); }
+            if(res.status === "sucesso") { clearInterval(intervaloTimer); $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex')); }
+            else { alert(res.msg); location.reload(); }
         });
     }
 
