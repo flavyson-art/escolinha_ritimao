@@ -3,45 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Ritimão 2026</title>
+    <title>Inscrição Ritimão 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; --sucesso: #28a745; }
         body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
         #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; text-align: center; cursor: pointer; }
-        .logo-ritimao { width: 250px; border-radius: 50%; border: 6px solid var(--branco); margin: 20px; }
+        .logo-ritimao { width: 220px; border-radius: 50%; border: 5px solid var(--branco); margin: 20px; box-shadow: 0 0 20px rgba(255,255,255,0.1); }
         #tela-cadastro, #tela-pix, #tela-final { display: none; padding: 20px; min-height: 100vh; }
         .container { max-width: 450px; margin: 0 auto; background: #111; padding: 25px; border-radius: 15px; border: 1px solid #333; }
         
-        .quadro-vagas { background: #000; padding: 10px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem; }
+        .quadro-vagas { background: #000; padding: 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.7rem; }
         .vaga-item { display: flex; justify-content: space-between; padding: 2px 5px; border-bottom: 1px solid #111; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
 
         .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
-        label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); }
-        input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
+        label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); font-weight: bold; }
+        input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; font-size: 0.9rem; }
         .input-erro { border-color: var(--erro) !important; }
-        button { width: 100%; padding: 15px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        button { width: 100%; padding: 16px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
         .hidden { display: none; }
         .qr-code { background: #fff; padding: 10px; width: 180px; height: 180px; margin: 15px auto; border-radius: 10px; }
-        .chave-pix { font-family: monospace; font-size: 0.8rem; word-break: break-all; background: #222; padding: 10px; border-radius: 5px; margin: 10px 0; border: 1px dashed #555; }
+        .chave-pix { font-family: monospace; font-size: 0.8rem; word-break: break-all; background: #222; padding: 12px; border-radius: 5px; margin: 10px 0; border: 1px dashed #555; color: var(--destaque); }
     </style>
 </head>
 <body>
 
     <div id="tela-inicial" onclick="abrirCadastro()">
-        <h1 style="font-size: 3rem; margin: 0;">RITIMÃO</h1>
+        <h1 style="font-size: 2.5rem; margin: 0;">RITIMÃO</h1>
         <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-ritimao">
-        <p>Toque para iniciar inscrição</p>
+        <p style="letter-spacing: 2px;">TOQUE PARA COMEÇAR</p>
     </div>
 
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center">INSCRIÇÃO 2026</h2>
+            <h2 style="text-align:center; margin-top: 0;">INSCRIÇÃO 2026</h2>
             
             <div id="vagasDisplay" class="quadro-vagas">
-                <div style="grid-column: span 2; text-align: center;">Carregando vagas...</div>
+                <div style="grid-column: span 2; text-align: center;">Consultando vagas...</div>
             </div>
 
             <form id="formMatricula">
@@ -50,8 +50,10 @@
                 <div class="campo"><label>Data de Nascimento</label><input type="date" id="dataNasc" required></div>
                 
                 <div id="dadosResponsavel" class="hidden">
-                    <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label>WhatsApp do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                    <div style="border-left: 3px solid var(--branco); padding-left: 15px; margin-bottom: 15px;">
+                        <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
+                        <div class="campo"><label>WhatsApp do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                    </div>
                 </div>
 
                 <div class="campo"><label>Sexo</label>
@@ -64,7 +66,7 @@
 
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Rede Social (Instagram)</label><input type="text" id="redeSocial" placeholder="@seuusuario" required></div>
+                <div class="campo"><label>Rede Social</label><input type="text" id="redeSocial" placeholder="@seuuser" required></div>
                 
                 <div class="campo"><label>Instrumento</label><select id="instrumento" required><option value="">Selecione o sexo...</option></select></div>
                 <div class="campo"><label>Nº Sócio (Gaviões)</label><input type="text" id="campoNumSocio" class="mask-numero" required></div>
@@ -78,28 +80,30 @@
 
     <div id="tela-pix">
         <div class="container" style="text-align: center;">
-            <h2 style="color:var(--destaque)">PAGAMENTO</h2>
-            <p style="font-size: 0.8rem;">Escaneie o código ou copie a chave abaixo:</p>
+            <h2 style="color:var(--destaque)">QUASE LÁ!</h2>
+            <p style="font-size: 0.8rem; color: var(--cinza);">Sua vaga está <strong>reservada por 5 minutos</strong>. Realize o pagamento para confirmar:</p>
+            
             <div class="qr-code">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=aa16b3ae-567b-4a15-87f5-98abe8650a93" width="180">
             </div>
+            
             <div class="chave-pix">aa16b3ae-567b-4a15-87f5-98abe8650a93</div>
 
-            <div class="campo" style="margin-top: 20px; text-align: left;">
-                <label>Anexar Comprovante do PIX</label>
+            <div class="campo" style="margin-top: 25px; text-align: left;">
+                <label>Anexar Comprovante PIX (Obrigatório)</label>
                 <input type="file" id="fotoComprovante" accept="image/*" required>
             </div>
 
-            <button id="btnConfirmarPix" onclick="enviarTudo()" style="background:var(--sucesso); color:#fff">ENVIAR COMPROVANTE</button>
+            <button id="btnConfirmarPix" onclick="confirmarPagamento()" style="background:var(--sucesso); color:#fff">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
     <div id="tela-final">
         <div class="container" style="text-align:center">
             <h1 style="font-size: 4rem;">🥁</h1>
-            <h2>SUCESSO!</h2>
-            <p>Inscrição e comprovante recebidos. Aguarde nosso contato.</p>
-            <button onclick="location.reload()">SAIR</button>
+            <h2 style="color:var(--sucesso)">INSCRIÇÃO RECEBIDA!</h2>
+            <p>Sua vaga está garantida. A diretoria entrará em contato via WhatsApp após conferir o comprovante.</p>
+            <button onclick="location.reload()" style="background:#333; color:#fff">FECHAR</button>
         </div>
     </div>
 
@@ -112,18 +116,20 @@
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-numero').mask('00000000');
 
+        // Validação CPF e Duplicidade
         $('#cpf').on('blur', function() {
             const cpf = $(this).val();
             if(!validarCPF(cpf)) { alert("CPF Inválido!"); $(this).addClass('input-erro').val(""); return; }
             $.get(URL_SCRIPT + "?verificarCPF=" + cpf, (res) => {
-                if(res.existe) { alert("CPF já cadastrado!"); $(this).addClass('input-erro').val(""); }
+                if(res.existe) { alert("Este CPF já possui cadastro!"); $(this).addClass('input-erro').val(""); }
                 else { $(this).removeClass('input-erro'); }
             });
         });
 
+        // Validação Idade (>12) e Responsável (<18)
         $('#dataNasc').on('change', function() {
             const idade = calcularIdade($(this).val());
-            if(idade < 12) { alert("Mínimo 12 anos."); $(this).val(""); return; }
+            if(idade < 12) { alert("Idade mínima: 12 anos."); $(this).val(""); return; }
             if(idade < 18) { $('#dadosResponsavel').removeClass('hidden'); $('#nomeResp, #telResp').prop('required', true); }
             else { $('#dadosResponsavel').addClass('hidden'); $('#nomeResp, #telResp').prop('required', false); }
         });
@@ -137,9 +143,10 @@
         const res = await $.get(URL_SCRIPT);
         let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
         for (let inst in res) {
-            hVagas += `<div class="vaga-item"><span>${inst}:</span><span class="${res[inst]<=0?'vaga-zero':''}">${res[inst]<=0?'LOTADO':res[inst]}</span></div>`;
+            let lotado = res[inst] <= 0;
+            hVagas += `<div class="vaga-item"><span>${inst}:</span><span class="${lotado?'vaga-zero':''}">${lotado?'LOTADO':res[inst]}</span></div>`;
             if (sexo === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) continue;
-            hSelect += `<option value="${inst}" ${res[inst]<=0?'disabled':''}>${inst} ${res[inst]<=0?'(LOTADO)':''}</option>`;
+            hSelect += `<option value="${inst}" ${lotado?'disabled':''}>${inst} ${lotado?'(LOTADO)':''}</option>`;
         }
         $('#vagasDisplay').html(hVagas); $('#instrumento').html(hSelect);
     }
@@ -147,7 +154,7 @@
     $('#formMatricula').on('submit', async function(e) {
         e.preventDefault();
         const btn = $('#btnEnviar');
-        btn.prop('disabled', true).text('VALIDANDO VAGAS...');
+        btn.prop('disabled', true).text('RESERVANDO VAGA...');
 
         dadosTemp = {
             nome: $('#nome').val(), cpf: $('#cpf').val(), idade: calcularIdade($('#dataNasc').val()),
@@ -156,31 +163,41 @@
             numSocio: $('#campoNumSocio').val(), nomeResp: $('#nomeResp').val() || "N/A",
             telResp: $('#telResp').val() || "N/A",
             fotoBase64: await converterImagem($('#foto')[0].files[0]),
-            fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0])
+            fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0]),
+            acao: "RESERVAR"
         };
 
-        const check = await $.get(URL_SCRIPT);
-        if (check[dadosTemp.instrumento] <= 0) { alert("Vaga esgotada!"); location.reload(); return; }
-        $('#tela-cadastro').fadeOut(300, () => $('#tela-pix').fadeIn());
+        $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
+            if(res.status === "sucesso") { $('#tela-cadastro').fadeOut(300, () => $('#tela-pix').fadeIn()); }
+            else { alert("Erro: " + res.msg); btn.prop('disabled', false).text('FINALIZAR INSCRIÇÃO'); }
+        });
     });
 
-    async function enviarTudo() {
-        const file = $('#fotoComprovante')[0].files[0];
-        if(!file) return alert("Anexe o comprovante!");
-        $('#btnConfirmarPix').prop('disabled', true).text('ENVIANDO...');
-        dadosTemp.fotoComprovante = await converterImagem(file);
+    async function confirmarPagamento() {
+        const fileComp = $('#fotoComprovante')[0].files[0];
+        if(!fileComp) return alert("Anexe o comprovante do PIX.");
 
-        $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
-            if(res.status === "sucesso") $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex'));
-            else { alert("Erro: " + res.msg); $('#btnConfirmarPix').prop('disabled', false).text('ENVIAR COMPROVANTE'); }
+        const btn = $('#btnConfirmarPix');
+        btn.prop('disabled', true).text('CONFIRMANDO...');
+
+        const pFinal = {
+            cpf: dadosTemp.cpf,
+            instrumento: dadosTemp.instrumento,
+            fotoComprovante: await converterImagem(fileComp),
+            acao: "CONFIRMAR_PAGAMENTO"
+        };
+
+        $.post(URL_SCRIPT, JSON.stringify(pFinal), function(res) {
+            if(res.status === "sucesso") { $('#tela-pix').fadeOut(300, () => $('#tela-final').css('display','flex')); }
+            else { alert("Erro: " + res.msg); btn.prop('disabled', false).text('ENVIAR COMPROVANTE'); }
         });
     }
 
-    function calcularIdade(d) {
-        const nasc = new Date(d); const hoje = new Date();
-        let i = hoje.getFullYear() - nasc.getFullYear();
-        if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) i--;
-        return i;
+    function calcularIdade(dataStr) {
+        const nasc = new Date(dataStr); const hoje = new Date();
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        if (new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate()) < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) idade--;
+        return idade;
     }
 
     function validarCPF(cpf) {
