@@ -58,9 +58,11 @@
         <div class="container">
             <h2 style="text-align:center; margin-top: 0; color: var(--destaque);">INSCRIÇÃO 2026</h2>
             <div id="vagasDisplay" class="quadro-vagas"></div>
+            
             <div class="aviso-tamborim">
-                ⚠️ <strong>AVISO:</strong> Instrumento próprio obrigatório para <strong>Tamborim</strong>.
+                ⚠️ <strong>AVISO IMPORTANTE:</strong> Para as aulas de <strong>Tamborim</strong>, é obrigatório que o aluno possua e traga seu próprio instrumento. A escola não fornece tamborins.
             </div>
+
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
@@ -99,6 +101,33 @@
                 
                 <button type="submit" id="btnEnviar">RESERVAR VAGA</button>
             </form>
+        </div>
+    </div>
+
+    <div id="tela-pix">
+        <div class="container" style="text-align: center;">
+            <div class="timer-box">Expira em: <span id="timer">05:00</span></div>
+            <h2 style="color:var(--destaque); margin-bottom:0">PAGAMENTO</h2>
+            <div class="valor-pix">R$ 50,00</div>
+            <div class="qr-code"><img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=aa16b3ae-567b-4a15-87f5-98abe8650a93" width="180"></div>
+            <div class="chave-pix">aa16b3ae-567b-4a15-87f5-98abe8650a93</div>
+            
+            <div class="campo" style="margin-top: 20px; text-align: left;">
+                <label>Anexar Comprovante PIX</label>
+                <input type="file" id="fotoComprovante" accept="image/*" required>
+            </div>
+            
+            <button id="btnConfirmarPix" onclick="confirmarPagamento()">ENVIAR COMPROVANTE</button>
+        </div>
+    </div>
+
+    <div id="tela-final">
+        <div class="container" style="text-align:center">
+            <h1 style="font-size: 4rem;">⏳</h1>
+            <h2 style="color:var(--destaque)">COMPROVANTE ENVIADO!</h2>
+            <p>Sua inscrição foi recebida com sucesso. Agora, a <strong>Diretoria da Ritimão</strong> irá validar seu comprovante de pagamento e os dados de sócio.</p>
+            <p style="font-size: 0.9rem; color: var(--cinza);">Aguarde nosso contato via WhatsApp em breve!</p>
+            <button onclick="location.reload()" style="background:#333; color:#fff; margin-top: 20px;">FECHAR</button>
         </div>
     </div>
 
