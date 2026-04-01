@@ -56,7 +56,7 @@
 
     <div id="tela-cadastro">
         <div class="container">
-            <h2 style="text-align:center; margin-top: 0; color: var(--destaque); line-height: 1.2;">INSCRIÇÕES ABIERTAS!<br>PARA SÓCIOS</h2>
+            <h2 style="text-align:center; margin-top: 0; color: var(--destaque); line-height: 1.2;">INSCRIÇÕES ABERTAS!<br>PARA SÓCIOS</h2>
             
             <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
             
@@ -69,6 +69,11 @@
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
                 <div class="campo"><label>Nascimento</label><input type="text" id="dataNasc" class="mask-data" placeholder="DD/MM/AAAA" required></div>
                 
+                <div id="dadosResponsavel" class="hidden">
+                    <div class="campo"><label style="color:var(--destaque)">Nome do Responsável (Menor de 18)</label><input type="text" id="nomeResp"></div>
+                    <div class="campo"><label style="color:var(--destaque)">WhatsApp do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                </div>
+
                 <div class="campo"><label>Sexo</label>
                     <select id="sexo" required>
                         <option value="">Selecione...</option>
@@ -151,6 +156,26 @@
         $('.mask-numero').mask('00000000');
         $('.mask-data').mask('00/00/0000');
 
+        // VALIDAÇÃO DE IDADE EM TEMPO REAL
+        $('#dataNasc').on('blur', function() {
+            const dataStr = $(this).val();
+            if(dataStr.length === 10) {
+                const idade = calcularIdade(dataStr);
+                
+                if (idade < 12) {
+                    alert("A idade mínima para inscrição é 12 anos.");
+                    $(this).val('');
+                    $('#dadosResponsavel').addClass('hidden');
+                } else if (idade < 18) {
+                    $('#dadosResponsavel').removeClass('hidden');
+                    $('#nomeResp, #telResp').prop('required', true);
+                } else {
+                    $('#dadosResponsavel').addClass('hidden');
+                    $('#nomeResp, #telResp').prop('required', false).val('');
+                }
+            }
+        });
+
         $('#sexo').on('change', function() { 
             const sexo = $(this).val();
             $('#campoNivel').addClass('hidden');
@@ -208,14 +233,25 @@
     $('#formMatricula').on('submit', async function(e) {
         e.preventDefault();
         const btn = $('#btnEnviar');
+        const idade = calcularIdade($('#dataNasc').val());
+
+        if (idade < 12) return alert("Idade mínima de 12 anos.");
+
         btn.prop('disabled', true).text('PROCESSANDO...');
         
         dadosTemp = {
-            nome: $('#nome').val(), cpf: $('#cpf').val(), idade: calcularIdade($('#dataNasc').val()),
-            sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
-            redeSocial: $('#redeSocial').val(), instrumento: $('#instrumento').val(),
-            nivel: $('#nivel').val(), numSocio: $('#campoNumSocio').val(),
-            nomeResp: "N/A", telResp: "N/A",
+            nome: $('#nome').val(), 
+            cpf: $('#cpf').val(), 
+            idade: idade,
+            sexo: $('#sexo').val(), 
+            telefone: $('#tel').val(), 
+            email: $('#email').val(),
+            redeSocial: $('#redeSocial').val(), 
+            instrumento: $('#instrumento').val(),
+            nivel: $('#nivel').val(), 
+            numSocio: $('#campoNumSocio').val(),
+            nomeResp: $('#nomeResp').val() || "N/A", 
+            telResp: $('#telResp').val() || "N/A",
             fotoBase64: await converterImagem($('#foto')[0].files[0]),
             fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0]),
             acao: "RESERVAR"
@@ -256,7 +292,10 @@
     }
 
     function calcularIdade(s) {
-        const p = s.split('/'); const n = new Date(p[2], p[1]-1, p[0]); const h = new Date();
+        const p = s.split('/'); 
+        if(p.length !== 3) return 0;
+        const n = new Date(p[2], p[1]-1, p[0]); 
+        const h = new Date();
         let i = h.getFullYear() - n.getFullYear();
         if (h.getMonth() < n.getMonth() || (h.getMonth() === n.getMonth() && h.getDate() < n.getDate())) i--;
         return i;
