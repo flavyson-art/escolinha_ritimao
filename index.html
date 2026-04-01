@@ -18,7 +18,7 @@
 
         /* Fundos específicos */
         #tela-cadastro { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg"); }
-        #tela-pix { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_Pix.jpg"); }
+        #tela-pix { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg"); }
 
         /* Overlay para efeito de marca d'água/legibilidade */
         #tela-cadastro::before, #tela-pix::before {
@@ -202,4 +202,104 @@
             if (inst && NIVEIS[inst]) {
                 let options = '<option value="">Selecione o nível...</option>';
                 NIVEIS[inst].forEach(n => options += `<option value="${n}">${n}</option>`);
-                selectNivel.html(options).prop('
+                selectNivel.html(options).prop('required', true);
+                campoNivel.removeClass('hidden');
+            } else {
+                campoNivel.addClass('hidden');
+            }
+        });
+    });
+
+    function calcularIdade(s) {
+        const partes = s.split('/');
+        if (partes.length !== 3) return -1;
+        const dia = parseInt(partes[0]), mes = parseInt(partes[1]), ano = parseInt(partes[2]);
+        const nascimento = new Date(ano, mes - 1, dia);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+        const m = hoje.getMonth() - nascimento.getMonth();
+        if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
+        return idade;
+    }
+
+    async function atualizarVagas(sexo = "") {
+        try {
+            const res = await $.get(URL_SCRIPT);
+            let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
+            const restritosMasc = ["Chocalho", "Xequere"];
+
+            for (let inst in res) {
+                let lotado = res[inst] <= 0;
+                let nomeExibicao = inst === "Surdo 3" ? "Terceira" : inst;
+                let ehRestrito = (sexo === "Masculino" && restritosMasc.includes(inst));
+                hVagas += `<div class="vaga-item"><span>${nomeExibicao}:</span><span class="${lotado?'vaga-zero':''}">${lotado?'LOTADO':res[inst]}</span></div>`;
+                if (!ehRestrito) {
+                    hSelect += `<option value="${inst}" ${lotado?'disabled':''}>${nomeExibicao} ${lotado?'(LOTADO)':''}</option>`;
+                }
+            }
+            $('#vagasDisplay').html(hVagas); $('#instrumento').html(hSelect);
+        } catch (e) {
+            $('#vagasDisplay').html("<span style='color:red'>Erro ao carregar vagas.</span>");
+        }
+    }
+
+    function abrirCadastro() { $('#tela-inicial').fadeOut(300, () => { $('#tela-cadastro').fadeIn(); atualizarVagas(); }); }
+
+    $('#formMatricula').on('submit', async function(e) {
+        e.preventDefault();
+        const btn = $('#btnEnviar');
+        const idade = calcularIdade($('#dataNasc').val());
+        if (idade < 12) return alert("Idade mínima de 12 anos.");
+
+        btn.prop('disabled', true).text('PROCESSANDO...');
+        
+        dadosTemp = {
+            nome: $('#nome').val(), cpf: $('#cpf').val(), idade: idade,
+            sexo: $('#sexo').val(), telefone: $('#tel').val(), email: $('#email').val(),
+            redeSocial: $('#redeSocial').val(), instrumento: $('#instrumento').val(),
+            nivel: $('#nivel').val(), numSocio: $('#campoNumSocio').val(),
+            nomeResp: $('#nomeResp').val() || "N/A", telResp: $('#telResp').val() || "N/A",
+            fotoBase64: await converterImagem($('#foto')[0].files[0]),
+            fotoSocioBase64: await converterImagem($('#fotoSocio')[0].files[0]),
+            acao: "RESERVAR"
+        };
+
+        $.post(URL_SCRIPT, JSON.stringify(dadosTemp), function(res) {
+            if(res.status === "sucesso") { 
+                $('#tela-cadastro').fadeOut(300, () => { $('#tela-pix').fadeIn(); startTimer(300, document.querySelector('#timer')); });
+            } else { alert(res.msg); btn.prop('disabled', false).text('RESERVAR VAGA'); }
+        });
+    });
+
+    async function confirmarPagamento() {
+        const fileComp = $('#fotoComprovante')[0].files[0];
+        if(!fileComp) return alert("Por favor, anexe o comprovante!");
+        const btn = $('#btnConfirmarPix');
+        btn.prop('disabled', true).text('ENVIANDO...');
+        const b64Comp = await converterImagem(fileComp);
+        const pFinal = { cpf: dadosTemp.cpf, instrumento: dadosTemp.instrumento, fotoComprovante: b64Comp, acao: "CONFIRMAR_PAGAMENTO" };
+        $.post(URL_SCRIPT, JSON.stringify(pFinal), function(res) {
+            if(res.status === "sucesso") { clearInterval(intervaloTimer); $('#tela-pix').fadeOut(300, () => $('#tela-final').fadeIn()); }
+            else { alert(res.msg); location.reload(); }
+        });
+    }
+
+    function startTimer(duration, display) {
+        let timer = duration, min, sec;
+        intervaloTimer = setInterval(() => {
+            min = parseInt(timer / 60, 10); sec = parseInt(timer % 60, 10);
+            display.textContent = (min < 10 ? "0"+min : min) + ":" + (sec < 10 ? "0"+sec : sec);
+            if (--timer < 0) { clearInterval(intervaloTimer); alert("Tempo expirado!"); location.reload(); }
+        }, 1000);
+    }
+
+    function converterImagem(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.readAsDataURL(file);
+        });
+    }
+</script>
+</body>
+</html>
