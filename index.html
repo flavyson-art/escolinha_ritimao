@@ -3,104 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inscrição Escolinha Ritimão 2026</title>
+    <title>Inscrição Ritimão 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
-        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
         
-        /* TELAS - Importante: display none em todas exceto a inicial */
-        .tela { 
-            display: none; 
-            min-height: 100vh; 
-            width: 100%; 
-            position: relative; 
-            box-sizing: border-box; 
-            z-index: 1;
-        }
-        
-        #tela-inicial { 
-            display: flex; /* Apenas a inicial começa visível */
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            text-align: center; 
+        body, html { 
+            margin: 0; padding: 0; 
+            background-color: var(--preto); 
+            color: var(--branco); 
+            font-family: 'Segoe UI', sans-serif;
+            min-height: 100vh;
         }
 
+        /* RESET DE BOTÃO - Mata a faixa amarela/azul de foco */
+        button, img, a {
+            outline: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        /* CONTROLE ESTRUTURAL DAS TELAS */
+        .tela { 
+            display: none; /* Esconde tudo por padrão */
+            min-height: 100vh;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Força apenas a inicial a aparecer no carregamento */
+        #tela-inicial { 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* FUNDOS */
         #tela-cadastro { 
-            background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg"); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed; 
-            padding: 40px 10px; 
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
+                        url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg");
+            background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         #tela-pix { 
-            background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg"); 
-            background-size: cover; 
-            background-position: center; 
-            padding: 40px 10px; 
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
+                        url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg");
+            background-size: cover; background-position: center;
         }
 
-        .tela::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: -1; }
-
-        .container { max-width: 480px; margin: 0 auto; background: rgba(15, 15, 15, 0.95); padding: 30px; border-radius: 20px; border: 1px solid #333; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        /* Ajuste do Botão Logo - Remove a faixa amarela */
-        .btn-logo-inicial { 
-            background: transparent !important; 
-            border: none !important; 
-            outline: none !important; 
-            cursor: pointer; 
-            transition: transform 0.3s ease; 
-            padding: 0;
-            -webkit-tap-highlight-color: transparent; /* Remove brilho em mobile */
+        .container { 
+            max-width: 450px; 
+            margin: 0 auto; 
+            background: rgba(20, 20, 20, 0.95); 
+            padding: 25px; 
+            border-radius: 20px; 
+            border: 1px solid #333; 
         }
-        .btn-logo-inicial:focus, .btn-logo-inicial:active {
+
+        /* LOGO SEM FAIXA AMARELA */
+        .btn-logo {
             background: transparent !important;
-            outline: none !important;
-            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            cursor: pointer;
+            transition: transform 0.2s;
+            display: inline-block;
         }
-        .btn-logo-inicial:hover { transform: scale(1.05); }
-        .logo-img { width: 220px; height: 220px; border-radius: 50%; border: 4px solid var(--branco); object-fit: cover; }
+        .btn-logo:hover { transform: scale(1.03); }
+        .btn-logo img {
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            border: 4px solid var(--branco);
+            display: block;
+        }
 
-        /* Vagas e Forms */
-        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin: 20px 0; font-size: 0.8rem; }
+        /* FORMULÁRIO E VAGAS */
+        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin: 15px 0; font-size: 0.8rem; }
         .vaga-item { border-bottom: 1px solid #111; padding: 4px 0; display: flex; justify-content: space-between; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
-        .campo { margin-bottom: 18px; display: flex; flex-direction: column; }
-        label { font-size: 0.75rem; text-transform: uppercase; margin-bottom: 6px; color: var(--cinza); font-weight: bold; }
-        input, select { padding: 14px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 1rem; }
-        button.btn-acao { width: 100%; padding: 18px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; }
         
-        .timer-box { background: var(--erro); color: white; padding: 12px; border-radius: 10px; font-weight: bold; margin-bottom: 20px; text-align: center; }
-        .chave-pix { background: #111; padding: 15px; border-radius: 8px; border: 1px dashed var(--destaque); color: var(--destaque); font-family: monospace; margin: 15px 0; }
+        .campo { margin-bottom: 15px; display: flex; flex-direction: column; text-align: left; }
+        label { font-size: 0.7rem; text-transform: uppercase; color: var(--cinza); margin-bottom: 5px; font-weight: bold; }
+        input, select { padding: 12px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 1rem; }
+        
+        button.btn-principal {
+            width: 100%; padding: 18px; background: var(--branco); color: var(--preto);
+            border: none; font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 10px;
+        }
+
+        .timer-box { background: var(--erro); color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; text-align: center; }
+        .chave-pix { background: #111; padding: 15px; border-radius: 8px; border: 1px dashed var(--destaque); color: var(--destaque); font-family: monospace; font-size: 0.9rem; margin: 15px 0; }
+        
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
     <div id="tela-inicial" class="tela">
-        <button class="btn-logo-inicial" onclick="irParaCadastro()">
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-img">
+        <button class="btn-logo" onclick="navegarPara('tela-cadastro')">
+            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg">
         </button>
-        <p style="margin-top: 25px; letter-spacing: 3px;">TOQUE NA LOGO PARA INICIAR</p>
+        <p style="margin-top: 20px; letter-spacing: 2px; color: var(--cinza);">TOQUE NA LOGO PARA INICIAR</p>
     </div>
 
     <div id="tela-cadastro" class="tela">
         <div class="container">
-            <h2 style="text-align:center; color: var(--destaque);">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
+            <h2 style="color: var(--destaque); text-align: center; margin-top: 0;">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
             <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
             
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
-                <div class="campo"><label>Data Nascimento</label><input type="text" id="dataNasc" class="mask-data" required></div>
+                <div class="campo"><label>Data de Nascimento</label><input type="text" id="dataNasc" class="mask-data" required></div>
                 
-                <div id="blocoResponsavel" class="hidden">
-                    <div class="campo"><label>Nome do Responsável</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label>WhatsApp Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                <div id="blocoResp" class="hidden">
+                    <div class="campo"><label>Responsável</label><input type="text" id="nomeResp"></div>
+                    <div class="campo"><label>WhatsApp Resp.</label><input type="text" id="telResp" class="mask-tel"></div>
                 </div>
 
                 <div class="campo"><label>Sexo</label>
@@ -113,17 +136,16 @@
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
                 <div class="campo"><label>Instrumento</label><select id="instrumento" required></select></div>
-                <div class="campo"><label>Nível</label>
-                    <select id="nivel" required>
-                        <option value="Iniciante">Iniciante</option>
-                        <option value="Intermediário">Intermediário</option>
+                <div class="campo"><label>Tamanho Camiseta</label>
+                    <select id="tamanhoCamiseta" required>
+                        <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option>
                     </select>
                 </div>
                 <div class="campo"><label>Nº Gaviões</label><input type="number" id="numSocio" required></div>
                 <div class="campo"><label>Foto Carteirinha</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Foto Perfil</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
                 
-                <button type="submit" id="btnReservar" class="btn-acao">RESERVAR VAGA</button>
+                <button type="submit" id="btnReserva" class="btn-principal">RESERVAR VAGA</button>
             </form>
         </div>
     </div>
@@ -131,65 +153,90 @@
     <div id="tela-pix" class="tela">
         <div class="container" style="text-align: center;">
             <div class="timer-box">Expira em: <span id="timer">05:00</span></div>
-            <h2 style="color:var(--destaque);">PAGAMENTO</h2>
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" width="200" style="background:#fff; padding:10px; border-radius:10px;">
+            <h2 style="color: var(--destaque);">PAGAMENTO</h2>
+            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" width="180" style="background:#fff; padding:10px; border-radius:10px;">
             <div class="chave-pix">carnaval@gavioes.com.br</div>
-            <div class="campo" style="text-align: left;">
-                <label>Anexar Comprovante PIX</label>
+            <div class="campo">
+                <label>Anexar Comprovante</label>
                 <input type="file" id="comprovante" accept="image/*" required>
             </div>
-            <button id="btnEnviarComprovante" class="btn-acao" onclick="enviarPix()">ENVIAR COMPROVANTE</button>
+            <button class="btn-principal" onclick="enviarComprovante()">ENVIAR COMPROVANTE</button>
+        </div>
+    </div>
+
+    <div id="tela-sucesso" class="tela">
+        <div class="container" style="text-align: center;">
+            <h1 style="font-size: 3rem;">✅</h1>
+            <h2 style="color: var(--destaque);">RECEBIDO!</h2>
+            <p>Sua inscrição foi enviada para validação da Diretoria.</p>
+            <button class="btn-principal" onclick="location.reload()">FECHAR</button>
         </div>
     </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; // Atualize aqui
-    let dadosCandidato = {};
+    // URL do seu Google Apps Script (Web App)
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; 
     let timerInterval;
+    let dadosCandidato = {};
 
-    function irParaCadastro() {
-        $('#tela-inicial').fadeOut(300, function() {
-            $('#tela-cadastro').fadeIn(300);
-            carregarVagas();
-        });
+    // FUNÇÃO DE NAVEGAÇÃO SEGURA
+    function navegarPara(idTela) {
+        $('.tela').hide(); // Esconde todas as telas sem exceção
+        $('#' + idTela).css('display', idTela === 'tela-inicial' ? 'flex' : 'block');
+        
+        if(idTela === 'tela-cadastro') carregarVagas();
     }
 
-    // Máscaras e Validações
     $(document).ready(function(){
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-data').mask('00/00/0000');
 
-        $('#sexo').change(function() { carregarVagas($(this).val()); });
+        $('#sexo').change(function(){ carregarVagas($(this).val()); });
+
+        $('#dataNasc').on('blur', function(){
+            const idade = calcularIdade($(this).val());
+            if(idade >= 12 && idade < 18) $('#blocoResp').removeClass('hidden');
+            else $('#blocoResp').addClass('hidden');
+        });
     });
 
     async function carregarVagas(sexo = "") {
-        const res = await fetch(URL_SCRIPT);
-        const vagas = await res.json();
-        let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
-        const insts = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
-        
-        insts.forEach(i => {
-            const qtd = vagas[i] || 0;
-            hVagas += `<div class="vaga-item"><span>${i}:</span><span class="${qtd<=0?'vaga-zero':''}">${qtd<=0?'Esgotado':qtd}</span></div>`;
-            if (!(sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"))) {
-                hSelect += `<option value="${i}" ${qtd<=0?'disabled':''}>${i} ${qtd<=0?'(LOTADO)':''}</option>`;
-            }
-        });
-        $('#vagasDisplay').html(hVagas);
-        $('#instrumento').html(hSelect);
+        try {
+            const res = await fetch(URL_SCRIPT);
+            const vagas = await res.json();
+            let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
+            const insts = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
+            
+            insts.forEach(i => {
+                const qtd = vagas[i] || 0;
+                hVagas += `<div class="vaga-item"><span>${i}:</span><span class="${qtd<=0?'vaga-zero':''}">${qtd<=0?'Esgotado':qtd}</span></div>`;
+                if (!(sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"))) {
+                    hSelect += `<option value="${i}" ${qtd<=0?'disabled':''}>${i}</option>`;
+                }
+            });
+            $('#vagasDisplay').html(hVagas);
+            $('#instrumento').html(hSelect);
+        } catch(e) { console.error("Erro ao carregar vagas"); }
+    }
+
+    function calcularIdade(data) {
+        const p = data.split('/'); if(p.length < 3) return 0;
+        const n = new Date(p[2], p[1]-1, p[0]);
+        const h = new Date();
+        let i = h.getFullYear() - n.getFullYear();
+        if (h.getMonth() < n.getMonth() || (h.getMonth() == n.getMonth() && h.getDate() < n.getDate())) i--;
+        return i;
     }
 
     $('#formMatricula').submit(async function(e) {
         e.preventDefault();
-        $('#btnReservar').prop('disabled', true).text('PROCESSANDO...');
+        $('#btnReserva').prop('disabled', true).text('RESERVANDO...');
         
-        // Aqui você chamaria o POST para o Apps Script
-        // Se sucesso:
-        $('#tela-cadastro').fadeOut(300, function() {
-            $('#tela-pix').fadeIn(300);
-            iniciarTimer(300);
-        });
+        // Simulação de Sucesso na Reserva (Aqui entra o seu fetch POST para o Apps Script)
+        dadosCandidato.cpf = $('#cpf').val();
+        navegarPara('tela-pix');
+        iniciarTimer(300);
     });
 
     function iniciarTimer(s) {
@@ -201,11 +248,9 @@
         }, 1000);
     }
 
-    function enviarPix() {
-        if(!$('#comprovante')[0].files[0]) return alert("Anexe o comprovante!");
-        // Lógica de envio final...
-        alert("Comprovante enviado!");
-        location.reload();
+    function enviarComprovante() {
+        if(!$('#comprovante')[0].files[0]) return alert("Anexe o arquivo!");
+        navegarPara('tela-sucesso');
     }
 </script>
 </body>
