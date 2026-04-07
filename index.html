@@ -8,103 +8,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
+        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
+        button, img, a { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
         
-        body, html { 
-            margin: 0; padding: 0; 
-            background-color: var(--preto); 
-            color: var(--branco); 
-            font-family: 'Segoe UI', sans-serif;
-            min-height: 100vh;
-        }
+        .tela { display: none; min-height: 100vh; width: 100%; padding: 20px; box-sizing: border-box; }
+        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
 
-        /* RESET DE BOTÃO - Mata a faixa amarela/azul de foco */
-        button, img, a {
-            outline: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-        }
-
-        /* CONTROLE ESTRUTURAL DAS TELAS */
-        .tela { 
-            display: none; /* Esconde tudo por padrão */
-            min-height: 100vh;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Força apenas a inicial a aparecer no carregamento */
-        #tela-inicial { 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        /* FUNDOS */
         #tela-cadastro { 
             background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
-                        url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg");
+            url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg");
             background-size: cover; background-position: center; background-attachment: fixed;
         }
 
         #tela-pix { 
             background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
-                        url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg");
+            url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg");
             background-size: cover; background-position: center;
         }
 
-        .container { 
-            max-width: 450px; 
-            margin: 0 auto; 
-            background: rgba(20, 20, 20, 0.95); 
-            padding: 25px; 
-            border-radius: 20px; 
-            border: 1px solid #333; 
-        }
+        .container { max-width: 450px; margin: 0 auto; background: rgba(20, 20, 20, 0.95); padding: 25px; border-radius: 20px; border: 1px solid #333; }
+        .btn-logo { background: transparent; border: none; cursor: pointer; transition: transform 0.2s; }
+        .btn-logo img { width: 220px; height: 220px; border-radius: 50%; border: 4px solid var(--branco); }
 
-        /* LOGO SEM FAIXA AMARELA */
-        .btn-logo {
-            background: transparent !important;
-            border: none !important;
-            padding: 0 !important;
-            cursor: pointer;
-            transition: transform 0.2s;
-            display: inline-block;
-        }
-        .btn-logo:hover { transform: scale(1.03); }
-        .btn-logo img {
-            width: 220px; height: 220px;
-            border-radius: 50%;
-            border: 4px solid var(--branco);
-            display: block;
-        }
-
-        /* FORMULÁRIO E VAGAS */
-        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin: 15px 0; font-size: 0.8rem; }
+        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 15px; font-size: 0.8rem; }
         .vaga-item { border-bottom: 1px solid #111; padding: 4px 0; display: flex; justify-content: space-between; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
         
-        .campo { margin-bottom: 15px; display: flex; flex-direction: column; text-align: left; }
+        .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
         label { font-size: 0.7rem; text-transform: uppercase; color: var(--cinza); margin-bottom: 5px; font-weight: bold; }
         input, select { padding: 12px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 1rem; }
         
-        button.btn-principal {
-            width: 100%; padding: 18px; background: var(--branco); color: var(--preto);
-            border: none; font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 10px;
-        }
-
+        button.btn-principal { width: 100%; padding: 18px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; border-radius: 10px; cursor: pointer; }
         .timer-box { background: var(--erro); color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; text-align: center; }
-        .chave-pix { background: #111; padding: 15px; border-radius: 8px; border: 1px dashed var(--destaque); color: var(--destaque); font-family: monospace; font-size: 0.9rem; margin: 15px 0; }
-        
+        .chave-pix { background: #111; padding: 15px; border-radius: 8px; border: 1px dashed var(--destaque); color: var(--destaque); font-family: monospace; font-size: 0.8rem; margin: 15px 0; word-break: break-all; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div id="tela-inicial" class="tela">
+    <div id="tela-inicial" class="tela" style="display: flex;">
         <button class="btn-logo" onclick="navegarPara('tela-cadastro')">
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg">
         </button>
@@ -113,7 +55,7 @@
 
     <div id="tela-cadastro" class="tela">
         <div class="container">
-            <h2 style="color: var(--destaque); text-align: center; margin-top: 0;">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
+            <h2 style="color: var(--destaque); text-align: center; margin-top: 0;">INSCRIÇÃO DE SÓCIOS</h2>
             <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
             
             <form id="formMatricula">
@@ -138,12 +80,12 @@
                 <div class="campo"><label>Instrumento</label><select id="instrumento" required></select></div>
                 <div class="campo"><label>Tamanho Camiseta</label>
                     <select id="tamanhoCamiseta" required>
-                        <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option>
+                        <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
                     </select>
                 </div>
-                <div class="campo"><label>Nº Gaviões</label><input type="number" id="numSocio" required></div>
+                <div class="campo"><label>Nº Gaviões (Matrícula)</label><input type="number" id="numSocio" required></div>
                 <div class="campo"><label>Foto Carteirinha</label><input type="file" id="fotoSocio" accept="image/*" required></div>
-                <div class="campo"><label>Foto Perfil</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
+                <div class="campo"><label>Foto Perfil (Rosto)</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
                 
                 <button type="submit" id="btnReserva" class="btn-principal">RESERVAR VAGA</button>
             </form>
@@ -152,38 +94,36 @@
 
     <div id="tela-pix" class="tela">
         <div class="container" style="text-align: center;">
-            <div class="timer-box">Expira em: <span id="timer">05:00</span></div>
-            <h2 style="color: var(--destaque);">PAGAMENTO</h2>
+            <div class="timer-box">Aguardando Pagamento: <span id="timer">05:00</span></div>
+            <h2 style="color: var(--destaque);">PIX COPIA E COLA</h2>
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" width="180" style="background:#fff; padding:10px; border-radius:10px;">
             <div class="chave-pix">carnaval@gavioes.com.br</div>
             <div class="campo">
                 <label>Anexar Comprovante</label>
                 <input type="file" id="comprovante" accept="image/*" required>
             </div>
-            <button class="btn-principal" onclick="enviarComprovante()">ENVIAR COMPROVANTE</button>
+            <button class="btn-principal" id="btnComprovante" onclick="enviarComprovante()">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
     <div id="tela-sucesso" class="tela">
         <div class="container" style="text-align: center;">
             <h1 style="font-size: 3rem;">✅</h1>
-            <h2 style="color: var(--destaque);">RECEBIDO!</h2>
-            <p>Sua inscrição foi enviada para validação da Diretoria.</p>
-            <button class="btn-principal" onclick="location.reload()">FECHAR</button>
+            <h2 style="color: var(--destaque);">TUDO PRONTO!</h2>
+            <p>Sua reserva foi enviada. Acompanhe seu e-mail para a confirmação da diretoria.</p>
+            <button class="btn-principal" onclick="location.reload()">VOLTAR AO INÍCIO</button>
         </div>
     </div>
 
 <script>
-    // URL do seu Google Apps Script (Web App)
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; 
     let timerInterval;
     let dadosCandidato = {};
 
-    // FUNÇÃO DE NAVEGAÇÃO SEGURA
     function navegarPara(idTela) {
-        $('.tela').hide(); // Esconde todas as telas sem exceção
+        $('.tela').hide();
         $('#' + idTela).css('display', idTela === 'tela-inicial' ? 'flex' : 'block');
-        
+        window.scrollTo(0,0);
         if(idTela === 'tela-cadastro') carregarVagas();
     }
 
@@ -203,7 +143,7 @@
 
     async function carregarVagas(sexo = "") {
         try {
-            const res = await fetch(URL_SCRIPT);
+            const res = await fetch(URL_SCRIPT + "?action=getVagas");
             const vagas = await res.json();
             let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
             const insts = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
@@ -211,13 +151,17 @@
             insts.forEach(i => {
                 const qtd = vagas[i] || 0;
                 hVagas += `<div class="vaga-item"><span>${i}:</span><span class="${qtd<=0?'vaga-zero':''}">${qtd<=0?'Esgotado':qtd}</span></div>`;
-                if (!(sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"))) {
-                    hSelect += `<option value="${i}" ${qtd<=0?'disabled':''}>${i}</option>`;
+                
+                // Regra Ritimão: Xequerê e Chocalho apenas para mulheres
+                const restrito = (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"));
+                
+                if (!restrito) {
+                    hSelect += `<option value="${i}" ${qtd<=0?'disabled':''}>${i} ${qtd<=0?'(Esgotado)':''}</option>`;
                 }
             });
             $('#vagasDisplay').html(hVagas);
             $('#instrumento').html(hSelect);
-        } catch(e) { console.error("Erro ao carregar vagas"); }
+        } catch(e) { console.error("Erro vagas:", e); }
     }
 
     function calcularIdade(data) {
@@ -229,28 +173,78 @@
         return i;
     }
 
+    // Converte arquivo para Base64 para enviar via JSON
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
     $('#formMatricula').submit(async function(e) {
         e.preventDefault();
-        $('#btnReserva').prop('disabled', true).text('RESERVANDO...');
-        
-        // Simulação de Sucesso na Reserva (Aqui entra o seu fetch POST para o Apps Script)
-        dadosCandidato.cpf = $('#cpf').val();
-        navegarPara('tela-pix');
-        iniciarTimer(300);
+        $('#btnReserva').prop('disabled', true).text('VALIDANDO DADOS...');
+
+        try {
+            dadosCandidato = {
+                nome: $('#nome').val(),
+                cpf: $('#cpf').val(),
+                dataNasc: $('#dataNasc').val(),
+                sexo: $('#sexo').val(),
+                tel: $('#tel').val(),
+                email: $('#email').val(),
+                instrumento: $('#instrumento').val(),
+                tamanhoCamiseta: $('#tamanhoCamiseta').val(),
+                numSocio: $('#numSocio').val(),
+                nomeResp: $('#nomeResp').val(),
+                telResp: $('#telResp').val(),
+                fotoSocio: await toBase64($('#fotoSocio')[0].files[0]),
+                fotoPerfil: await toBase64($('#fotoPerfil')[0].files[0])
+            };
+
+            navegarPara('tela-pix');
+            iniciarTimer(300);
+        } catch (err) {
+            alert("Erro ao processar fotos. Tente arquivos menores.");
+            $('#btnReserva').prop('disabled', false).text('RESERVAR VAGA');
+        }
     });
 
     function iniciarTimer(s) {
         let t = s;
+        if(timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             let m = Math.floor(t / 60); let seg = t % 60;
             $('#timer').text(`${m < 10 ? '0'+m : m}:${seg < 10 ? '0'+seg : seg}`);
-            if(--t < 0) { clearInterval(timerInterval); location.reload(); }
+            if(--t < 0) { clearInterval(timerInterval); alert("Tempo expirado!"); location.reload(); }
         }, 1000);
     }
 
-    function enviarComprovante() {
-        if(!$('#comprovante')[0].files[0]) return alert("Anexe o arquivo!");
-        navegarPara('tela-sucesso');
+    async function enviarComprovante() {
+        if(!$('#comprovante')[0].files[0]) return alert("Anexe o comprovante!");
+        
+        $('#btnComprovante').prop('disabled', true).text('ENVIANDO...');
+        
+        try {
+            dadosCandidato.comprovante = await toBase64($('#comprovante')[0].files[0]);
+            
+            const response = await fetch(URL_SCRIPT, {
+                method: 'POST',
+                body: JSON.stringify(dadosCandidato)
+            });
+            const res = await response.json();
+
+            if(res.success) {
+                clearInterval(timerInterval);
+                navegarPara('tela-sucesso');
+            } else {
+                alert(res.message);
+                $('#btnComprovante').prop('disabled', false).text('ENVIAR COMPROVANTE');
+            }
+        } catch(e) {
+            alert("Erro ao enviar. Verifique sua conexão.");
+            $('#btnComprovante').prop('disabled', false).text('ENVIAR COMPROVANTE');
+        }
     }
 </script>
 </body>
