@@ -8,64 +8,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
-        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; min-height: 100vh; }
-        button, img, a { outline: none !important; -webkit-tap-highlight-color: transparent !important; }
+        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
         
-        .tela { display: none; min-height: 100vh; width: 100%; padding: 20px; box-sizing: border-box; }
-        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        #tela-cadastro, #tela-pix, #tela-final { display: none; padding: 20px; min-height: 100vh; position: relative; background-size: cover; background-position: center; background-attachment: fixed; }
+        #tela-cadastro { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg"); }
+        #tela-pix { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg"); }
 
-        #tela-cadastro { 
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), 
-            url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg");
-            background-size: cover; background-position: center; background-attachment: fixed;
-        }
+        #tela-cadastro::before, #tela-pix::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1; }
+        .container { max-width: 450px; margin: 0 auto; background: rgba(17, 17, 17, 0.9); padding: 25px; border-radius: 15px; border: 1px solid #333; position: relative; z-index: 2; }
+        
+        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; cursor: pointer; }
+        .logo-btn { width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--branco); transition: transform 0.3s; object-fit: cover; }
+        .logo-btn:hover { transform: scale(1.05); }
 
-        #tela-pix { 
-            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), 
-            url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg");
-            background-size: cover; background-position: center;
-        }
-
-        .container { max-width: 450px; margin: 0 auto; background: rgba(20, 20, 20, 0.95); padding: 25px; border-radius: 20px; border: 1px solid #333; }
-        .btn-logo { background: transparent; border: none; cursor: pointer; transition: transform 0.2s; }
-        .btn-logo img { width: 220px; height: 220px; border-radius: 50%; border: 4px solid var(--branco); }
-
-        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; margin-bottom: 15px; font-size: 0.8rem; }
-        .vaga-item { border-bottom: 1px solid #111; padding: 4px 0; display: flex; justify-content: space-between; }
+        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; margin: 15px 0; background: #111; padding: 10px; border-radius: 8px; }
+        .vaga-item { display: flex; justify-content: space-between; border-bottom: 1px solid #222; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
+        .aviso-tamborim { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--destaque); color: var(--destaque); padding: 10px; border-radius: 8px; font-size: 0.75rem; margin-bottom: 20px; }
         
         .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
-        label { font-size: 0.7rem; text-transform: uppercase; color: var(--cinza); margin-bottom: 5px; font-weight: bold; }
-        input, select { padding: 12px; background: #050505; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 1rem; }
-        
-        button.btn-principal { width: 100%; padding: 18px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; border-radius: 10px; cursor: pointer; }
-        .timer-box { background: var(--erro); color: #fff; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 15px; text-align: center; }
-        .chave-pix { background: #111; padding: 15px; border-radius: 8px; border: 1px dashed var(--destaque); color: var(--destaque); font-family: monospace; font-size: 0.8rem; margin: 15px 0; word-break: break-all; }
-        .hidden { display: none !important; }
+        label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); }
+        input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
+        button { width: 100%; padding: 16px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
+        .timer-box { background: var(--erro); padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="tela-inicial" class="tela" style="display: flex;">
-        <button class="btn-logo" onclick="navegarPara('tela-cadastro')">
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg">
-        </button>
-        <p style="margin-top: 20px; letter-spacing: 2px; color: var(--cinza);">TOQUE NA LOGO PARA INICIAR</p>
+    <div id="tela-inicial" onclick="abrirCadastro()">
+        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-btn">
+        <p style="margin-top:20px; letter-spacing: 2px;">CLIQUE NA LOGO PARA INICIAR</p>
     </div>
 
-    <div id="tela-cadastro" class="tela">
+    <div id="tela-cadastro">
         <div class="container">
-            <h2 style="color: var(--destaque); text-align: center; margin-top: 0;">INSCRIÇÃO DE SÓCIOS</h2>
-            <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
+            <h2 style="text-align:center; color: var(--destaque);">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
             
+            <div id="vagasDisplay" class="quadro-vagas">Verificando vagas...</div>
+            
+            <div class="aviso-tamborim">
+                <strong>AVISO IMPORTANTE:</strong> Para as aulas de Tamborim, é obrigatório trazer seu próprio instrumento. A escola não fornece tamborins.
+            </div>
+
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
                 <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
-                <div class="campo"><label>Data de Nascimento</label><input type="text" id="dataNasc" class="mask-data" required></div>
+                <div class="campo"><label>Nascimento</label><input type="text" id="dataNasc" class="mask-data" placeholder="DD/MM/AAAA" required></div>
                 
                 <div id="blocoResp" class="hidden">
-                    <div class="campo"><label>Responsável</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label>WhatsApp Resp.</label><input type="text" id="telResp" class="mask-tel"></div>
+                    <div class="campo"><label style="color:var(--destaque)">Nome do Responsável</label><input type="text" id="nomeResp"></div>
+                    <div class="campo"><label style="color:var(--destaque)">WhatsApp do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
                 </div>
 
                 <div class="campo"><label>Sexo</label>
@@ -75,56 +68,72 @@
                         <option value="Feminino">Feminino</option>
                     </select>
                 </div>
+
                 <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Instrumento</label><select id="instrumento" required></select></div>
-                <div class="campo"><label>Tamanho Camiseta</label>
+                
+                <div class="campo"><label>Instrumento</label>
+                    <select id="instrumento" required><option value="">Selecione o sexo primeiro</option></select>
+                </div>
+
+                <div class="campo"><label>Nível de Conhecimento</label>
+                    <select id="nivel" required>
+                        <option value="">Selecione...</option>
+                        <option value="Iniciante (Zero)">Iniciante (Zero)</option>
+                        <option value="Intermediário">Intermediário</option>
+                        <option value="Avançado">Avançado</option>
+                    </select>
+                </div>
+
+                <div class="campo"><label>Tamanho da Camiseta</label>
                     <select id="tamanhoCamiseta" required>
                         <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
                     </select>
                 </div>
-                <div class="campo"><label>Nº Gaviões (Matrícula)</label><input type="number" id="numSocio" required></div>
-                <div class="campo"><label>Foto Carteirinha</label><input type="file" id="fotoSocio" accept="image/*" required></div>
-                <div class="campo"><label>Foto Perfil (Rosto)</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
-                
-                <button type="submit" id="btnReserva" class="btn-principal">RESERVAR VAGA</button>
+
+                <div class="campo"><label>Nº Sócio (Gaviões)</label><input type="number" id="numSocio" required></div>
+                <div class="campo"><label>Foto Carteirinha/Recibo</label><input type="file" id="fotoSocio" accept="image/*" required></div>
+                <div class="campo"><label>Foto de Perfil</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
+
+                <button type="submit" id="btnReservar">RESERVAR VAGA</button>
             </form>
         </div>
     </div>
 
-    <div id="tela-pix" class="tela">
+    <div id="tela-pix">
         <div class="container" style="text-align: center;">
-            <div class="timer-box">Aguardando Pagamento: <span id="timer">05:00</span></div>
-            <h2 style="color: var(--destaque);">PIX COPIA E COLA</h2>
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" width="180" style="background:#fff; padding:10px; border-radius:10px;">
-            <div class="chave-pix">carnaval@gavioes.com.br</div>
-            <div class="campo">
-                <label>Anexar Comprovante</label>
-                <input type="file" id="comprovante" accept="image/*" required>
+            <div class="timer-box">A reserva expira em: <span id="timer">05:00</span></div>
+            <h2 style="color:var(--destaque)">PAGAMENTO DA TAXA</h2>
+            <p>Valor: <strong>R$ 50,00</strong></p>
+            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" style="width:200px; background:#fff; padding:10px; border-radius:10px;">
+            <div style="background:#222; padding:10px; margin:15px 0; font-family:monospace; font-size:0.8rem;">carnaval@gavioes.com.br</div>
+            
+            <div class="campo" style="text-align:left">
+                <label>Anexar Comprovante do PIX</label>
+                <input type="file" id="fotoComprovante" accept="image/*" required>
             </div>
-            <button class="btn-principal" id="btnComprovante" onclick="enviarComprovante()">ENVIAR COMPROVANTE</button>
+            <button onclick="enviarComprovante()" id="btnComprovante">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
-    <div id="tela-sucesso" class="tela">
+    <div id="tela-final">
         <div class="container" style="text-align: center;">
-            <h1 style="font-size: 3rem;">✅</h1>
-            <h2 style="color: var(--destaque);">TUDO PRONTO!</h2>
-            <p>Sua reserva foi enviada. Acompanhe seu e-mail para a confirmação da diretoria.</p>
-            <button class="btn-principal" onclick="location.reload()">VOLTAR AO INÍCIO</button>
+            <h2 style="color:var(--destaque)">COMPROVANTE ENVIADO!</h2>
+            <p>Sua inscrição foi recebida com sucesso. A Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.</p>
+            <button onclick="location.reload()">VOLTAR AO INÍCIO</button>
         </div>
     </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; 
-    let timerInterval;
-    let dadosCandidato = {};
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; // Atualize aqui
+    let dadosUsuario = {};
+    let tempoRestante = 300;
+    let cronometro;
 
-    function navegarPara(idTela) {
-        $('.tela').hide();
-        $('#' + idTela).css('display', idTela === 'tela-inicial' ? 'flex' : 'block');
-        window.scrollTo(0,0);
-        if(idTela === 'tela-cadastro') carregarVagas();
+    function abrirCadastro() {
+        $('#tela-inicial').hide();
+        $('#tela-cadastro').show();
+        buscarVagas();
     }
 
     $(document).ready(function(){
@@ -132,119 +141,152 @@
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-data').mask('00/00/0000');
 
-        $('#sexo').change(function(){ carregarVagas($(this).val()); });
-
-        $('#dataNasc').on('blur', function(){
+        // Lógica de Idade e Responsável
+        $('#dataNasc').blur(function(){
             const idade = calcularIdade($(this).val());
-            if(idade >= 12 && idade < 18) $('#blocoResp').removeClass('hidden');
-            else $('#blocoResp').addClass('hidden');
+            if(idade < 12) {
+                alert("As inscrições são permitidas apenas para maiores de 12 anos.");
+                $(this).val('');
+            } else if(idade >= 12 && idade <= 17) {
+                $('#blocoResp').removeClass('hidden');
+                $('#nomeResp, #telResp').prop('required', true);
+            } else {
+                $('#blocoResp').addClass('hidden');
+                $('#nomeResp, #telResp').prop('required', false);
+            }
+        });
+
+        // Filtro de Sexo -> Instrumentos
+        $('#sexo').change(function(){
+            const sexo = $(this).val();
+            atualizarListaInstrumentos(sexo);
         });
     });
 
-    async function carregarVagas(sexo = "") {
+    async function buscarVagas() {
         try {
-            const res = await fetch(URL_SCRIPT + "?action=getVagas");
+            const res = await fetch(URL_SCRIPT + "?acao=BUSCAR_VAGAS");
             const vagas = await res.json();
-            let hVagas = ""; let hSelect = '<option value="">Selecione...</option>';
-            const insts = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
+            let htmlVagas = "";
+            window.vagasGlobais = vagas; // Guarda para usar no select
+
+            for(let inst in vagas) {
+                const esgotado = vagas[inst] <= 0;
+                htmlVagas += `<div class="vaga-item"><span>${inst}:</span><span class="${esgotado?'vaga-zero':''}">${esgotado?'ESGOTADO':vagas[inst]}</span></div>`;
+            }
+            $('#vagasDisplay').html(htmlVagas);
+            atualizarListaInstrumentos($('#sexo').val());
+        } catch(e) { console.error("Erro ao carregar vagas"); }
+    }
+
+    function atualizarListaInstrumentos(sexo) {
+        if(!window.vagasGlobais) return;
+        let html = '<option value="">Selecione...</option>';
+        for(let inst in window.vagasGlobais) {
+            const esgotado = window.vagasGlobais[inst] <= 0;
+            const restritoMasc = (sexo === "Masculino" && (inst === "Xequere" || inst === "Chocalho"));
             
-            insts.forEach(i => {
-                const qtd = vagas[i] || 0;
-                hVagas += `<div class="vaga-item"><span>${i}:</span><span class="${qtd<=0?'vaga-zero':''}">${qtd<=0?'Esgotado':qtd}</span></div>`;
-                
-                // Regra Ritimão: Xequerê e Chocalho apenas para mulheres
-                const restrito = (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"));
-                
-                if (!restrito) {
-                    hSelect += `<option value="${i}" ${qtd<=0?'disabled':''}>${i} ${qtd<=0?'(Esgotado)':''}</option>`;
-                }
-            });
-            $('#vagasDisplay').html(hVagas);
-            $('#instrumento').html(hSelect);
-        } catch(e) { console.error("Erro vagas:", e); }
+            if(!restritoMasc) {
+                html += `<option value="${inst}" ${esgotado ? 'disabled' : ''}>${inst} ${esgotado ? '(ESGOTADO)' : ''}</option>`;
+            }
+        }
+        $('#instrumento').html(html);
     }
 
     function calcularIdade(data) {
         const p = data.split('/'); if(p.length < 3) return 0;
-        const n = new Date(p[2], p[1]-1, p[0]);
-        const h = new Date();
-        let i = h.getFullYear() - n.getFullYear();
-        if (h.getMonth() < n.getMonth() || (h.getMonth() == n.getMonth() && h.getDate() < n.getDate())) i--;
-        return i;
+        const nascimento = new Date(p[2], p[1]-1, p[0]);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - nascimento.getFullYear();
+        if (hoje.getMonth() < nascimento.getMonth() || (hoje.getMonth() == nascimento.getMonth() && hoje.getDate() < nascimento.getDate())) idade--;
+        return idade;
     }
 
-    // Converte arquivo para Base64 para enviar via JSON
-    const toBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
-    });
-
-    $('#formMatricula').submit(async function(e) {
+    $('#formMatricula').submit(async function(e){
         e.preventDefault();
-        $('#btnReserva').prop('disabled', true).text('VALIDANDO DADOS...');
+        const btn = $('#btnReservar');
+        btn.prop('disabled', true).text('VERIFICANDO...');
 
-        try {
-            dadosCandidato = {
-                nome: $('#nome').val(),
-                cpf: $('#cpf').val(),
-                dataNasc: $('#dataNasc').val(),
-                sexo: $('#sexo').val(),
-                tel: $('#tel').val(),
-                email: $('#email').val(),
-                instrumento: $('#instrumento').val(),
-                tamanhoCamiseta: $('#tamanhoCamiseta').val(),
-                numSocio: $('#numSocio').val(),
-                nomeResp: $('#nomeResp').val(),
-                telResp: $('#telResp').val(),
-                fotoSocio: await toBase64($('#fotoSocio')[0].files[0]),
-                fotoPerfil: await toBase64($('#fotoPerfil')[0].files[0])
-            };
+        // Validação de E-mail simples
+        if(!$('#email').val().includes('@')) return alert("E-mail inválido!");
 
-            navegarPara('tela-pix');
-            iniciarTimer(300);
-        } catch (err) {
-            alert("Erro ao processar fotos. Tente arquivos menores.");
-            $('#btnReserva').prop('disabled', false).text('RESERVAR VAGA');
+        dadosUsuario = {
+            nome: $('#nome').val(),
+            cpf: $('#cpf').val().replace(/\D/g,''),
+            dataNasc: $('#dataNasc').val(),
+            sexo: $('#sexo').val(),
+            tel: $('#tel').val(),
+            email: $('#email').val(),
+            instrumento: $('#instrumento').val(),
+            nivel: $('#nivel').val(),
+            tamanhoCamiseta: $('#tamanhoCamiseta').val(),
+            numSocio: $('#numSocio').val(),
+            nomeResp: $('#nomeResp').val() || "N/A",
+            telResp: $('#telResp').val() || "N/A",
+            fotoSocio: await converterB64($('#fotoSocio')[0].files[0]),
+            fotoPerfil: await converterB64($('#fotoPerfil')[0].files[0]),
+            acao: "RESERVAR"
+        };
+
+        const res = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dadosUsuario) });
+        const resultado = await res.json();
+
+        if(resultado.status === "sucesso") {
+            $('#tela-cadastro').hide();
+            $('#tela-pix').show();
+            iniciarCronometro();
+        } else {
+            alert(resultado.msg);
+            if(resultado.msg.includes("vagas")) location.reload();
+            btn.prop('disabled', false).text('RESERVAR VAGA');
         }
     });
-
-    function iniciarTimer(s) {
-        let t = s;
-        if(timerInterval) clearInterval(timerInterval);
-        timerInterval = setInterval(() => {
-            let m = Math.floor(t / 60); let seg = t % 60;
-            $('#timer').text(`${m < 10 ? '0'+m : m}:${seg < 10 ? '0'+seg : seg}`);
-            if(--t < 0) { clearInterval(timerInterval); alert("Tempo expirado!"); location.reload(); }
-        }, 1000);
-    }
 
     async function enviarComprovante() {
-        if(!$('#comprovante')[0].files[0]) return alert("Anexe o comprovante!");
-        
+        const file = $('#fotoComprovante')[0].files[0];
+        if(!file) return alert("Anexe o comprovante!");
+
         $('#btnComprovante').prop('disabled', true).text('ENVIANDO...');
         
-        try {
-            dadosCandidato.comprovante = await toBase64($('#comprovante')[0].files[0]);
-            
-            const response = await fetch(URL_SCRIPT, {
-                method: 'POST',
-                body: JSON.stringify(dadosCandidato)
-            });
-            const res = await response.json();
+        const dadosComprovante = {
+            cpf: dadosUsuario.cpf,
+            comprovante: await converterB64(file),
+            acao: "CONFIRMAR_PAGAMENTO"
+        };
 
-            if(res.success) {
-                clearInterval(timerInterval);
-                navegarPara('tela-sucesso');
-            } else {
-                alert(res.message);
-                $('#btnComprovante').prop('disabled', false).text('ENVIAR COMPROVANTE');
-            }
-        } catch(e) {
-            alert("Erro ao enviar. Verifique sua conexão.");
-            $('#btnComprovante').prop('disabled', false).text('ENVIAR COMPROVANTE');
+        const res = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dadosComprovante) });
+        const resultado = await res.json();
+
+        if(resultado.status === "sucesso") {
+            clearInterval(cronometro);
+            $('#tela-pix').hide();
+            $('#tela-final').show();
+        } else {
+            alert(resultado.msg);
+            location.reload();
         }
+    }
+
+    function converterB64(file) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function iniciarCronometro() {
+        cronometro = setInterval(() => {
+            tempoRestante--;
+            let min = Math.floor(tempoRestante / 60);
+            let seg = tempoRestante % 60;
+            $('#timer').text(`${min}:${seg < 10 ? '0'+seg : seg}`);
+            if(tempoRestante <= 0) {
+                clearInterval(cronometro);
+                alert("Tempo esgotado! Sua vaga foi liberada.");
+                location.reload();
+            }
+        }, 1000);
     }
 </script>
 </body>
