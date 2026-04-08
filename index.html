@@ -123,69 +123,77 @@
     </div>
 
 <script>
+    // URL do seu Script (Certifique-se de que é a versão mais recente da implantação)
     const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
     let dadosUsuario = {};
     let timerId;
 
-    // PASSO 3: LÓGICA BLINDADA PARA ABRIR O SITE SEM TRAVAR
+    // 1. FUNÇÃO PRINCIPAL PARA ABRIR O CADASTRO
     async function abrirCadastro() {
-        console.log("Iniciando transição de tela...");
+        console.log("Botão clicado. Iniciando abertura...");
         
-        // 1. Muda a tela PRIMEIRO (Ação instantânea para o usuário)
-        $('#tela-inicial').hide();
-        $('#tela-cadastro').fadeIn();
+        // MUDANÇA DE TELA INSTANTÂNEA (Sem depender de nada)
+        const telaInicial = document.getElementById('tela-inicial');
+        const telaCadastro = document.getElementById('tela-cadastro');
         
-        // 2. Tenta carregar as vagas em segundo plano
+        if (telaInicial && telaCadastro) {
+            telaInicial.style.display = 'none';
+            telaCadastro.style.display = 'block';
+            console.log("Tela alterada com sucesso.");
+        }
+
+        // Tenta carregar as vagas em segundo plano
         try {
             const res = await fetch(URL_SCRIPT);
-            if (!res.ok) throw new Error("Erro 404 ou de conexão");
+            if (!res.ok) throw new Error("Script retornou erro 404");
             
             window.vagas = await res.json();
             renderizarQuadroVagas();
         } catch (erro) {
-            console.error("Falha ao sincronizar vagas:", erro);
-            // Se der erro, preenchemos com algo básico para não deixar o campo vazio
-            $('#vagasDisplay').html("<p style='color:var(--destaque); grid-column: 1/-1; text-align:center;'>⚠️ Sistema Online (Vagas em atualização)</p>");
+            console.error("Erro ao carregar vagas (404 ou conexão):", erro);
+            document.getElementById('vagasDisplay').innerHTML = "<p style='color:orange; grid-column: 1/-1;'>⚠️ Vagas em atualização (Offline)</p>";
             
-            // Força uma lista padrão para o formulário funcionar
+            // Valores padrão para o formulário não travar
             window.vagas = {"Caixa":2,"Cuica":2,"Chocalho":2,"Repique":2,"Surdo 1":2,"Surdo 2":2,"Tamborim":2};
-            atualizarFiltroInstrumento($('#sexo').val());
+            atualizarFiltroInstrumento(document.getElementById('sexo').value);
         }
     }
 
-    // Função para desenhar o quadro de vagas na tela
+    // 2. AGUARDAR O DOCUMENTO CARREGAR PARA ATIVAR O CLIQUE
+    document.addEventListener('DOMContentLoaded', function() {
+        const logo = document.querySelector('.logo-btn');
+        if (logo) {
+            logo.addEventListener('click', abrirCadastro);
+            logo.style.cursor = 'pointer'; // Garante que mostre a mãozinha
+        }
+
+        // Inicializa Máscaras (jQuery é necessário aqui)
+        $('.mask-cpf').mask('000.000.000-00');
+        $('.mask-tel').mask('(00) 00000-0000');
+        $('.mask-data').mask('00/00/0000');
+    });
+
+    // --- FUNÇÕES DE APOIO ---
+
     function renderizarQuadroVagas() {
         let html = "";
         for(let i in window.vagas) {
             html += `<div class="vaga-item"><span>${i}:</span><span class="${window.vagas[i]<=0?'vaga-zero':''}">${window.vagas[i]}</span></div>`;
         }
-        $('#vagasDisplay').html(html);
-        atualizarFiltroInstrumento($('#sexo').val());
+        document.getElementById('vagasDisplay').innerHTML = html;
+        atualizarFiltroInstrumento(document.getElementById('sexo').value);
     }
 
-    $(document).ready(function(){
-        $('.mask-cpf').mask('000.000.000-00');
-        $('.mask-tel').mask('(00) 00000-0000');
-        $('.mask-data').mask('00/00/0000');
-
-        $('#dataNasc').blur(function(){
-            const idade = calcularIdade($(this).val());
-            if(idade > 0 && idade < 12) { alert("Mínimo 12 anos."); $(this).val(""); }
-            else if(idade < 18) $('#blocoResp').show();
-            else $('#blocoResp').hide();
-        });
-
-        $('#sexo').change(function(){ atualizarFiltroInstrumento($(this).val()); });
-    });
-
     function atualizarFiltroInstrumento(sexo) {
+        const select = document.getElementById('instrumento');
         let h = '<option value="">Selecione...</option>';
         const lista = window.vagas || {"Caixa":1,"Repique":1,"Surdo 1":1,"Surdo 2":1,"Tamborim":1};
+        
         for(let i in lista) {
             const restrito = (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"));
             if(!restrito) h += `<option value="${i}">${i}</option>`;
         }
-        $('#instrumento').html(h);
+        select.innerHTML = h;
     }
 
     function calcularIdade(data) {
@@ -195,6 +203,19 @@
         return idade;
     }
 
+    // Eventos de Formuário
+    $(document).on('blur', '#dataNasc', function(){
+        const idade = calcularIdade($(this).val());
+        if(idade > 0 && idade < 12) { alert("Mínimo 12 anos."); $(this).val(""); }
+        else if(idade < 18) $('#blocoResp').show();
+        else $('#blocoResp').hide();
+    });
+
+    $(document).on('change', '#sexo', function(){
+        atualizarFiltroInstrumento($(this).val());
+    });
+
+    // Envio do Formulário
     $('#formMatricula').submit(async function(e){
         e.preventDefault();
         $('#btnReservar').prop('disabled', true).text('PROCESSANDO...');
@@ -230,7 +251,7 @@
                 $('#btnReservar').prop('disabled', false).text('RESERVAR VAGA');
             }
         } catch(e) {
-            alert("Erro de conexão. Verifique se o Script foi publicado corretamente.");
+            alert("Erro ao conectar com o servidor. Verifique sua internet.");
             $('#btnReservar').prop('disabled', false).text('RESERVAR VAGA');
         }
     });
@@ -238,7 +259,6 @@
     async function enviarComprovante() {
         const f = $('#fotoComprovante')[0].files[0];
         if(!f) return alert("Selecione a foto do comprovante");
-        
         $('#btnComprovante').prop('disabled', true).text('ENVIANDO...');
         try {
             const res = await fetch(URL_SCRIPT, { 
