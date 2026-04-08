@@ -8,60 +8,74 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
-        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        #tela-cadastro, #tela-pix, #tela-final { display: none; padding: 20px; min-height: 100vh; position: relative; background-size: cover; background-position: center; background-attachment: fixed; }
+        /* TELAS */
+        .tela { display: none; padding: 20px; min-height: 100vh; position: relative; background-size: cover; background-position: center; background-attachment: fixed; }
+        
+        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
         #tela-cadastro { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg"); }
         #tela-pix { background-image: url("https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_pix.jpg"); }
 
-        #tela-cadastro::before, #tela-pix::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 1; }
-        .container { max-width: 450px; margin: 0 auto; background: rgba(17, 17, 17, 0.9); padding: 25px; border-radius: 15px; border: 1px solid #333; position: relative; z-index: 2; }
+        .tela::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1; }
+        .container { max-width: 480px; margin: 0 auto; background: rgba(15, 15, 15, 0.95); padding: 25px; border-radius: 20px; border: 1px solid #333; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         
-        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; cursor: pointer; }
-        .logo-btn { width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--branco); transition: transform 0.3s; object-fit: cover; }
+        /* LOGO MAIOR */
+        .logo-btn { width: 280px; height: 280px; border-radius: 50%; border: 6px solid var(--branco); transition: transform 0.3s; object-fit: cover; box-shadow: 0 0 40px rgba(255,255,255,0.1); }
         .logo-btn:hover { transform: scale(1.05); }
 
-        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.8rem; margin: 15px 0; background: #111; padding: 10px; border-radius: 8px; }
-        .vaga-item { display: flex; justify-content: space-between; border-bottom: 1px solid #222; }
+        /* QUADRO DE VAGAS */
+        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; background: #000; padding: 15px; border-radius: 10px; border: 1px solid #222; }
+        .vaga-item { display: flex; justify-content: space-between; font-size: 0.85rem; border-bottom: 1px solid #111; padding-bottom: 2px; }
         .vaga-zero { color: var(--erro); font-weight: bold; }
-        .aviso-tamborim { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--destaque); color: var(--destaque); padding: 10px; border-radius: 8px; font-size: 0.75rem; margin-bottom: 20px; }
         
-        .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
-        label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px; color: var(--cinza); }
-        input, select { padding: 12px; background: #000; border: 1px solid #444; color: #fff; border-radius: 8px; }
-        button { width: 100%; padding: 16px; background: var(--branco); color: var(--preto); border: none; font-weight: bold; border-radius: 8px; cursor: pointer; text-transform: uppercase; }
-        .timer-box { background: var(--erro); padding: 10px; border-radius: 8px; text-align: center; font-weight: bold; margin-bottom: 15px; }
+        .aviso-tamborim { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--destaque); color: var(--destaque); padding: 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 20px; text-align: center; }
+        
+        /* FORMULÁRIO */
+        .campo { margin-bottom: 18px; display: flex; flex-direction: column; }
+        label { font-size: 0.75rem; text-transform: uppercase; margin-bottom: 6px; color: var(--cinza); font-weight: 600; }
+        input, select { padding: 14px; background: #080808; border: 1px solid #333; color: #fff; border-radius: 10px; font-size: 1rem; }
+        input:focus { border-color: var(--destaque); outline: none; }
+        
+        button { width: 100%; padding: 18px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; transition: 0.2s; }
+        button:active { transform: scale(0.98); }
+        
+        /* TELA PIX */
+        .timer-box { background: var(--erro); padding: 12px; border-radius: 10px; text-align: center; font-weight: bold; margin-bottom: 20px; font-size: 1.1rem; }
+        .qr-code-img { width: 260px; background: #fff; padding: 15px; border-radius: 15px; margin: 20px auto; display: block; }
+        .chave-pix { background: #111; padding: 15px; border-radius: 8px; font-family: monospace; border: 1px dashed #444; color: var(--destaque); margin-bottom: 20px; }
+
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="tela-inicial" onclick="abrirCadastro()">
-        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-btn">
-        <p style="margin-top:20px; letter-spacing: 2px;">CLIQUE NA LOGO PARA INICIAR</p>
+    <div id="tela-inicial" class="tela" style="display: flex;">
+        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-btn" onclick="abrirCadastro()">
+        <p style="margin-top:30px; letter-spacing: 4px; font-weight: bold; z-index: 2;">TOQUE PARA INICIAR</p>
     </div>
 
-    <div id="tela-cadastro">
+    <div id="tela-cadastro" class="tela">
         <div class="container">
-            <h2 style="text-align:center; color: var(--destaque);">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
+            <h2 style="text-align:center; color: var(--destaque); margin-top:0;">INSCRIÇÕES ABERTAS PARA SÓCIOS</h2>
             
-            <div id="vagasDisplay" class="quadro-vagas">Verificando vagas...</div>
+            <div id="vagasDisplay" class="quadro-vagas">Carregando vagas...</div>
             
             <div class="aviso-tamborim">
-                <strong>AVISO IMPORTANTE:</strong> Para as aulas de Tamborim, é obrigatório trazer seu próprio instrumento. A escola não fornece tamborins.
+                ⚠️ <strong>TAMBORIM:</strong> É obrigatório que o aluno possua seu próprio instrumento.
             </div>
 
             <form id="formMatricula">
-                <div class="campo"><label>Nome Completo</label><input type="text" id="nome" required></div>
-                <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
-                <div class="campo"><label>Nascimento</label><input type="text" id="dataNasc" class="mask-data" placeholder="DD/MM/AAAA" required></div>
+                <div class="campo"><label>Nome Completo *</label><input type="text" id="nome" required></div>
+                <div class="campo"><label>CPF *</label><input type="text" id="cpf" class="mask-cpf" required></div>
+                <div class="campo"><label>Nascimento *</label><input type="text" id="dataNasc" class="mask-data" placeholder="DD/MM/AAAA" required></div>
                 
                 <div id="blocoResp" class="hidden">
-                    <div class="campo"><label style="color:var(--destaque)">Nome do Responsável</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label style="color:var(--destaque)">WhatsApp do Responsável</label><input type="text" id="telResp" class="mask-tel"></div>
+                    <div class="campo"><label style="color:var(--destaque)">Nome do Responsável *</label><input type="text" id="nomeResp"></div>
+                    <div class="campo"><label style="color:var(--destaque)">WhatsApp do Responsável *</label><input type="text" id="telResp" class="mask-tel"></div>
                 </div>
 
-                <div class="campo"><label>Sexo</label>
+                <div class="campo"><label>Sexo *</label>
                     <select id="sexo" required>
                         <option value="">Selecione...</option>
                         <option value="Masculino">Masculino</option>
@@ -69,71 +83,79 @@
                     </select>
                 </div>
 
-                <div class="campo"><label>WhatsApp</label><input type="text" id="tel" class="mask-tel" required></div>
-                <div class="campo"><label>E-mail</label><input type="email" id="email" required></div>
+                <div class="campo"><label>WhatsApp *</label><input type="text" id="tel" class="mask-tel" required></div>
+                <div class="campo"><label>E-mail *</label><input type="email" id="email" required></div>
                 
-                <div class="campo"><label>Instrumento</label>
-                    <select id="instrumento" required><option value="">Selecione o sexo primeiro</option></select>
+                <div class="campo"><label>Rede Social (Opcional)</label><input type="text" id="redeSocial" placeholder="@seuusuario"></div>
+
+                <div class="campo"><label>Instrumento *</label>
+                    <select id="instrumento" required><option value="">Selecione o sexo...</option></select>
                 </div>
 
-                <div class="campo"><label>Nível de Conhecimento</label>
+                <div class="campo"><label>Nível *</label>
                     <select id="nivel" required>
                         <option value="">Selecione...</option>
-                        <option value="Iniciante (Zero)">Iniciante (Zero)</option>
+                        <option value="Iniciante">Iniciante</option>
                         <option value="Intermediário">Intermediário</option>
                         <option value="Avançado">Avançado</option>
                     </select>
                 </div>
 
-                <div class="campo"><label>Tamanho da Camiseta</label>
+                <div class="campo"><label>Camiseta *</label>
                     <select id="tamanhoCamiseta" required>
                         <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
                     </select>
                 </div>
 
-                <div class="campo"><label>Nº Sócio (Gaviões)</label><input type="number" id="numSocio" required></div>
-                <div class="campo"><label>Foto Carteirinha/Recibo</label><input type="file" id="fotoSocio" accept="image/*" required></div>
-                <div class="campo"><label>Foto de Perfil</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
+                <div class="campo"><label>Nº Sócio (Gaviões) *</label><input type="number" id="numSocio" required></div>
+                <div class="campo"><label>Foto Carteirinha *</label><input type="file" id="fotoSocio" accept="image/*" required></div>
+                <div class="campo"><label>Foto de Perfil *</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
 
                 <button type="submit" id="btnReservar">RESERVAR VAGA</button>
             </form>
         </div>
     </div>
 
-    <div id="tela-pix">
+    <div id="tela-pix" class="tela">
         <div class="container" style="text-align: center;">
-            <div class="timer-box">A reserva expira em: <span id="timer">05:00</span></div>
-            <h2 style="color:var(--destaque)">PAGAMENTO DA TAXA</h2>
-            <p>Valor: <strong>R$ 50,00</strong></p>
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" style="width:200px; background:#fff; padding:10px; border-radius:10px;">
-            <div style="background:#222; padding:10px; margin:15px 0; font-family:monospace; font-size:0.8rem;">carnaval@gavioes.com.br</div>
+            <div class="timer-box">EXPIRA EM: <span id="timer">05:00</span></div>
+            <h2 style="color:var(--destaque)">TAXA DE MATRÍCULA</h2>
+            <p style="font-size: 1.2rem;">VALOR: <strong>R$ 50,00</strong></p>
+            
+            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" class="qr-code-img">
+            
+            <div class="chave-pix">
+                <small>CHAVE E-MAIL:</small><br>
+                <strong>carnaval@gavioes.com.br</strong>
+            </div>
             
             <div class="campo" style="text-align:left">
-                <label>Anexar Comprovante do PIX</label>
+                <label>Anexar Comprovante PIX *</label>
                 <input type="file" id="fotoComprovante" accept="image/*" required>
             </div>
             <button onclick="enviarComprovante()" id="btnComprovante">ENVIAR COMPROVANTE</button>
         </div>
     </div>
 
-    <div id="tela-final">
+    <div id="tela-final" class="tela">
         <div class="container" style="text-align: center;">
+            <h1 style="font-size: 4rem;">✅</h1>
             <h2 style="color:var(--destaque)">COMPROVANTE ENVIADO!</h2>
-            <p>Sua inscrição foi recebida com sucesso. A Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.</p>
-            <button onclick="location.reload()">VOLTAR AO INÍCIO</button>
+            <p>Sua inscrição foi recebida. A Diretoria da Ritimão irá validar os dados e entrará em contato via WhatsApp/E-mail.</p>
+            <button onclick="location.reload()" style="background:#333; color:#fff; margin-top:20px;">FECHAR</button>
         </div>
     </div>
 
 <script>
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; // Atualize aqui
+    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; 
     let dadosUsuario = {};
-    let tempoRestante = 300;
-    let cronometro;
+    let tempo = 300;
+    let timerId;
 
     function abrirCadastro() {
         $('#tela-inicial').hide();
         $('#tela-cadastro').show();
-        buscarVagas();
+        carregarVagas();
     }
 
     $(document).ready(function(){
@@ -141,74 +163,58 @@
         $('.mask-tel').mask('(00) 00000-0000');
         $('.mask-data').mask('00/00/0000');
 
-        // Lógica de Idade e Responsável
         $('#dataNasc').blur(function(){
             const idade = calcularIdade($(this).val());
             if(idade < 12) {
-                alert("As inscrições são permitidas apenas para maiores de 12 anos.");
+                alert("Inscrições apenas para maiores de 12 anos.");
                 $(this).val('');
-            } else if(idade >= 12 && idade <= 17) {
-                $('#blocoResp').removeClass('hidden');
+            } else if(idade < 18) {
+                $('#blocoResp').show();
                 $('#nomeResp, #telResp').prop('required', true);
             } else {
-                $('#blocoResp').addClass('hidden');
+                $('#blocoResp').hide();
                 $('#nomeResp, #telResp').prop('required', false);
             }
         });
 
-        // Filtro de Sexo -> Instrumentos
-        $('#sexo').change(function(){
-            const sexo = $(this).val();
-            atualizarListaInstrumentos(sexo);
-        });
+        $('#sexo').change(function(){ atualizarFiltroInstrumento($(this).val()); });
     });
 
-    async function buscarVagas() {
-        try {
-            const res = await fetch(URL_SCRIPT + "?acao=BUSCAR_VAGAS");
-            const vagas = await res.json();
-            let htmlVagas = "";
-            window.vagasGlobais = vagas; // Guarda para usar no select
-
-            for(let inst in vagas) {
-                const esgotado = vagas[inst] <= 0;
-                htmlVagas += `<div class="vaga-item"><span>${inst}:</span><span class="${esgotado?'vaga-zero':''}">${esgotado?'ESGOTADO':vagas[inst]}</span></div>`;
-            }
-            $('#vagasDisplay').html(htmlVagas);
-            atualizarListaInstrumentos($('#sexo').val());
-        } catch(e) { console.error("Erro ao carregar vagas"); }
+    async function carregarVagas() {
+        const res = await fetch(URL_SCRIPT);
+        window.vagas = await res.json();
+        let html = "";
+        for(let i in window.vagas) {
+            html += `<div class="vaga-item"><span>${i}:</span><span class="${window.vagas[i]<=0?'vaga-zero':''}">${window.vagas[i]<=0?'ESGOTADO':window.vagas[i]}</span></div>`;
+        }
+        $('#vagasDisplay').html(html);
+        atualizarFiltroInstrumento($('#sexo').val());
     }
 
-    function atualizarListaInstrumentos(sexo) {
-        if(!window.vagasGlobais) return;
-        let html = '<option value="">Selecione...</option>';
-        for(let inst in window.vagasGlobais) {
-            const esgotado = window.vagasGlobais[inst] <= 0;
-            const restritoMasc = (sexo === "Masculino" && (inst === "Xequere" || inst === "Chocalho"));
-            
-            if(!restritoMasc) {
-                html += `<option value="${inst}" ${esgotado ? 'disabled' : ''}>${inst} ${esgotado ? '(ESGOTADO)' : ''}</option>`;
-            }
+    function atualizarFiltroInstrumento(sexo) {
+        if(!window.vagas) return;
+        let h = '<option value="">Selecione...</option>';
+        for(let i in window.vagas) {
+            const esgotado = window.vagas[i] <= 0;
+            const restrito = (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"));
+            if(!restrito) h += `<option value="${i}" ${esgotado?'disabled':''}>${i} ${esgotado?'(LOTADO)':''}</option>`;
         }
-        $('#instrumento').html(html);
+        $('#instrumento').html(h);
     }
 
     function calcularIdade(data) {
-        const p = data.split('/'); if(p.length < 3) return 0;
-        const nascimento = new Date(p[2], p[1]-1, p[0]);
+        const p = data.split('/'); if(p.length<3) return 0;
+        const nasc = new Date(p[2], p[1]-1, p[0]);
         const hoje = new Date();
-        let idade = hoje.getFullYear() - nascimento.getFullYear();
-        if (hoje.getMonth() < nascimento.getMonth() || (hoje.getMonth() == nascimento.getMonth() && hoje.getDate() < nascimento.getDate())) idade--;
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        if (hoje.getMonth() < nasc.getMonth() || (hoje.getMonth() == nasc.getMonth() && hoje.getDate() < nasc.getDate())) idade--;
         return idade;
     }
 
     $('#formMatricula').submit(async function(e){
         e.preventDefault();
         const btn = $('#btnReservar');
-        btn.prop('disabled', true).text('VERIFICANDO...');
-
-        // Validação de E-mail simples
-        if(!$('#email').val().includes('@')) return alert("E-mail inválido!");
+        btn.prop('disabled', true).text('RESERVANDO...');
 
         dadosUsuario = {
             nome: $('#nome').val(),
@@ -217,27 +223,27 @@
             sexo: $('#sexo').val(),
             tel: $('#tel').val(),
             email: $('#email').val(),
+            redeSocial: $('#redeSocial').val() || "Não informado",
             instrumento: $('#instrumento').val(),
             nivel: $('#nivel').val(),
             tamanhoCamiseta: $('#tamanhoCamiseta').val(),
             numSocio: $('#numSocio').val(),
             nomeResp: $('#nomeResp').val() || "N/A",
             telResp: $('#telResp').val() || "N/A",
-            fotoSocio: await converterB64($('#fotoSocio')[0].files[0]),
-            fotoPerfil: await converterB64($('#fotoPerfil')[0].files[0]),
+            fotoSocio: await toB64($('#fotoSocio')[0].files[0]),
+            fotoPerfil: await toB64($('#fotoPerfil')[0].files[0]),
             acao: "RESERVAR"
         };
 
         const res = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dadosUsuario) });
-        const resultado = await res.json();
+        const r = await res.json();
 
-        if(resultado.status === "sucesso") {
+        if(r.status === "sucesso") {
             $('#tela-cadastro').hide();
             $('#tela-pix').show();
-            iniciarCronometro();
+            iniciarTimer();
         } else {
-            alert(resultado.msg);
-            if(resultado.msg.includes("vagas")) location.reload();
+            alert(r.msg);
             btn.prop('disabled', false).text('RESERVAR VAGA');
         }
     });
@@ -247,45 +253,36 @@
         if(!file) return alert("Anexe o comprovante!");
 
         $('#btnComprovante').prop('disabled', true).text('ENVIANDO...');
-        
-        const dadosComprovante = {
-            cpf: dadosUsuario.cpf,
-            comprovante: await converterB64(file),
-            acao: "CONFIRMAR_PAGAMENTO"
-        };
+        const res = await fetch(URL_SCRIPT, { 
+            method: 'POST', 
+            body: JSON.stringify({ cpf: dadosUsuario.cpf, comprovante: await toB64(file), acao: "CONFIRMAR_PAGAMENTO" }) 
+        });
+        const r = await res.json();
 
-        const res = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dadosComprovante) });
-        const resultado = await res.json();
-
-        if(resultado.status === "sucesso") {
-            clearInterval(cronometro);
+        if(r.status === "sucesso") {
+            clearInterval(timerId);
             $('#tela-pix').hide();
             $('#tela-final').show();
         } else {
-            alert(resultado.msg);
+            alert(r.msg);
             location.reload();
         }
     }
 
-    function converterB64(file) {
-        return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = e => resolve(e.target.result);
-            reader.readAsDataURL(file);
+    function toB64(file) {
+        return new Promise((res) => {
+            const rd = new FileReader();
+            rd.onload = e => res(e.target.result);
+            rd.readAsDataURL(file);
         });
     }
 
-    function iniciarCronometro() {
-        cronometro = setInterval(() => {
-            tempoRestante--;
-            let min = Math.floor(tempoRestante / 60);
-            let seg = tempoRestante % 60;
-            $('#timer').text(`${min}:${seg < 10 ? '0'+seg : seg}`);
-            if(tempoRestante <= 0) {
-                clearInterval(cronometro);
-                alert("Tempo esgotado! Sua vaga foi liberada.");
-                location.reload();
-            }
+    function iniciarTimer() {
+        timerId = setInterval(() => {
+            tempo--;
+            let m = Math.floor(tempo/60); let s = tempo%60;
+            $('#timer').text(`${m}:${s<10?'0'+s:s}`);
+            if(tempo<=0) { clearInterval(timerId); alert("Tempo esgotado!"); location.reload(); }
         }, 1000);
     }
 </script>
