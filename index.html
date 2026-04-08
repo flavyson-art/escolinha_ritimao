@@ -8,32 +8,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; --sucesso: #00ff00; }
-        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
         .tela { display: none; padding: 20px; min-height: 100vh; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; background-size: cover; background-position: center; background-attachment: fixed; }
         
         #tela-inicial { display: flex; justify-content: center; align-items: center; }
 
-        /* Logo oval e maior conforme solicitado */
+        /* AJUSTE 1: Logo oval e MUITO maior (preenchendo a tela móvel) */
         .logo-btn { 
-            width: 85vw; 
-            max-width: 450px; 
+            width: 90vw; /* 90% da largura da tela */
+            max-width: 600px; /* Limite para telas grandes */
             height: auto; 
             aspect-ratio: 1/1;
-            border-radius: 45%; /* Formato oval */
-            border: 8px solid var(--branco); 
+            border-radius: 48%; /* Formato oval */
+            border: 10px solid var(--branco); 
             cursor: pointer; 
             transition: 0.4s; 
             object-fit: cover; 
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+            display: block;
+            margin: 0 auto;
         }
-        .logo-btn:hover { transform: scale(1.02); box-shadow: 0 0 40px var(--destaque); }
+        .logo-btn:hover { transform: scale(1.02); box-shadow: 0 0 50px var(--destaque); }
 
         #tela-cadastro { background-image: url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg'); }
 
-        .container { width: 100%; max-width: 480px; background: rgba(0, 0, 0, 0.92); padding: 30px; border-radius: 20px; border: 1px solid #444; box-sizing: border-box; margin: 20px 0; }
+        .container { width: 100%; max-width: 480px; background: rgba(0, 0, 0, 0.94); padding: 30px; border-radius: 20px; border: 1px solid #444; box-sizing: border-box; margin: 20px 0; position: relative; z-index: 2; }
         
-        .titulo-amarelo { color: var(--destaque); text-align: center; text-transform: uppercase; font-weight: 900; font-size: 1.5rem; margin-bottom: 25px; }
+        .titulo-amarelo { color: var(--destaque); text-align: center; text-transform: uppercase; font-weight: 900; font-size: 1.6rem; margin-top: 0; margin-bottom: 25px; }
         
         .grid-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333; }
         .vaga-item { border-bottom: 1px solid #333; padding: 6px; font-size: 12px; display: flex; justify-content: space-between; }
@@ -48,16 +50,23 @@
         
         .btn-acao { width: 100%; padding: 20px; background: var(--branco); color: #000; border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; font-size: 1.1rem; }
         .btn-acao:active { transform: scale(0.98); }
+        .btn-acao:disabled { background: #666; color: #aaa; cursor: not-allowed; }
 
-        #qr-code { width: 90%; max-width: 320px; margin: 25px 0; border: 8px solid white; border-radius: 15px; }
+        /* Estilos do Cronômetro na tela PIX */
+        .secao-timer { background: #222; border: 2px solid var(--erro); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center; }
+        .texto-timer { color: var(--erro); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; margin: 0 0 5px 0; }
+        #cronometro { color: #fff; font-size: 2.5rem; font-family: monospace; font-weight: bold; letter-spacing: 2px; }
+
+        #qr-code { width: 95%; max-width: 350px; margin: 20px auto; border: 10px solid white; border-radius: 15px; display: block; }
+        .chave-pix { background: #1a1a1a; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 1.2rem; color: var(--destaque); margin: 10px auto; border: 1px dashed #555; width: fit-content; max-width: 100%; word-wrap: break-word; }
     </style>
 </head>
 <body>
 
     <div id="tela-inicial" class="tela">
-        <div style="text-align: center;">
+        <div style="text-align: center; padding-top: 20px;">
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-btn" onclick="abrirCadastro()">
-            <h1 style="color:var(--destaque); margin-top:30px; letter-spacing: 2px;">TOQUE NO LOGO PARA INICIAR</h1>
+            <h1 style="color:var(--destaque); margin-top:40px; letter-spacing: 2px; font-size: 2rem;">TOQUE NO LOGO PARA INICIAR</h1>
         </div>
     </div>
 
@@ -126,10 +135,18 @@
     <div id="tela-pix" class="tela">
         <div class="container" style="text-align: center;">
             <h2 class="titulo-amarelo">Pagamento da Taxa</h2>
+            
+            <div class="secao-timer">
+                <p class="texto-timer">Sua reserva expira em:</p>
+                <div id="cronometro">05:00</div>
+            </div>
+
+            <p style="font-size: 1.1rem; margin-bottom: 5px;">Taxa de Matrícula + Camiseta:</p>
+            <p style="font-size: 1.8rem; font-weight: bold; color: var(--sucesso); margin-top: 0;">R$ 50,00</p>
+            
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" id="qr-code">
-            <p style="font-weight: bold; margin-bottom: 5px;">CHAVE PIX:</p>
+            <p style="font-weight: bold; margin-bottom: 5px;">CHAVE PIX (E-MAIL):</p>
             <div class="chave-pix">carnaval@gavioes.com.br</div>
-            <p style="font-size: 13px; color: var(--cinza);">Valor: R$ 50,00</p>
             
             <div class="campo" style="margin-top: 30px; text-align: left;">
                 <label>Anexar Comprovante do PIX *</label>
@@ -140,8 +157,9 @@
     </div>
 
 <script>
-    const URL_API = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
+    const URL_API = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; // Certifique-se de que este link está correto!
     let dadosCandidato = {};
+    let intervaloCronometro; // Variável global para o timer
 
     function abrirCadastro() {
         $(".tela").hide();
@@ -195,9 +213,7 @@
         const listaInst = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
 
         listaInst.forEach(i => {
-            // Regra de Sexo Masculino
             if (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho")) return;
-            
             let vagasDisponiveis = window.vagas[i] || 0;
             let esgotado = vagasDisponiveis <= 0;
             html += `<option value="${i}" ${esgotado ? 'disabled' : ''}>${i} ${esgotado ? '(INDISPONÍVEL)' : ''}</option>`;
@@ -205,6 +221,7 @@
         $("#instrumento").html(html);
     }
 
+    // Máscaras
     $(document).ready(function(){
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-data').mask('00/00/0000');
@@ -214,7 +231,6 @@
     $("#formMatricula").on("submit", async function(e) {
         e.preventDefault();
         
-        // Validação manual de e-mail (segurança extra)
         if(!$("#email").val().includes("@")) {
             alert("Por favor, insira um e-mail válido.");
             return;
@@ -249,6 +265,7 @@
                 $(".tela").hide();
                 $("#tela-pix").css("display", "flex");
                 window.scrollTo(0,0);
+                iniciarCronometro(); // AJUSTE 2: Inicia o timer
             } else {
                 alert(final.msg);
                 if(final.msg.includes("esgotadas")) window.location.reload();
@@ -257,6 +274,41 @@
         
         $("#btnReservar").prop("disabled", false).text("Reservar Minha Vaga");
     });
+
+    // AJUSTE 2: Lógica do Cronômetro Regressivo
+    function iniciarCronometro() {
+        let tempoRestante = 300; // 5 minutos em segundos
+        const display = document.getElementById('cronometro');
+        
+        // Limpa qualquer intervalo anterior existente
+        if (intervaloCronometro) clearInterval(intervaloCronometro);
+
+        intervaloCronometro = setInterval(function () {
+            let minutos = parseInt(tempoRestante / 60, 10);
+            let segundos = parseInt(tempoRestante % 60, 10);
+
+            minutos = minutos < 10 ? "0" + minutos : minutos;
+            segundos = segundos < 10 ? "0" + segundos : segundos;
+
+            display.textContent = minutos + ":" + segundos;
+
+            // Se o tempo acabar
+            if (--tempoRestante < 0) {
+                clearInterval(intervaloCronometro);
+                display.textContent = "00:00";
+                alert("O tempo para envio do comprovante expirou!\nSua reserva foi cancelada e a vaga retornou ao sistema.");
+                window.location.reload(); // Recarrega a página inicial
+            }
+            
+            // Muda cor do timer para vermelho no último minuto
+            if (tempoRestante < 60) {
+                display.style.color = "var(--erro)";
+            } else {
+                display.style.color = "#fff";
+            }
+
+        }, 1000);
+    }
 
     async function enviarPix() {
         const file = document.getElementById("fotoPix").files[0];
@@ -267,9 +319,16 @@
         
         try {
             const res = await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
-            alert("COMPROVANTE ENVIADO! Sua inscrição foi recebida com sucesso. A Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.");
+            
+            // Se o PIX foi enviado com sucesso, para o cronômetro
+            clearInterval(intervaloCronometro);
+            
+            alert("COMPROVANTE ENVIADO!\nSua inscrição foi recebida com sucesso.\nA Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.");
             window.location.reload();
-        } catch (e) { alert("Erro ao enviar. Tente novamente."); }
+        } catch (e) { 
+            alert("Erro ao enviar. Tente novamente."); 
+            $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante");
+        }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
