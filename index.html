@@ -7,7 +7,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
-        /* MELHORIA: Removida a cor verde. Usando azul claro para destaque de sucesso. */
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; --sucesso: #00bfff; }
         body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
@@ -35,7 +34,6 @@
 
         .container { width: 100%; max-width: 480px; background: rgba(0, 0, 0, 0.94); padding: 30px; border-radius: 20px; border: 1px solid #444; box-sizing: border-box; margin: 20px 0; position: relative; z-index: 2; }
         
-        /* MELHORIA: Aumentado o tamanho do contêiner da tela Pix */
         #tela-pix .container { max-width: 700px; }
 
         .titulo-amarelo { color: var(--destaque); text-align: center; text-transform: uppercase; font-weight: 900; font-size: 1.6rem; margin-top: 0; margin-bottom: 25px; }
@@ -52,12 +50,12 @@
         input:focus { border-color: var(--destaque); outline: none; }
         
         .btn-acao { width: 100%; padding: 20px; background: var(--branco); color: #000; border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; font-size: 1.1rem; }
+        .btn-acao:disabled { background: #555; cursor: not-allowed; }
         
         .secao-timer { background: #222; border: 2px solid var(--erro); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center; }
         .texto-timer { color: var(--erro); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; margin: 0 0 5px 0; }
         #cronometro { color: #fff; font-size: 2.5rem; font-family: monospace; font-weight: bold; letter-spacing: 2px; }
 
-        /* MELHORIA: Aumentada a imagem do QR Code */
         #qr-code { width: 100%; max-width: 550px; margin: 20px auto; border: 15px solid white; border-radius: 10px; display: block; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         
         .chave-pix { background: #1a1a1a; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 1.2rem; color: var(--destaque); margin: 10px auto; border: 1px dashed #555; width: fit-content; max-width: 100%; word-wrap: break-word; }
@@ -127,7 +125,12 @@
             <p>Taxa de Matrícula + Camiseta: <br><strong style="font-size: 1.8rem; color: var(--sucesso);">R$ 50,00</strong></p>
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" id="qr-code">
             <div class="chave-pix">Chave Pix: carnaval@gavioes.com.br</div>
-            <div class="campo" style="text-align: left; margin-top: 20px;"><label>Anexar Comprovante do PIX *</label><input type="file" id="fotoPix" accept="image/*" required></div>
+            
+            <div class="campo" style="text-align: left; margin-top: 20px;">
+                <label>Anexar Comprovante do PIX *</label>
+                <input type="file" id="fotoPix" accept="image/*">
+            </div>
+            
             <button class="btn-acao" onclick="enviarPix()" id="btnEnviarPix">Enviar Comprovante</button>
         </div>
     </div>
@@ -252,6 +255,7 @@
                 $(".tela").hide();
                 $("#tela-pix").css("display", "flex");
                 iniciarCronometro();
+                window.scrollTo(0,0);
             } else { alert(final.msg); window.location.reload(); }
         } catch (e) { alert("Erro na reserva."); }
         $("#btnReservar").prop("disabled", false).text("Reservar Minha Vaga");
@@ -275,15 +279,39 @@
 
     async function enviarPix() {
         const file = document.getElementById("fotoPix").files[0];
-        if(!file) return alert("Anexe o comprovante!");
+        
+        // AJUSTE: Bloqueio caso não tenha arquivo
+        if(!file) {
+            alert("ATENÇÃO: Você precisa anexar a foto do comprovante para finalizar sua inscrição.");
+            return;
+        }
+
         $("#btnEnviarPix").prop("disabled", true).text("Enviando...");
+        
         try {
-            const payload = { acao: "CONFIRMAR_PAGAMENTO", cpf: dadosCandidato.cpf, comprovante: await toBase64(file) };
-            await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
-            clearInterval(intervaloCronometro);
-            alert("Inscrição concluída com sucesso!");
-            window.location.reload();
-        } catch (e) { alert("Erro ao enviar PIX."); $("#btnEnviarPix").prop("disabled", false); }
+            const payload = { 
+                acao: "CONFIRMAR_PAGAMENTO", 
+                cpf: dadosCandidato.cpf, 
+                comprovante: await toBase64(file) 
+            };
+
+            const res = await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
+            const final = await res.json();
+
+            if(final.status === "sucesso") {
+                clearInterval(intervaloCronometro);
+                // MENSAGEM FINAL SOLICITADA
+                alert("COMPROVANTE ENVIADO!\n\nSua inscrição foi recebida com sucesso. A Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.");
+                window.location.reload();
+            } else {
+                alert("Erro ao validar: " + final.msg);
+                $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante");
+            }
+
+        } catch (e) { 
+            alert("Erro ao enviar PIX. Tente novamente."); 
+            $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante"); 
+        }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
