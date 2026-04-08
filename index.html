@@ -34,6 +34,9 @@
 
         .container { width: 100%; max-width: 480px; background: rgba(0, 0, 0, 0.94); padding: 30px; border-radius: 20px; border: 1px solid #444; box-sizing: border-box; margin: 20px 0; position: relative; z-index: 2; }
         
+        /* Ajuste específico para a tela de PIX caber o QR Code maior */
+        #tela-pix .container { max-width: 520px; }
+
         .titulo-amarelo { color: var(--destaque); text-align: center; text-transform: uppercase; font-weight: 900; font-size: 1.6rem; margin-top: 0; margin-bottom: 25px; }
         
         .grid-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333; }
@@ -53,7 +56,17 @@
         .texto-timer { color: var(--erro); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; margin: 0 0 5px 0; }
         #cronometro { color: #fff; font-size: 2.5rem; font-family: monospace; font-weight: bold; letter-spacing: 2px; }
 
-        #qr-code { width: 95%; max-width: 350px; margin: 20px auto; border: 10px solid white; border-radius: 15px; display: block; }
+        /* MELHORIA: QR CODE MAIOR E COM MAIS CONTRASTE */
+        #qr-code { 
+            width: 100%; 
+            max-width: 400px; 
+            margin: 20px auto; 
+            border: 15px solid white; 
+            border-radius: 10px; 
+            display: block; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        
         .chave-pix { background: #1a1a1a; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 1.2rem; color: var(--destaque); margin: 10px auto; border: 1px dashed #555; width: fit-content; max-width: 100%; word-wrap: break-word; }
     </style>
 </head>
@@ -120,8 +133,9 @@
             <div class="secao-timer"><p class="texto-timer">Sua reserva expira em:</p><div id="cronometro">05:00</div></div>
             <p>Taxa de Matrícula + Camiseta: <br><strong style="font-size: 1.8rem; color: var(--sucesso);">R$ 50,00</strong></p>
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" id="qr-code">
+            <p style="font-size: 0.9rem; color: var(--cinza);">Chave PIX (E-mail):</p>
             <div class="chave-pix">carnaval@gavioes.com.br</div>
-            <div class="campo" style="text-align: left;"><label>Anexar Comprovante do PIX *</label><input type="file" id="fotoPix" accept="image/*" required></div>
+            <div class="campo" style="text-align: left; margin-top: 20px;"><label>Anexar Comprovante do PIX *</label><input type="file" id="fotoPix" accept="image/*" required></div>
             <button class="btn-acao" onclick="enviarPix()" id="btnEnviarPix">Enviar Comprovante</button>
         </div>
     </div>
@@ -224,7 +238,7 @@
             acao: "RESERVAR",
             nome: $("#nome").val(),
             cpf: $("#cpf").val(),
-            nasc: idadeCalculada, // GRAVA A IDADE
+            nasc: idadeCalculada,
             sexo: $("#sexo").val(),
             tel: $("#tel").val(),
             email: $("#email").val(),
