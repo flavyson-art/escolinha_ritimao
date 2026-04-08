@@ -14,13 +14,12 @@
         
         #tela-inicial { display: flex; justify-content: center; align-items: center; }
 
-        /* AJUSTE 1: Logo oval e MUITO maior (preenchendo a tela móvel) */
         .logo-btn { 
-            width: 90vw; /* 90% da largura da tela */
-            max-width: 600px; /* Limite para telas grandes */
+            width: 90vw; 
+            max-width: 600px; 
             height: auto; 
             aspect-ratio: 1/1;
-            border-radius: 48%; /* Formato oval */
+            border-radius: 48%; 
             border: 10px solid var(--branco); 
             cursor: pointer; 
             transition: 0.4s; 
@@ -49,10 +48,7 @@
         input:focus { border-color: var(--destaque); outline: none; }
         
         .btn-acao { width: 100%; padding: 20px; background: var(--branco); color: #000; border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; font-size: 1.1rem; }
-        .btn-acao:active { transform: scale(0.98); }
-        .btn-acao:disabled { background: #666; color: #aaa; cursor: not-allowed; }
-
-        /* Estilos do Cronômetro na tela PIX */
+        
         .secao-timer { background: #222; border: 2px solid var(--erro); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center; }
         .texto-timer { color: var(--erro); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; margin: 0 0 5px 0; }
         #cronometro { color: #fff; font-size: 2.5rem; font-family: monospace; font-weight: bold; letter-spacing: 2px; }
@@ -73,12 +69,8 @@
     <div id="tela-cadastro" class="tela">
         <div class="container">
             <h2 class="titulo-amarelo">Inscrições Abertas para Sócios</h2>
-            
             <div id="vagas-container" class="grid-vagas"></div>
-
-            <div class="aviso-tamborim">
-                <strong>AVISO IMPORTANTE:</strong> PARA AS AULAS DE TAMBORIM, É OBRIGATÓRIO QUE O ALUNO POSSUA E TRAGA SEU PRÓPRIO INSTRUMENTO. A ESCOLA NÃO FORNECE TAMBORINS.
-            </div>
+            <div class="aviso-tamborim"><strong>AVISO:</strong> PARA TAMBORIM, É OBRIGATÓRIO TRAZER SEU PRÓPRIO INSTRUMENTO.</div>
 
             <form id="formMatricula">
                 <div class="campo"><label>Nome Completo *</label><input type="text" id="nome" required></div>
@@ -86,7 +78,7 @@
                 <div class="campo"><label>Data de Nascimento *</label><input type="text" id="nasc" class="mask-data" placeholder="DD/MM/AAAA" onblur="validarIdade()" required></div>
                 
                 <div id="campos-responsavel" style="display:none; border-left: 4px solid var(--destaque); padding-left: 15px; background: #111; padding-top: 10px; border-radius: 0 10px 10px 0;">
-                    <p style="font-size: 11px; color: var(--destaque); margin-top: 0;">DADOS DO RESPONSÁVEL (MENOR DE IDADE)</p>
+                    <p style="font-size: 11px; color: var(--destaque); margin-top: 0;">DADOS DO RESPONSÁVEL</p>
                     <div class="campo"><label>Nome do Responsável *</label><input type="text" id="nomeResp"></div>
                     <div class="campo"><label>Telefone do Responsável *</label><input type="text" id="telResp" class="mask-tel"></div>
                 </div>
@@ -101,29 +93,19 @@
 
                 <div class="campo"><label>WhatsApp *</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail *</label><input type="email" id="email" placeholder="email@exemplo.com" required></div>
-                <div class="campo"><label>Rede Social (Instagram/Facebook)</label><input type="text" id="social"></div>
+                <div class="campo"><label>Rede Social</label><input type="text" id="social"></div>
                 
-                <div class="campo"><label>Instrumento *</label><select id="instrumento" required></select></div>
-                
-                <div class="campo"><label>Nível de Conhecimento *</label>
-                    <select id="nivel" required>
-                        <option value="">Selecione...</option>
-                        <option value="Iniciante">Iniciante</option>
-                        <option value="Intermediário">Intermediário</option>
-                        <option value="Avançado">Avançado</option>
-                    </select>
-                </div>
+                <div class="campo"><label>Instrumento *</label><select id="instrumento" onchange="atualizarNiveis()" required></select></div>
+                <div class="campo"><label>Nível de Conhecimento *</label><select id="nivel" required><option value="">Selecione o instrumento primeiro...</option></select></div>
 
                 <div class="campo"><label>Tamanho da Camiseta *</label>
                     <select id="camiseta" required>
                         <option value="">Selecione...</option>
-                        <option value="P">P</option><option value="M">M</option><option value="G">G</option>
-                        <option value="GG">GG</option><option value="XG">XG</option>
+                        <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="XG">XG</option>
                     </select>
                 </div>
 
                 <div class="campo"><label>Nº Sócio Gaviões *</label><input type="number" id="numSocio" required></div>
-                
                 <div class="campo"><label>Foto Carteirinha/Recibo *</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Foto de Perfil *</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
 
@@ -135,31 +117,20 @@
     <div id="tela-pix" class="tela">
         <div class="container" style="text-align: center;">
             <h2 class="titulo-amarelo">Pagamento da Taxa</h2>
-            
-            <div class="secao-timer">
-                <p class="texto-timer">Sua reserva expira em:</p>
-                <div id="cronometro">05:00</div>
-            </div>
-
-            <p style="font-size: 1.1rem; margin-bottom: 5px;">Taxa de Matrícula + Camiseta:</p>
-            <p style="font-size: 1.8rem; font-weight: bold; color: var(--sucesso); margin-top: 0;">R$ 50,00</p>
-            
+            <div class="secao-timer"><p class="texto-timer">Sua reserva expira em:</p><div id="cronometro">05:00</div></div>
+            <p>Taxa de Matrícula + Camiseta: <br><strong style="font-size: 1.8rem; color: var(--sucesso);">R$ 50,00</strong></p>
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" id="qr-code">
-            <p style="font-weight: bold; margin-bottom: 5px;">CHAVE PIX (E-MAIL):</p>
             <div class="chave-pix">carnaval@gavioes.com.br</div>
-            
-            <div class="campo" style="margin-top: 30px; text-align: left;">
-                <label>Anexar Comprovante do PIX *</label>
-                <input type="file" id="fotoPix" accept="image/*" required>
-            </div>
+            <div class="campo" style="text-align: left;"><label>Anexar Comprovante do PIX *</label><input type="file" id="fotoPix" accept="image/*" required></div>
             <button class="btn-acao" onclick="enviarPix()" id="btnEnviarPix">Enviar Comprovante</button>
         </div>
     </div>
 
 <script>
-    const URL_API = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; // Certifique-se de que este link está correto!
+    const URL_API = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec"; 
     let dadosCandidato = {};
-    let intervaloCronometro; // Variável global para o timer
+    let intervaloCronometro;
+    let idadeCalculada = null;
 
     function abrirCadastro() {
         $(".tela").hide();
@@ -174,7 +145,6 @@
             window.vagas = await res.json();
             let html = "";
             const listaFixa = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
-            
             listaFixa.forEach(inst => {
                 let qtd = window.vagas[inst] || 0;
                 html += `<div class="vaga-item"><span>${inst}</span> <span>${qtd > 0 ? qtd : '<span class="esgotado">Esgotado</span>'}</span></div>`;
@@ -187,7 +157,6 @@
     function validarIdade() {
         const dataStr = $("#nasc").val();
         if(dataStr.length < 10) return;
-        
         const partes = dataStr.split("/");
         const nasc = new Date(partes[2], partes[1] - 1, partes[0]);
         const hoje = new Date();
@@ -195,34 +164,53 @@
         if (hoje < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) idade--;
 
         if (idade < 12) {
-            alert("Inscrições permitidas apenas para maiores de 12 anos.");
+            alert("Apenas maiores de 12 anos.");
             $("#nasc").val("");
             $("#campos-responsavel").hide();
-        } else if (idade < 18) {
-            $("#campos-responsavel").show();
-            $("#nomeResp, #telResp").prop("required", true);
+            idadeCalculada = null;
         } else {
-            $("#campos-responsavel").hide();
-            $("#nomeResp, #telResp").prop("required", false);
+            idadeCalculada = idade;
+            if (idade < 18) {
+                $("#campos-responsavel").show();
+                $("#nomeResp, #telResp").prop("required", true);
+            } else {
+                $("#campos-responsavel").hide();
+                $("#nomeResp, #telResp").prop("required", false);
+            }
         }
     }
 
     function atualizarInstrumentos() {
         const sexo = $("#sexo").val();
-        let html = '<option value="">Selecione o instrumento...</option>';
+        let html = '<option value="">Selecione...</option>';
         const listaInst = ["Caixa", "Cuica", "Chocalho", "Repique", "Surdo 1", "Surdo 2", "Terceira", "Tamborim", "Timbal", "Xequere"];
-
         listaInst.forEach(i => {
             if (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho")) return;
-            let vagasDisponiveis = window.vagas[i] || 0;
-            let esgotado = vagasDisponiveis <= 0;
-            html += `<option value="${i}" ${esgotado ? 'disabled' : ''}>${i} ${esgotado ? '(INDISPONÍVEL)' : ''}</option>`;
+            let vagas = window.vagas ? (window.vagas[i] || 0) : 0;
+            html += `<option value="${i}" ${vagas <= 0 ? 'disabled' : ''}>${i} ${vagas <= 0 ? '(ESGOTADO)' : ''}</option>`;
         });
         $("#instrumento").html(html);
+        $("#nivel").html('<option value="">Selecione o instrumento primeiro...</option>');
     }
 
-    // Máscaras
-    $(document).ready(function(){
+    function atualizarNiveis() {
+        const inst = $("#instrumento").val();
+        const campo = $("#nivel");
+        let html = '<option value="">Selecione...</option>';
+        const basico = ["Iniciante", "Intermediário"];
+        const aprimora = ["Curso de aprimoramento (para quem já toca)"];
+        const completo = ["Iniciante", "Intermediário", "Curso de aprimoramento (para quem já toca)"];
+
+        let lista = [];
+        if (["Chocalho", "Xequere", "Repique", "Caixa", "Terceira"].includes(inst)) lista = basico;
+        else if (["Tamborim", "Cuica", "Timbal"].includes(inst)) lista = completo;
+        else if (["Surdo 1", "Surdo 2"].includes(inst)) lista = aprimora;
+
+        lista.forEach(n => html += `<option value="${n}">${n}</option>`);
+        campo.html(html);
+    }
+
+    $(document).ready(() => {
         $('.mask-cpf').mask('000.000.000-00');
         $('.mask-data').mask('00/00/0000');
         $('.mask-tel').mask('(00) 00000-0000');
@@ -230,23 +218,17 @@
 
     $("#formMatricula").on("submit", async function(e) {
         e.preventDefault();
-        
-        if(!$("#email").val().includes("@")) {
-            alert("Por favor, insira um e-mail válido.");
-            return;
-        }
-
-        $("#btnReservar").prop("disabled", true).text("Verificando Vagas...");
+        $("#btnReservar").prop("disabled", true).text("Processando...");
 
         dadosCandidato = {
             acao: "RESERVAR",
             nome: $("#nome").val(),
             cpf: $("#cpf").val(),
-            nasc: $("#nasc").val(),
+            nasc: idadeCalculada, // GRAVA A IDADE
             sexo: $("#sexo").val(),
             tel: $("#tel").val(),
             email: $("#email").val(),
-            social: $("#social").val() || "Não informado",
+            social: $("#social").val() || "N/A",
             instrumento: $("#instrumento").val(),
             nivel: $("#nivel").val(),
             camiseta: $("#camiseta").val(),
@@ -260,82 +242,49 @@
         try {
             const res = await fetch(URL_API, { method: "POST", body: JSON.stringify(dadosCandidato) });
             const final = await res.json();
-            
             if (final.status === "sucesso") {
                 $(".tela").hide();
                 $("#tela-pix").css("display", "flex");
-                window.scrollTo(0,0);
-                iniciarCronometro(); // AJUSTE 2: Inicia o timer
-            } else {
-                alert(final.msg);
-                if(final.msg.includes("esgotadas")) window.location.reload();
-            }
-        } catch (e) { alert("Erro de conexão. Tente novamente."); }
-        
+                iniciarCronometro();
+            } else { alert(final.msg); window.location.reload(); }
+        } catch (e) { alert("Erro na reserva."); }
         $("#btnReservar").prop("disabled", false).text("Reservar Minha Vaga");
     });
 
-    // AJUSTE 2: Lógica do Cronômetro Regressivo
     function iniciarCronometro() {
-        let tempoRestante = 300; // 5 minutos em segundos
+        let tempo = 300;
         const display = document.getElementById('cronometro');
-        
-        // Limpa qualquer intervalo anterior existente
-        if (intervaloCronometro) clearInterval(intervaloCronometro);
-
-        intervaloCronometro = setInterval(function () {
-            let minutos = parseInt(tempoRestante / 60, 10);
-            let segundos = parseInt(tempoRestante % 60, 10);
-
-            minutos = minutos < 10 ? "0" + minutos : minutos;
-            segundos = segundos < 10 ? "0" + segundos : segundos;
-
-            display.textContent = minutos + ":" + segundos;
-
-            // Se o tempo acabar
-            if (--tempoRestante < 0) {
+        intervaloCronometro = setInterval(() => {
+            let min = String(Math.floor(tempo / 60)).padStart(2, '0');
+            let sec = String(tempo % 60).padStart(2, '0');
+            display.textContent = `${min}:${sec}`;
+            if (tempo < 60) display.style.color = "var(--erro)";
+            if (--tempo < 0) {
                 clearInterval(intervaloCronometro);
-                display.textContent = "00:00";
-                alert("O tempo para envio do comprovante expirou!\nSua reserva foi cancelada e a vaga retornou ao sistema.");
-                window.location.reload(); // Recarrega a página inicial
+                alert("Tempo esgotado!");
+                window.location.reload();
             }
-            
-            // Muda cor do timer para vermelho no último minuto
-            if (tempoRestante < 60) {
-                display.style.color = "var(--erro)";
-            } else {
-                display.style.color = "#fff";
-            }
-
         }, 1000);
     }
 
     async function enviarPix() {
         const file = document.getElementById("fotoPix").files[0];
-        if(!file) return alert("Você deve anexar o comprovante para concluir!");
-        
-        $("#btnEnviarPix").prop("disabled", true).text("Validando...");
-        const payload = { acao: "CONFIRMAR_PAGAMENTO", cpf: dadosCandidato.cpf, comprovante: await toBase64(file) };
-        
+        if(!file) return alert("Anexe o comprovante!");
+        $("#btnEnviarPix").prop("disabled", true).text("Enviando...");
         try {
-            const res = await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
-            
-            // Se o PIX foi enviado com sucesso, para o cronômetro
+            const payload = { acao: "CONFIRMAR_PAGAMENTO", cpf: dadosCandidato.cpf, comprovante: await toBase64(file) };
+            await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
             clearInterval(intervaloCronometro);
-            
-            alert("COMPROVANTE ENVIADO!\nSua inscrição foi recebida com sucesso.\nA Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.");
+            alert("Inscrição concluída com sucesso!");
             window.location.reload();
-        } catch (e) { 
-            alert("Erro ao enviar. Tente novamente."); 
-            $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante");
-        }
+        } catch (e) { alert("Erro ao enviar PIX."); $("#btnEnviarPix").prop("disabled", false); }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onerror = e => reject(e);
     });
 </script>
 </body>
