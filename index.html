@@ -8,286 +8,108 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; }
-        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; }
+        body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
         
-        .tela { display: none; padding: 20px; min-height: 100vh; position: relative; background-size: cover; background-position: center; background-attachment: fixed; }
-        #tela-inicial { display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
+        /* Telas */
+        .tela { display: none; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         
-        /* Overlay escuro para legibilidade */
-        .tela::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 1; }
-        
-        .container { max-width: 480px; margin: 0 auto; background: rgba(15, 15, 15, 0.95); padding: 25px; border-radius: 20px; border: 1px solid #333; position: relative; z-index: 2; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        .logo-btn { width: 280px; height: 280px; border-radius: 50%; border: 6px solid var(--branco); object-fit: cover; box-shadow: 0 0 40px rgba(255,255,255,0.2); transition: 0.3s; }
-        .logo-btn:active { transform: scale(0.95); }
+        /* Garantir que a tela inicial apareça */
+        #tela-inicial { display: flex ! Democratic; } 
 
-        .quadro-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 15px 0; background: #000; padding: 12px; border-radius: 10px; font-size: 0.8rem; border: 1px solid #222; }
-        .vaga-item { border-bottom: 1px solid #111; display: flex; justify-content: space-between; padding: 2px 0; }
-        .vaga-zero { color: var(--erro); font-weight: bold; }
+        .container { width: 100%; max-width: 400px; background: #111; padding: 20px; border-radius: 15px; border: 1px solid #333; box-sizing: border-box; }
         
-        .campo { margin-bottom: 15px; display: flex; flex-direction: column; }
-        label { font-size: 0.7rem; text-transform: uppercase; margin-bottom: 4px; color: var(--cinza); font-weight: bold; }
-        input, select { padding: 12px; background: #080808; border: 1px solid #333; color: #fff; border-radius: 8px; font-size: 1rem; }
-        input:focus { border-color: var(--destaque); outline: none; }
+        .logo-btn { width: 200px; height: 200px; border-radius: 50%; border: 4px solid var(--branco); cursor: pointer; transition: 0.3s; z-index: 10; position: relative; }
+        .logo-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px var(--destaque); }
+
+        .campo { margin-bottom: 12px; display: flex; flex-direction: column; }
+        label { font-size: 0.75rem; color: var(--cinza); margin-bottom: 4px; }
+        input, select { padding: 10px; background: #000; border: 1px solid #444; color: #fff; border-radius: 5px; }
         
-        button { width: 100%; padding: 18px; background: var(--branco); color: var(--preto); border: none; font-weight: 900; border-radius: 10px; cursor: pointer; margin-top: 10px; text-transform: uppercase; }
-        
-        .qr-code-img { width: 260px; background: #fff; padding: 10px; border-radius: 10px; margin: 15px auto; display: block; }
+        button { width: 100%; padding: 15px; background: var(--branco); color: #000; border: none; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <div id="tela-inicial" class="tela" style="display: flex;">
-        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" class="logo-btn" onclick="abrirCadastro()">
-        <p style="margin-top:20px; font-weight: bold; z-index: 2; letter-spacing: 2px; text-align: center;">TOQUE NO LOGO PARA INICIAR</p>
+    <div id="tela-inicial" class="tela">
+        <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Logo.jpg" 
+             class="logo-btn" 
+             id="btn-iniciar"
+             onerror="this.src='https://via.placeholder.com/200?text=CLIQUE+AQUI'">
+        <h2 style="text-align:center; margin-top:20px;">TOQUE NO LOGO PARA INICIAR</h2>
     </div>
 
-    <div id="tela-cadastro" class="tela">
+    <div id="tela-cadastro" class="tela" style="display:none;">
         <div class="container">
-            <h2 style="text-align:center; color: var(--destaque); margin-top:0;">INSCRIÇÃO SÓCIOS</h2>
-            <div id="vagasDisplay" class="quadro-vagas">Sincronizando vagas...</div>
-            
+            <h3 style="color:var(--destaque); text-align:center;">CADASTRO</h3>
+            <div id="status-vagas" style="font-size: 10px; text-align: center; margin-bottom: 10px;"></div>
             <form id="formMatricula">
-                <div class="campo"><label>Nome Completo *</label><input type="text" id="nome" required></div>
-                <div class="campo"><label>CPF *</label><input type="text" id="cpf" class="mask-cpf" required></div>
-                <div class="campo"><label>Nascimento *</label><input type="text" id="dataNasc" class="mask-data" placeholder="DD/MM/AAAA" required></div>
-                
-                <div id="blocoResp" class="hidden">
-                    <div class="campo"><label style="color:var(--destaque)">Nome do Responsável *</label><input type="text" id="nomeResp"></div>
-                    <div class="campo"><label style="color:var(--destaque)">WhatsApp do Responsável *</label><input type="text" id="telResp" class="mask-tel"></div>
-                </div>
-
-                <div class="campo"><label>Sexo *</label>
-                    <select id="sexo" required>
+                <div class="campo"><label>Nome</label><input type="text" id="nome" required></div>
+                <div class="campo"><label>CPF</label><input type="text" id="cpf" class="mask-cpf" required></div>
+                <div class="campo"><label>Sexo</label>
+                    <select id="sexo" required onchange="atualizarInstrumentos()">
                         <option value="">Selecione...</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Feminino">Feminino</option>
                     </select>
                 </div>
-
-                <div class="campo"><label>WhatsApp *</label><input type="text" id="tel" class="mask-tel" required></div>
-                <div class="campo"><label>E-mail *</label><input type="email" id="email" required></div>
-                <div class="campo"><label>Rede Social (Instagram/Facebook)</label><input type="text" id="redeSocial" placeholder="@usuario"></div>
-                
-                <div class="campo"><label>Instrumento *</label>
-                    <select id="instrumento" required><option value="">Selecione o sexo primeiro</option></select>
+                <div class="campo"><label>Instrumento</label>
+                    <select id="instrumento" required></select>
                 </div>
-
-                <div class="campo"><label>Nível *</label>
-                    <select id="nivel" required>
-                        <option value="Iniciante">Iniciante</option>
-                        <option value="Intermediário">Intermediário</option>
-                        <option value="Avançado">Avançado</option>
-                    </select>
-                </div>
-
-                <div class="campo"><label>Tamanho Camiseta *</label>
-                    <select id="tamanhoCamiseta" required>
-                        <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="EXG">EXG</option>
-                    </select>
-                </div>
-
-                <div class="campo"><label>Nº Sócio Gaviões *</label><input type="number" id="numSocio" required></div>
-                <div class="campo"><label>Foto Carteirinha (Sócio) *</label><input type="file" id="fotoSocio" accept="image/*" required></div>
-                <div class="campo"><label>Sua Foto (Perfil) *</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
-
-                <button type="submit" id="btnReservar">RESERVAR VAGA</button>
+                <button type="submit" id="btnEnviar">AVANÇAR PARA PAGAMENTO</button>
             </form>
         </div>
     </div>
 
-    <div id="tela-pix" class="tela">
-        <div class="container" style="text-align: center;">
-            <div style="background:var(--erro); padding:10px; border-radius:8px; font-weight:bold; margin-bottom:15px">RESERVA EXPIRA EM: <span id="timer">05:00</span></div>
-            <h2 style="color:var(--destaque)">PAGAMENTO PIX</h2>
-            <p>Taxa de Matrícula: <strong>R$ 50,00</strong></p>
-            <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" class="qr-code-img">
-            <p style="font-family:monospace; font-size:0.9rem; background:#111; padding:10px;">carnaval@gavioes.com.br</p>
-            
-            <div class="campo" style="text-align:left; margin-top:20px;">
-                <label>Anexar Comprovante PIX *</label>
-                <input type="file" id="fotoComprovante" accept="image/*" required>
-            </div>
-            <button onclick="enviarComprovante()" id="btnComprovante">ENVIAR COMPROVANTE</button>
-        </div>
-    </div>
-
-    <div id="tela-final" class="tela">
-        <div class="container" style="text-align: center;">
-            <h1 style="font-size:4rem">✅</h1>
-            <h2 style="color:var(--destaque)">SUCESSO!</h2>
-            <p>Seus dados e comprovante foram enviados para análise da Diretoria.</p>
-            <button onclick="location.reload()">SAIR</button>
-        </div>
-    </div>
-
 <script>
-    // URL do seu Script (Certifique-se de que é a versão mais recente da implantação)
-    const URL_SCRIPT = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
-    let dadosUsuario = {};
-    let timerId;
+    // 1. Verifique se este link está correto (cole no navegador para testar)
+    const URL_API = "https://script.google.com/macros/s/AKfycbxtm0y_UXaIn8kua8IJJHPmopP8qqdUnw435jLp1HD0XPgcYNe8AIMIVA83tWOhgf5ngA/exec";
 
-    // 1. FUNÇÃO PRINCIPAL PARA ABRIR O CADASTRO
-    async function abrirCadastro() {
-        console.log("Botão clicado. Iniciando abertura...");
-        
-        // MUDANÇA DE TELA INSTANTÂNEA (Sem depender de nada)
-        const telaInicial = document.getElementById('tela-inicial');
-        const telaCadastro = document.getElementById('tela-cadastro');
-        
-        if (telaInicial && telaCadastro) {
-            telaInicial.style.display = 'none';
-            telaCadastro.style.display = 'block';
-            console.log("Tela alterada com sucesso.");
-        }
-
-        // Tenta carregar as vagas em segundo plano
-        try {
-            const res = await fetch(URL_SCRIPT);
-            if (!res.ok) throw new Error("Script retornou erro 404");
-            
-            window.vagas = await res.json();
-            renderizarQuadroVagas();
-        } catch (erro) {
-            console.error("Erro ao carregar vagas (404 ou conexão):", erro);
-            document.getElementById('vagasDisplay').innerHTML = "<p style='color:orange; grid-column: 1/-1;'>⚠️ Vagas em atualização (Offline)</p>";
-            
-            // Valores padrão para o formulário não travar
-            window.vagas = {"Caixa":2,"Cuica":2,"Chocalho":2,"Repique":2,"Surdo 1":2,"Surdo 2":2,"Tamborim":2};
-            atualizarFiltroInstrumento(document.getElementById('sexo').value);
-        }
-    }
-
-    // 2. AGUARDAR O DOCUMENTO CARREGAR PARA ATIVAR O CLIQUE
-    document.addEventListener('DOMContentLoaded', function() {
-        const logo = document.querySelector('.logo-btn');
-        if (logo) {
-            logo.addEventListener('click', abrirCadastro);
-            logo.style.cursor = 'pointer'; // Garante que mostre a mãozinha
-        }
-
-        // Inicializa Máscaras (jQuery é necessário aqui)
-        $('.mask-cpf').mask('000.000.000-00');
-        $('.mask-tel').mask('(00) 00000-0000');
-        $('.mask-data').mask('00/00/0000');
+    // FUNÇÃO DE TROCA DE TELA (JavaScript Puro - Não depende de jQuery)
+    document.getElementById('btn-iniciar').addEventListener('click', function() {
+        console.log("Clique detectado!");
+        document.getElementById('tela-inicial').style.setProperty('display', 'none', 'important');
+        document.getElementById('tela-cadastro').style.display = 'flex';
+        carregarVagas();
     });
 
-    // --- FUNÇÕES DE APOIO ---
-
-    function renderizarQuadroVagas() {
-        let html = "";
-        for(let i in window.vagas) {
-            html += `<div class="vaga-item"><span>${i}:</span><span class="${window.vagas[i]<=0?'vaga-zero':''}">${window.vagas[i]}</span></div>`;
+    async function carregarVagas() {
+        const status = document.getElementById('status-vagas');
+        status.innerHTML = "Sincronizando com a planilha...";
+        try {
+            const response = await fetch(URL_API);
+            if (!response.ok) throw new Error("Erro 404 na API");
+            window.vagas = await response.json();
+            status.innerHTML = "✅ Vagas atualizadas";
+            atualizarInstrumentos();
+        } catch (e) {
+            console.error(e);
+            status.innerHTML = "⚠️ Erro ao conectar. Usando modo offline.";
+            // Fallback para não travar o site
+            window.vagas = {"Caixa":5, "Surdo":5, "Repique":5, "Chocalho":5};
+            atualizarInstrumentos();
         }
-        document.getElementById('vagasDisplay').innerHTML = html;
-        atualizarFiltroInstrumento(document.getElementById('sexo').value);
     }
 
-    function atualizarFiltroInstrumento(sexo) {
+    function atualizarInstrumentos() {
+        const sexo = document.getElementById('sexo').value;
         const select = document.getElementById('instrumento');
-        let h = '<option value="">Selecione...</option>';
-        const lista = window.vagas || {"Caixa":1,"Repique":1,"Surdo 1":1,"Surdo 2":1,"Tamborim":1};
+        let opcoes = '<option value="">Selecione...</option>';
         
-        for(let i in lista) {
-            const restrito = (sexo === "Masculino" && (i === "Xequere" || i === "Chocalho"));
-            if(!restrito) h += `<option value="${i}">${i}</option>`;
+        for (let inst in window.vagas) {
+            // Regra de segurança: Masculino não vê Chocalho/Xequere
+            if (sexo === "Masculino" && (inst === "Chocalho" || inst === "Xequere")) continue;
+            opcoes += `<option value="${inst}">${inst} (${window.vagas[inst]} vagas)</option>`;
         }
-        select.innerHTML = h;
+        select.innerHTML = opcoes;
     }
 
-    function calcularIdade(data) {
-        const p = data.split('/'); if(p.length<3) return 0;
-        const n = new Date(p[2], p[1]-1, p[0]);
-        let idade = new Date().getFullYear() - n.getFullYear();
-        return idade;
-    }
-
-    // Eventos de Formuário
-    $(document).on('blur', '#dataNasc', function(){
-        const idade = calcularIdade($(this).val());
-        if(idade > 0 && idade < 12) { alert("Mínimo 12 anos."); $(this).val(""); }
-        else if(idade < 18) $('#blocoResp').show();
-        else $('#blocoResp').hide();
-    });
-
-    $(document).on('change', '#sexo', function(){
-        atualizarFiltroInstrumento($(this).val());
-    });
-
-    // Envio do Formulário
-    $('#formMatricula').submit(async function(e){
-        e.preventDefault();
-        $('#btnReservar').prop('disabled', true).text('PROCESSANDO...');
-        
-        dadosUsuario = {
-            nome: $('#nome').val(),
-            cpf: $('#cpf').val().replace(/\D/g,''),
-            dataNasc: $('#dataNasc').val(),
-            sexo: $('#sexo').val(),
-            tel: $('#tel').val(),
-            email: $('#email').val(),
-            redeSocial: $('#redeSocial').val() || "Não informado",
-            instrumento: $('#instrumento').val(),
-            nivel: $('#nivel').val(),
-            tamanhoCamiseta: $('#tamanhoCamiseta').val(),
-            numSocio: $('#numSocio').val(),
-            nomeResp: $('#nomeResp').val() || "N/A",
-            telResp: $('#telResp').val() || "N/A",
-            fotoSocio: await toB64($('#fotoSocio')[0].files[0]),
-            fotoPerfil: await toB64($('#fotoPerfil')[0].files[0]),
-            acao: "RESERVAR"
-        };
-
-        try {
-            const res = await fetch(URL_SCRIPT, { method: 'POST', body: JSON.stringify(dadosUsuario) });
-            const r = await res.json();
-            if(r.status === "sucesso") {
-                $('#tela-cadastro').hide();
-                $('#tela-pix').fadeIn();
-                iniciarTimer();
-            } else {
-                alert(r.msg);
-                $('#btnReservar').prop('disabled', false).text('RESERVAR VAGA');
-            }
-        } catch(e) {
-            alert("Erro ao conectar com o servidor. Verifique sua internet.");
-            $('#btnReservar').prop('disabled', false).text('RESERVAR VAGA');
+    // Máscaras (Dependem do jQuery)
+    $(document).ready(function(){
+        if($.isFunction($('.mask-cpf').mask)) {
+            $('.mask-cpf').mask('000.000.000-00');
         }
     });
-
-    async function enviarComprovante() {
-        const f = $('#fotoComprovante')[0].files[0];
-        if(!f) return alert("Selecione a foto do comprovante");
-        $('#btnComprovante').prop('disabled', true).text('ENVIANDO...');
-        try {
-            const res = await fetch(URL_SCRIPT, { 
-                method: 'POST', 
-                body: JSON.stringify({ cpf: dadosUsuario.cpf, comprovante: await toB64(f), acao: "CONFIRMAR_PAGAMENTO" }) 
-            });
-            const r = await res.json();
-            if(r.status === "sucesso") {
-                clearInterval(timerId);
-                $('#tela-pix').hide();
-                $('#tela-final').fadeIn();
-            }
-        } catch(e) {
-            alert("Erro ao enviar. Tente novamente.");
-            $('#btnComprovante').prop('disabled', false).text('ENVIAR COMPROVANTE');
-        }
-    }
-
-    function toB64(f) { return new Promise(res => { const r = new FileReader(); r.onload = e => res(e.target.result); r.readAsDataURL(f); }); }
-
-    function iniciarTimer() {
-        let t = 300;
-        timerId = setInterval(() => {
-            t--;
-            let m = Math.floor(t/60), s = t%60;
-            $('#timer').text(`${m}:${s<10?'0'+s:s}`);
-            if(t<=0) { clearInterval(timerId); alert("Tempo esgotado!"); location.reload(); }
-        }, 1000);
-    }
 </script>
 </body>
 </html>
