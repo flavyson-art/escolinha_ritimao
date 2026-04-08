@@ -9,55 +9,28 @@
     <style>
         :root { --preto: #000; --branco: #fff; --cinza: #aaa; --destaque: #ffd700; --erro: #ff4444; --sucesso: #00bfff; }
         body, html { margin: 0; padding: 0; background-color: var(--preto); color: var(--branco); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
-        
         .tela { display: none; padding: 20px; min-height: 100vh; flex-direction: column; align-items: center; width: 100%; box-sizing: border-box; background-size: cover; background-position: center; background-attachment: fixed; }
-        
         #tela-inicial { display: flex; justify-content: center; align-items: center; }
-
-        .logo-btn { 
-            width: 90vw; 
-            max-width: 600px; 
-            height: auto; 
-            aspect-ratio: 1/1;
-            border-radius: 48%; 
-            border: 10px solid var(--branco); 
-            cursor: pointer; 
-            transition: 0.4s; 
-            object-fit: cover; 
-            box-shadow: 0 0 30px rgba(255,255,255,0.3);
-            display: block;
-            margin: 0 auto;
-        }
+        .logo-btn { width: 90vw; max-width: 600px; height: auto; aspect-ratio: 1/1; border-radius: 48%; border: 10px solid var(--branco); cursor: pointer; transition: 0.4s; object-fit: cover; box-shadow: 0 0 30px rgba(255,255,255,0.3); display: block; margin: 0 auto; }
         .logo-btn:hover { transform: scale(1.02); box-shadow: 0 0 50px var(--destaque); }
-
         #tela-cadastro { background-image: url('https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/Fundo_tela_Cadastro.jpg'); }
-
         .container { width: 100%; max-width: 480px; background: rgba(0, 0, 0, 0.94); padding: 30px; border-radius: 20px; border: 1px solid #444; box-sizing: border-box; margin: 20px 0; position: relative; z-index: 2; }
-        
         #tela-pix .container { max-width: 700px; }
-
         .titulo-amarelo { color: var(--destaque); text-align: center; text-transform: uppercase; font-weight: 900; font-size: 1.6rem; margin-top: 0; margin-bottom: 25px; }
-        
         .grid-vagas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid #333; }
         .vaga-item { border-bottom: 1px solid #333; padding: 6px; font-size: 12px; display: flex; justify-content: space-between; }
         .esgotado { color: var(--erro); font-weight: bold; text-transform: uppercase; }
-
         .aviso-tamborim { background: rgba(255, 215, 0, 0.1); border: 1px solid var(--destaque); color: #fff; padding: 12px; border-radius: 8px; font-size: 11px; margin-bottom: 20px; text-align: center; line-height: 1.4; }
-
         .campo { margin-bottom: 18px; display: flex; flex-direction: column; }
         label { font-size: 0.85rem; color: var(--cinza); margin-bottom: 6px; font-weight: 600; }
         input, select { padding: 14px; background: #000; border: 1px solid #444; color: #fff; border-radius: 10px; font-size: 1rem; transition: 0.3s; }
         input:focus { border-color: var(--destaque); outline: none; }
-        
         .btn-acao { width: 100%; padding: 20px; background: var(--branco); color: #000; border: none; font-weight: 900; border-radius: 10px; cursor: pointer; text-transform: uppercase; margin-top: 15px; font-size: 1.1rem; }
         .btn-acao:disabled { background: #555; cursor: not-allowed; }
-        
         .secao-timer { background: #222; border: 2px solid var(--erro); border-radius: 10px; padding: 15px; margin-bottom: 20px; text-align: center; }
         .texto-timer { color: var(--erro); font-weight: bold; font-size: 1.2rem; text-transform: uppercase; margin: 0 0 5px 0; }
         #cronometro { color: #fff; font-size: 2.5rem; font-family: monospace; font-weight: bold; letter-spacing: 2px; }
-
         #qr-code { width: 100%; max-width: 550px; margin: 20px auto; border: 15px solid white; border-radius: 10px; display: block; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        
         .chave-pix { background: #1a1a1a; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 1.2rem; color: var(--destaque); margin: 10px auto; border: 1px dashed #555; width: fit-content; max-width: 100%; word-wrap: break-word; }
     </style>
 </head>
@@ -98,17 +71,14 @@
                 <div class="campo"><label>WhatsApp *</label><input type="text" id="tel" class="mask-tel" required></div>
                 <div class="campo"><label>E-mail *</label><input type="email" id="email" placeholder="email@exemplo.com" required></div>
                 <div class="campo"><label>Rede Social</label><input type="text" id="social"></div>
-                
                 <div class="campo"><label>Instrumento *</label><select id="instrumento" onchange="atualizarNiveis()" required></select></div>
                 <div class="campo"><label>Nível de Conhecimento *</label><select id="nivel" required><option value="">Selecione o instrumento primeiro...</option></select></div>
-
                 <div class="campo"><label>Tamanho da Camiseta *</label>
                     <select id="camiseta" required>
                         <option value="">Selecione...</option>
                         <option value="P">P</option><option value="M">M</option><option value="G">G</option><option value="GG">GG</option><option value="XG">XG</option>
                     </select>
                 </div>
-
                 <div class="campo"><label>Nº Sócio Gaviões *</label><input type="number" id="numSocio" required></div>
                 <div class="campo"><label>Foto Carteirinha/Recibo *</label><input type="file" id="fotoSocio" accept="image/*" required></div>
                 <div class="campo"><label>Foto de Perfil *</label><input type="file" id="fotoPerfil" accept="image/*" required></div>
@@ -125,12 +95,7 @@
             <p>Taxa de Matrícula + Camiseta: <br><strong style="font-size: 1.8rem; color: var(--sucesso);">R$ 50,00</strong></p>
             <img src="https://raw.githubusercontent.com/flavyson-art/escolinha_ritimao/main/QR_Cod.jpg" id="qr-code">
             <div class="chave-pix">Chave Pix: carnaval@gavioes.com.br</div>
-            
-            <div class="campo" style="text-align: left; margin-top: 20px;">
-                <label>Anexar Comprovante do PIX *</label>
-                <input type="file" id="fotoPix" accept="image/*">
-            </div>
-            
+            <div class="campo" style="text-align: left; margin-top: 20px;"><label>Anexar Comprovante do PIX *</label><input type="file" id="fotoPix" accept="image/*"></div>
             <button class="btn-acao" onclick="enviarPix()" id="btnEnviarPix">Enviar Comprovante</button>
         </div>
     </div>
@@ -140,6 +105,23 @@
     let dadosCandidato = {};
     let intervaloCronometro;
     let idadeCalculada = null;
+
+    // Função de validação real de CPF
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/[^\d]+/g, '');
+        if (cpf == '' || cpf.length != 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+        let add = 0;
+        for (let i = 0; i < 9; i++) add += parseInt(cpf.charAt(i)) * (10 - i);
+        let rev = 11 - (add % 11);
+        if (rev == 10 || rev == 11) rev = 0;
+        if (rev != parseInt(cpf.charAt(9))) return false;
+        add = 0;
+        for (let i = 0; i < 10; i++) add += parseInt(cpf.charAt(i)) * (11 - i);
+        rev = 11 - (add % 11);
+        if (rev == 10 || rev == 11) rev = 0;
+        if (rev != parseInt(cpf.charAt(10))) return false;
+        return true;
+    }
 
     function abrirCadastro() {
         $(".tela").hide();
@@ -171,7 +153,6 @@
         const hoje = new Date();
         let idade = hoje.getFullYear() - nasc.getFullYear();
         if (hoje < new Date(hoje.getFullYear(), nasc.getMonth(), nasc.getDate())) idade--;
-
         if (idade < 12) {
             alert("Apenas maiores de 12 anos.");
             $("#nasc").val("");
@@ -179,13 +160,8 @@
             idadeCalculada = null;
         } else {
             idadeCalculada = idade;
-            if (idade < 18) {
-                $("#campos-responsavel").show();
-                $("#nomeResp, #telResp").prop("required", true);
-            } else {
-                $("#campos-responsavel").hide();
-                $("#nomeResp, #telResp").prop("required", false);
-            }
+            if (idade < 18) { $("#campos-responsavel").show(); $("#nomeResp, #telResp").prop("required", true); } 
+            else { $("#campos-responsavel").hide(); $("#nomeResp, #telResp").prop("required", false); }
         }
     }
 
@@ -209,12 +185,10 @@
         const basico = ["Iniciante", "Intermediário"];
         const aprimora = ["Curso de aprimoramento (para quem já toca)"];
         const completo = ["Iniciante", "Intermediário", "Curso de aprimoramento (para quem já toca)"];
-
         let lista = [];
         if (["Chocalho", "Xequere", "Repique", "Caixa", "Terceira"].includes(inst)) lista = basico;
         else if (["Tamborim", "Cuica", "Timbal"].includes(inst)) lista = completo;
         else if (["Surdo 1", "Surdo 2"].includes(inst)) lista = aprimora;
-
         lista.forEach(n => html += `<option value="${n}">${n}</option>`);
         campo.html(html);
     }
@@ -227,8 +201,15 @@
 
     $("#formMatricula").on("submit", async function(e) {
         e.preventDefault();
-        $("#btnReservar").prop("disabled", true).text("Processando...");
+        
+        // Validação de CPF antes de processar
+        if(!validarCPF($("#cpf").val())){
+            alert("Por favor, informe um CPF válido.");
+            $("#cpf").focus();
+            return;
+        }
 
+        $("#btnReservar").prop("disabled", true).text("Processando...");
         dadosCandidato = {
             acao: "RESERVAR",
             nome: $("#nome").val(),
@@ -269,49 +250,32 @@
             let sec = String(tempo % 60).padStart(2, '0');
             display.textContent = `${min}:${sec}`;
             if (tempo < 60) display.style.color = "var(--erro)";
-            if (--tempo < 0) {
-                clearInterval(intervaloCronometro);
-                alert("Tempo esgotado!");
-                window.location.reload();
-            }
+            if (--tempo < 0) { clearInterval(intervaloCronometro); alert("Tempo esgotado!"); window.location.reload(); }
         }, 1000);
     }
 
     async function enviarPix() {
         const file = document.getElementById("fotoPix").files[0];
-        
-        // AJUSTE: Bloqueio caso não tenha arquivo
         if(!file) {
             alert("ATENÇÃO: Você precisa anexar a foto do comprovante para finalizar sua inscrição.");
             return;
         }
-
         $("#btnEnviarPix").prop("disabled", true).text("Enviando...");
-        
         try {
-            const payload = { 
-                acao: "CONFIRMAR_PAGAMENTO", 
-                cpf: dadosCandidato.cpf, 
-                comprovante: await toBase64(file) 
-            };
-
+            const payload = { acao: "CONFIRMAR_PAGAMENTO", cpf: dadosCandidato.cpf, comprovante: await toBase64(file) };
             const res = await fetch(URL_API, { method: "POST", body: JSON.stringify(payload) });
             const final = await res.json();
 
             if(final.status === "sucesso") {
                 clearInterval(intervaloCronometro);
-                // MENSAGEM FINAL SOLICITADA
+                // MENSAGEM CORRIGIDA
                 alert("COMPROVANTE ENVIADO!\n\nSua inscrição foi recebida com sucesso. A Diretoria da Ritimão irá validar seu comprovante e entrará em contato pelo Whatsapp e e-mail.");
                 window.location.reload();
             } else {
-                alert("Erro ao validar: " + final.msg);
+                alert("Erro: " + final.msg);
                 $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante");
             }
-
-        } catch (e) { 
-            alert("Erro ao enviar PIX. Tente novamente."); 
-            $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante"); 
-        }
+        } catch (e) { alert("Erro ao enviar PIX."); $("#btnEnviarPix").prop("disabled", false).text("Enviar Comprovante"); }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
